@@ -43,7 +43,14 @@ one. With co-op on the room gets a second manager (numpad map + joystick slot 1)
 - Co-op on, rh-combat A/B: P2 walks and jumps on numpad input; P1 unchanged until the
   two interact.
 
+## Gamepads
+
+Tested by hand with two physical pads (P1 and P2, combat included). A pad that is unplugged
+and plugged back in is picked up again within a fraction of a second (co-op only; retail
+re-acquired only on DIERR_INPUTLOST, so it needed a window minimize / restore). Each new
+read failure code is written once to `coop.log` in the game folder.
+
 ## Known limits
 
-One camera (follows player 1), player 2 cannot open menus or talk, real gamepads and
-save/load with co-op not tested yet.
+One camera (follows player 1), player 2 cannot open menus or talk, save/load with co-op
+not tested yet.
