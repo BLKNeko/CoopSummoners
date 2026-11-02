@@ -88,6 +88,28 @@ void coop_p2_produce(input_mgr *m, const void *kb)
     if (p2_held(d, 0x50)) m->axis_held[4] = 1;
 }
 
+#define PAD_RETRY_POLLS 20   /* polls between Acquire tries (~3 per second at 60 fps) */
+
+int coop_pad_reacquire_due(const void *dev, int32_t hr, int32_t acquired)
+{
+    static struct { const void *dev; uint32_t n; int32_t last_hr; } seen[4];
+    if (!g_coop || acquired == 0) return 0;
+    int k = 0;
+    while (k < 4 && seen[k].dev != NULL && seen[k].dev != dev) k++;
+    if (k == 4) k = 0;
+    seen[k].dev = dev;
+    if (hr != seen[k].last_hr) {   /* each new failure code once, into coop.log beside the game */
+        FILE *f = fopen("coop.log", "a");
+        if (f != NULL) {
+            fprintf(f, "pad %d: poll failed hr=0x%08x at tick %u, re-acquiring\n", k, (unsigned)hr,
+                    (unsigned)g_eng.tick());
+            fclose(f);
+        }
+        seen[k].last_hr = hr;
+    }
+    return seen[k].n++ % PAD_RETRY_POLLS == 0;
+}
+
 wl_pslot *coop_p2_slot(const wl_room *r)
 {
     if (r->nin < COOP_NIN) return NULL;

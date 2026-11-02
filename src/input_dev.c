@@ -20,6 +20,7 @@
 #include <stdint.h>
 #include <string.h>
 
+#include "coop.h"
 #include "engine_calls.h"
 #include "rng.h"
 
@@ -623,6 +624,8 @@ int32_t id_5ba650(wl_char *self)
     id_5ba290(c);
     v2 = (*(int (__stdcall **)(void *, int, void *))(*(_DWORD *)F32(c, 0x4) + 36))(F32(c, 0x4), 80, c + 0x18);
   }
+  else if ( v2 != 0 && coop_pad_reacquire_due((const void *)c, (int32_t)v2, F32(c, 0x8)) && id_5ba290(c) )
+    v2 = (*(int (__stdcall **)(void *, int, void *))(*(_DWORD *)F32(c, 0x4) + 36))(F32(c, 0x4), 80, c + 0x18);
   return v2 == 0;
 }
 

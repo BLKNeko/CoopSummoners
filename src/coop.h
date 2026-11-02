@@ -41,6 +41,12 @@ void coop_p2_produce(input_mgr *m, const void *kb);
 void coop_tick(wl_room *r);
 /* the slot P2 holds, or NULL */
 wl_pslot *coop_p2_slot(const wl_room *r);
+/* the joystick poll (0x5ba650) got `hr` from GetDeviceState: should it Acquire again now?
+ * Retail re-acquires only on DIERR_INPUTLOST; a pad unplugged and plugged back in reports
+ * another failure instead and stayed dead until the window was reactivated.  Co-op only,
+ * any failure while the game holds the device acquired, a few tries per second per device;
+ * each new failure code is logged once to coop.log. */
+int coop_pad_reacquire_due(const void *dev, int32_t hr, int32_t acquired);
 /* a log summary (empty when co-op is off) */
 void coop_status(char *buf, size_t n);
 

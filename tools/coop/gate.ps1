@@ -3,7 +3,7 @@
 # --standalone` checks).  Fresh-start scenarios only (no "from" chains).
 #   gate.ps1 -Repo \wsl.localhost\Ubuntu\home\me\OpenSummoners -Game C:\fs-base -Out C:\fs-gate [-Coop] [-Only a,b]
 param([string]$Repo, [string]$Game, [string]$Out, [switch]$Coop, [string[]]$Only, [string]$Extra = "",
-      [string]$TraceDir = "")
+      [string]$TraceDir = "", [string]$UserDir = "")
 $ErrorActionPreference = "Stop"
 $scen = Join-Path $Repo "tests\scenarios"
 if ($TraceDir) { $scen = $TraceDir }
@@ -16,7 +16,7 @@ foreach ($d in Get-ChildItem $scen -Directory) {
     $tr = Join-Path $d.FullName "trace.jsonl"
     if (-not (Test-Path $tr)) { continue }
     $head = Get-Content $tr -TotalCount 3 | Out-String
-    if ($head -match '"from"' -or $head -match 'EN-SE' -or $head -match '"ense') { continue }
+    if ((-not $UserDir) -and $head -match '"from"' -or $head -match 'EN-SE' -or $head -match '"ense') { continue }
     $rd = Join-Path $Out $d.Name
     if (Test-Path $rd) { Remove-Item -Recurse -Force $rd -Confirm:$false }
     $gd = Join-Path $rd "game"
@@ -24,6 +24,7 @@ foreach ($d in Get-ChildItem $scen -Directory) {
     foreach ($f in "sotes.exe","sotesd.dll","sotesw.dll","sotesp.dll","lizsoft.spl") {
         New-Item -ItemType HardLink -Path (Join-Path $gd $f) -Target (Join-Path $Game $f) | Out-Null }
     Copy-Item $tr (Join-Path $rd "trace.jsonl")
+    if ($UserDir) { Copy-Item $UserDir (Join-Path $rd "user") -Recurse }
     Copy-Item (Join-Path $Repo "tools\rhost\volatile.enold.txt") (Join-Path $rd "volatile.txt")
     $a = @("--exe", "$gd\sotes.exe", "--game", $gd, "--run", $rd, "--trace", "$rd\trace.jsonl", "--fb-hash", "--standalone")
     if ($Coop) { $a += "--coop" }
