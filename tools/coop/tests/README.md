@@ -20,3 +20,10 @@ Arche down at f27130, P1 stays on her, P2 keeps Sana; both down at f28510 → Ga
 Fallen-member filter (`--frames 28500 --log-every 2`): while Arche is down, `act14` (attack) and
 skills never appear in the status line, she still moves (x 0..152288); the run equals the
 unfiltered one up to the fall frame — PASS.
+
+Pit fall with a fallen P2 (owner's crash, 2026-11-02): `F1-fall` with `--frames 29200 --log-every 10
+--coop-test-hp 27050:1:1 --coop-test-drop 28400:1 --coop-test-drop 28600:1 --coop-test-drop 28800:0`.
+Sana falls at f28410 (the first drop), the second drop puts the Disabled Sana below the map.
+Before the fix: `AV f28601 ... (write 00000000)` (char_add_hp writing through char_apply's NULL).
+After: no crash, Sana respawns on the ground at f28610 with 0 HP; healthy Arche dropped at f28800
+respawns and loses 5% HP (77 → 72) as in the base game — PASS.

@@ -52,6 +52,8 @@ static char g_gamedir_abs[MAX_PATH];
 static int g_finished;
 static struct { uint32_t frame; int32_t who, hp; } g_test_hp[8];   /* --coop-test-hp F:WHO:HP (test only) */
 static int g_n_test_hp;
+static struct { uint32_t frame; int32_t who; } g_test_drop[8];     /* --coop-test-drop F:WHO (test only) */
+static int g_n_test_drop;
 uint32_t RT_TEXT_LO, RT_TEXT_SZ, RT_DATA_LO, RT_DATA_HI, RT_IMG_HI;
 
 /* ---- editions ---- */
@@ -1092,6 +1094,11 @@ static void __cdecl pre_flip(void)
             coop_test_hp(g_test_hp[i].who, g_test_hp[i].hp);
             rh_log("coop-test-hp frame %u who %d hp %d\n", g_frame, g_test_hp[i].who, g_test_hp[i].hp);
         }
+    for (int i = 0; i < g_n_test_drop; i++)
+        if (g_test_drop[i].frame == g_frame) {
+            coop_test_drop(g_test_drop[i].who);
+            rh_log("coop-test-drop frame %u who %d\n", g_frame, g_test_drop[i].who);
+        }
     rh_coop_overlay();
     char t[32]; snprintf(t, sizeof t, "f%06u", g_frame);
     if (is_dump_frame(g_frame)) dump_now(t);
@@ -1314,6 +1321,11 @@ static void parse(int argc, char **argv)
             const char *v = ARG();
             if (sscanf(v, "%u:%d:%d", &g_test_hp[g_n_test_hp].frame, &g_test_hp[g_n_test_hp].who,
                        &g_test_hp[g_n_test_hp].hp) == 3) g_n_test_hp++;
+        }
+        else if (!strcmp(a, "--coop-test-drop") && g_n_test_drop < 8) {   /* FRAME:WHO */
+            const char *v = ARG();
+            if (sscanf(v, "%u:%d", &g_test_drop[g_n_test_drop].frame, &g_test_drop[g_n_test_drop].who) == 2)
+                g_n_test_drop++;
         }
         else if (!strcmp(a, "--screen")) O.screen = (int)strtoul(ARG(), 0, 0);
         else if (!strcmp(a, "--no-compat-layer")) O.no_compat_layer = 1;

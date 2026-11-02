@@ -342,6 +342,16 @@ void coop_test_hp(int32_t who, int32_t hp)
     if (s != NULL && s->ch != NULL && s->ch->party != NULL) s->ch->party->hp = hp;
 }
 
+/* test only (rhost --coop-test-drop): put the leader's (who 0) or P2's (who 1) character far below
+ * the map, as a fall into a bottomless pit does (char_apply's "fell" check) */
+void coop_test_drop(int32_t who)
+{
+    if (!g_coop || g_eng.world == NULL || *g_eng.world == NULL || (*g_eng.world)->room == NULL) return;
+    const wl_room *r = (*g_eng.world)->room;
+    const wl_pslot *s = who == 0 ? r->leader : coop_p2_slot(r);
+    if (s != NULL && s->ch != NULL && s->ch->base.body != NULL) s->ch->base.body->y = 50000000;
+}
+
 /* ---- the P2 marker overlay ---- */
 
 typedef struct ov_surf {

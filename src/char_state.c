@@ -27,7 +27,11 @@ int char_add_hp(wl_char *c, int32_t d, int32_t *out, int32_t dry)
 {
     wl_party *p = c->party;
     if (p->busy != 0) {
-        *out = 0;
+        /* retail stores unconditionally; its NULL callers (char_apply's regen and fall-out-of-map
+         * damage) never meet a busy (Disabled) player character there, but co-op lets a player keep
+         * a fallen one: a Disabled P2 falling into a bottomless pit wrote through NULL.  Same result
+         * on every path retail survives. */
+        if (out != NULL) *out = 0;
         return 0;
     }
     int32_t hp = p->hp, v = d;

@@ -63,6 +63,8 @@ int coop_pad_reacquire_due(const void *dev, int32_t hr, int32_t acquired);
 void coop_status(char *buf, size_t n);
 /* test only (rhost --coop-test-hp F:WHO:HP): the HP of the leader's (0) or P2's (1) character */
 void coop_test_hp(int32_t who, int32_t hp);
+/* test only (rhost --coop-test-drop F:WHO): drop that character below the map (a pit fall) */
+void coop_test_drop(int32_t who);
 
 /* The P2 marker, drawn by the host onto the finished back buffer right before each Flip
  * (an overlay: no game state is read back or changed).  A blue "P2" badge with a pointer
