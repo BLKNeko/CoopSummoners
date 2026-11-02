@@ -14,6 +14,11 @@
  * leader, and releases it whenever player 1 does not (cutscenes and scripts take the
  * leader's input; P2 follows the same rule).
  *
+ * The switch key is co-op's (coop.c, "the switch key"): both players tap within 0.5 s →
+ * they swap characters (P1 keeps the lead); a lone tap → the game's own switch to a free
+ * member once the window has passed; P2 holds it 1.5 s → leaves (the AI takes over) or
+ * rejoins.  A fallen member keeps its player; game over stays the game's own (all down).
+ *
  * P2 keyboard (numpad): 8/5/4/6 up/down/left/right, 1 attack, 2 jump, 3 use,
  * 0 sheathe / skill modifier, + switch character.
  */
@@ -41,6 +46,8 @@ void coop_p2_produce(input_mgr *m, const void *kb);
 void coop_tick(wl_room *r);
 /* the slot P2 holds, or NULL */
 wl_pslot *coop_p2_slot(const wl_room *r);
+/* P2 is in the game (co-op on and P2 has not left with a switch hold) */
+int coop_p2_joined(void);
 /* the joystick poll (0x5ba650) got `hr` from GetDeviceState: should it Acquire again now?
  * Retail re-acquires only on DIERR_INPUTLOST; a pad unplugged and plugged back in reports
  * another failure instead and stayed dead until the window was reactivated.  Co-op only,
@@ -49,6 +56,8 @@ wl_pslot *coop_p2_slot(const wl_room *r);
 int coop_pad_reacquire_due(const void *dev, int32_t hr, int32_t acquired);
 /* a log summary (empty when co-op is off) */
 void coop_status(char *buf, size_t n);
+/* test only (rhost --coop-test-hp F:WHO:HP): the HP of the leader's (0) or P2's (1) character */
+void coop_test_hp(int32_t who, int32_t hp);
 
 /* The P2 marker, drawn by the host onto the finished back buffer right before each Flip
  * (an overlay: no game state is read back or changed).  A blue "P2" badge with a pointer

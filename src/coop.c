@@ -10,6 +10,8 @@
 #include "char_state.h"
 #include "engine_calls.h"
 #include "input.h"
+#include "party_member.h"
+#include "room_load.h"
 #include "scene_loop.h"
 
 int g_coop;
@@ -138,12 +140,148 @@ static int p2_can_take(const wl_room *r, const wl_pslot *s)
            s->ch != NULL && char_targetable(s->ch, 0, 1);
 }
 
+/* ---- the switch key: taps, the LEGO-style swap, P2's hold to leave / rejoin ----
+ *
+ * While co-op runs, coop_tick takes every switch event (ring id 20, posted by Enter / the bound
+ * switch key / pad button, P2's numpad +) off both managers before room_keys (0x468a20 runs
+ * before it in the room update) can see it.  A press and its release make a TAP (counted at the
+ * release) or a HOLD (>= COOP_HOLD_MS):
+ *   - both players tap within COOP_SWAP_MS: they swap characters (fallen ones too); the leader
+ *     goes with P1's manager (room_leader_set), P2's manager goes to P1's old character;
+ *   - a lone tap, once the window has passed (at once when no swap is possible): a fresh id 20
+ *     press is posted back into that player's ring, so room_keys does the game's own switch to
+ *     a free member (its 40-tick retry included);
+ *   - P2 holds: leave (the AI takes the character back) / rejoin (the first free member);
+ *     P1's hold is just a tap. */
+
+#define SWITCH_ID     20
+#define COOP_SWAP_MS  500
+#define COOP_HOLD_MS  1500
+
+typedef struct sw_state {
+    int          down;        /* the switch is held (a press seen, its release not yet)  */
+    uint32_t     down_at;
+    int          hold_fired;
+    int          tap;         /* a tap waiting for the swap window                       */
+    uint32_t     tap_at;
+    input_event *posted;      /* the press coop posted for room_keys: not a player's     */
+} sw_state;
+
+static sw_state g_sw[COOP_NIN];
+static int g_p2_out;          /* 1 = P2 left; the AI drives the character               */
+
+int coop_p2_joined(void) { return g_coop && !g_p2_out; }
+
+static void sw_reset(void)
+{
+    for (int p = 0; p < COOP_NIN; p++) {
+        g_sw[p].down = g_sw[p].hold_fired = g_sw[p].tap = 0;
+    }
+}
+
+/* the game's own switch for player p: a press for room_keys' input_poll_consume (id 20, flag 1,
+ * stamped now: inside its 100 ms window) */
+static void sw_post(input_mgr *m, sw_state *s, uint32_t now)
+{
+    p2_push(m, SWITCH_ID, now, 1);
+    s->posted = m->ring[0];
+}
+
+/* both players' characters change hands; P1's manager keeps the leader */
+static void sw_swap(wl_room *r)
+{
+    wl_pslot *s1 = r->leader, *s2 = coop_p2_slot(r);
+    if (s1 == NULL || s2 == NULL || s1 == s2 || s1->in != &r->in[0]) return;
+    room_leader_set(r, s2);              /* s2 takes manager 0 and the lead, s1 goes to the AI */
+    pslot_input_set(s1, &r->in[1]);      /* ... and then to P2 */
+    room_formation(r);
+}
+
+static int sw_can_swap(const wl_room *r)
+{
+    return !g_p2_out && coop_p2_slot(r) != NULL && r->leader != NULL && r->leader->in == &r->in[0];
+}
+
+static void sw_tap(wl_room *r, int p, uint32_t t, uint32_t now)
+{
+    sw_state *s = &g_sw[p], *o = &g_sw[1 - p];
+    if (p == 1 && g_p2_out) return;                 /* not in the game: nothing to switch */
+    if (!sw_can_swap(r)) { sw_post(&r->in[p], s, now); return; }
+    int32_t gap = (int32_t)(t - o->tap_at);
+    if (o->tap && (gap < 0 ? -gap : gap) <= COOP_SWAP_MS) {
+        o->tap = 0;
+        sw_swap(r);
+        return;
+    }
+    s->tap = 1;
+    s->tap_at = t;
+}
+
+static void sw_hold(wl_room *r, int p)
+{
+    if (p != 1) return;
+    wl_pslot *held = coop_p2_slot(r);
+    if (!g_p2_out) {
+        if (held != NULL) pslot_input_set(held, NULL);
+        g_p2_out = 1;
+        g_sw[1].tap = 0;
+    } else {
+        g_p2_out = 0;                                /* coop_tick attaches P2 to a free member */
+    }
+}
+
+static void sw_update(wl_room *r)
+{
+    uint32_t now = g_eng.tick();
+    for (int p = 0; p < COOP_NIN; p++) {
+        input_mgr *m = &r->in[p];
+        sw_state *s = &g_sw[p];
+        for (int i = INPUT_RING_LEN - 1; i >= 0; i--) {   /* oldest first */
+            input_event *e = m->ring[i];
+            if (e == s->posted) {   /* ours, while room_keys may still take it; the record is reused later */
+                if (e->id == SWITCH_ID && e->flag == 1 && (uint32_t)(now - e->ts) <= 200) continue;
+                s->posted = NULL;
+            }
+            if (e->id != SWITCH_ID) continue;
+            int pressed = e->flag == 1;
+            uint32_t ts = e->ts;
+            e->id = 0;
+            if (pressed && !s->down) {
+                s->down = 1;
+                s->down_at = ts;
+                s->hold_fired = 0;
+            } else if (!pressed && s->down) {
+                s->down = 0;
+                if (!s->hold_fired) sw_tap(r, p, ts, now);
+            }
+        }
+        if (s->down && !s->hold_fired && p == 1 && (uint32_t)(now - s->down_at) >= COOP_HOLD_MS) {
+            s->hold_fired = 1;
+            sw_hold(r, p);
+        }
+    }
+    for (int p = 0; p < COOP_NIN; p++) {
+        sw_state *s = &g_sw[p];
+        if (s->tap && (uint32_t)(now - s->tap_at) > COOP_SWAP_MS) {
+            s->tap = 0;
+            sw_post(&r->in[p], s, now);
+        }
+    }
+}
+
 void coop_tick(wl_room *r)
 {
     if (!g_coop || r->nin < COOP_NIN || r->in == NULL) return;
     input_mgr *p2 = &r->in[1];
     wl_pslot *held = coop_p2_slot(r);
     if (!p1_in_control(r)) {
+        if (held != NULL) pslot_input_set(held, NULL);
+        sw_reset();
+        return;
+    }
+    sw_update(r);
+    held = coop_p2_slot(r);
+    if (g_p2_out) {
         if (held != NULL) pslot_input_set(held, NULL);
         return;
     }
@@ -173,12 +311,24 @@ void coop_status(char *buf, size_t n)
     for (int k = 0; k < 8; k++) if (r->slot[k] != NULL && r->slot[k]->active == 1) nact++;
     char a[96] = "-", b[96] = "-";
     if (ld != NULL && ld->ch != NULL && ld->ch->base.body != NULL)
-        snprintf(a, sizeof a, "%d@%d,%d/%d", (int)ld->code, (int)ld->ch->base.body->x, (int)ld->ch->base.body->y,
-                 (int)ld->ch->f200);
+        snprintf(a, sizeof a, "%d@%d,%d/%d hp%d%s", (int)ld->code, (int)ld->ch->base.body->x,
+                 (int)ld->ch->base.body->y, (int)ld->ch->f200, (int)ld->ch->party->hp,
+                 char_targetable(ld->ch, 0, 1) ? "" : " DOWN");
     if (p2 != NULL && p2->ch != NULL && p2->ch->base.body != NULL)
-        snprintf(b, sizeof b, "%d@%d,%d/%d", (int)p2->code, (int)p2->ch->base.body->x, (int)p2->ch->base.body->y,
-                 (int)p2->ch->f200);
-    snprintf(buf, n, " coop[nin=%u act=%d p1ctl=%d lead=%s p2=%s]", (unsigned)r->nin, nact, p1_in_control(r), a, b);
+        snprintf(b, sizeof b, "%d@%d,%d/%d hp%d%s", (int)p2->code, (int)p2->ch->base.body->x,
+                 (int)p2->ch->base.body->y, (int)p2->ch->f200, (int)p2->ch->party->hp,
+                 char_targetable(p2->ch, 0, 1) ? "" : " DOWN");
+    snprintf(buf, n, " coop[nin=%u act=%d p1ctl=%d p2out=%d lead=%s p2=%s]", (unsigned)r->nin, nact,
+             p1_in_control(r), g_p2_out, a, b);
+}
+
+/* test only (rhost --coop-test-hp): set the HP of the leader's (who 0) or P2's (who 1) character */
+void coop_test_hp(int32_t who, int32_t hp)
+{
+    if (!g_coop || g_eng.world == NULL || *g_eng.world == NULL || (*g_eng.world)->room == NULL) return;
+    const wl_room *r = (*g_eng.world)->room;
+    const wl_pslot *s = who == 0 ? r->leader : coop_p2_slot(r);
+    if (s != NULL && s->ch != NULL && s->ch->party != NULL) s->ch->party->hp = hp;
 }
 
 /* ---- the P2 marker overlay ---- */

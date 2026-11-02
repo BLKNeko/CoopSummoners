@@ -24,8 +24,20 @@ Build `opensummoners-standalone.exe` (see README.md, *Building*), copy it next t
 | Sheathe, skill modifier | game config | numpad 0 |
 | Switch character | Enter / config | numpad + |
 
-Player 2 takes the first free party member while player 1 is in control, and is released
-during cutscenes.
+Player 2 starts in the game and takes the first free party member while player 1 is in
+control, and is released during cutscenes.
+
+**Switch key (co-op rules):**
+
+| | Result |
+|---|---|
+| Both players tap within 0.5 s | They swap characters, also when one is fallen. Player 1's character is always the leader (camera, talk, HUD). |
+| One player taps alone | After the 0.5 s window, the game's own switch to a free member (nothing if none). |
+| Player 2 holds 1.5 s | Player 2 leaves: the AI takes the character back. Hold again to rejoin (first free member). |
+
+A fallen member stays with its player (player 1 does not take player 2's character). With
+a free AI member, the game's own rule still moves player 1 to it. Game over only when the
+whole party is down, as in the base game.
 
 A blue **P2** badge points at player 2's character. When the character is off the left or
 right of the screen, an arrow on that edge (with the badge) shows where they are. It is an

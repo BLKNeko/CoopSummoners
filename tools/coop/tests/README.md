@@ -1,0 +1,18 @@
+# Co-op switch tests (rhost traces)
+
+Each folder is a trace that loads save "3: Town of Tonkiness" (Arche + Sana) from the save set
+derived from the rh-early-game chain (`gate.ps1 -UserDir`), then presses the switch key:
+Enter = P1 (DIK 28), numpad + = P2 (DIK 0x4e). Run with `gate.ps1 -Coop -Extra "--log-every 25"`
+and read the `coop[...]` status lines.
+
+| Trace | Keys | Expected (2026-11-02 result) |
+|---|---|---|
+| T1-swap | P1 tap f4500, P2 tap f4510 | lead 50011 (Sana, P1), P2 on 50010 (Arche) at f4525 — PASS |
+| T2-p1-lone | P1 tap f4500 | no free member: no change — PASS |
+| T3-p2-lone | P2 tap f4500 | no change — PASS |
+| T4-drop | P2 hold f4500-4620, P1 tap f4800, P2 hold f5000-5120 | p2out=1 at f4600; P1 to Sana at f4825; P2 back on Arche at f5100 — PASS |
+| T5-late | P1 tap f4500, P2 tap f4545 (720 ms) | no swap — PASS |
+
+Falls: `rh-combat` with numpad stripped (`trace_p2.py`), `--coop-test-hp 27050:0:1` (test only):
+Arche down at f27130, P1 stays on her, P2 keeps Sana; both down at f28510 → Game Over screen
+(f29200). With taps at f27300/f27305 the two swap: P1 on the healthy member, P2 on fallen Arche.

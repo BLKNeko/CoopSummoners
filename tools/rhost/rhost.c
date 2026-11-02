@@ -50,6 +50,8 @@ FILE *g_log;
 static FILE *g_logf;
 static char g_gamedir_abs[MAX_PATH];
 static int g_finished;
+static struct { uint32_t frame; int32_t who, hp; } g_test_hp[8];   /* --coop-test-hp F:WHO:HP (test only) */
+static int g_n_test_hp;
 uint32_t RT_TEXT_LO, RT_TEXT_SZ, RT_DATA_LO, RT_DATA_HI, RT_IMG_HI;
 
 /* ---- editions ---- */
@@ -1085,6 +1087,11 @@ static void __cdecl pre_flip(void)
 {
     if (g_finished) return;
     if (g_nw) watch_arm_due();
+    for (int i = 0; i < g_n_test_hp; i++)
+        if (g_test_hp[i].frame == g_frame) {
+            coop_test_hp(g_test_hp[i].who, g_test_hp[i].hp);
+            rh_log("coop-test-hp frame %u who %d hp %d\n", g_frame, g_test_hp[i].who, g_test_hp[i].hp);
+        }
     rh_coop_overlay();
     char t[32]; snprintf(t, sizeof t, "f%06u", g_frame);
     if (is_dump_frame(g_frame)) dump_now(t);
@@ -1303,6 +1310,11 @@ static void parse(int argc, char **argv)
         else if (!strcmp(a, "--live")) O.live = 1;
         else if (!strcmp(a, "--no-launcher")) O.no_launcher = 1;
         else if (!strcmp(a, "--coop")) g_coop = 1;
+        else if (!strcmp(a, "--coop-test-hp") && g_n_test_hp < 8) {   /* FRAME:WHO:HP, WHO 0 leader / 1 P2 */
+            const char *v = ARG();
+            if (sscanf(v, "%u:%d:%d", &g_test_hp[g_n_test_hp].frame, &g_test_hp[g_n_test_hp].who,
+                       &g_test_hp[g_n_test_hp].hp) == 3) g_n_test_hp++;
+        }
         else if (!strcmp(a, "--screen")) O.screen = (int)strtoul(ARG(), 0, 0);
         else if (!strcmp(a, "--no-compat-layer")) O.no_compat_layer = 1;
         else if (!strcmp(a, "--no-seed")) O.has_seed = 0;
