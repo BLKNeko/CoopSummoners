@@ -45,6 +45,12 @@ right of the screen, an arrow on that edge (with the badge) shows where they are
 overlay drawn on the finished frame (`coop_overlay_draw`, called by the host right before
 each Flip), so it never changes game state.
 
+The spell panel (top right: the spells and the selected one) appears whenever a player
+controls Sana, player 1 or player 2. When player 1's leader does not cast, it shows player
+2's caster (`coop_spell_panel_slot`); the leader portrait stays player 1's. It disappears
+only when the caster is driven by the AI. If both players control casters, it shows player
+1's (one panel).
+
 ## How it works
 
 `src/coop.c`. The engine already keeps one input manager per party slot

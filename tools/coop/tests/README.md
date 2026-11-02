@@ -27,3 +27,7 @@ Sana falls at f28410 (the first drop), the second drop puts the Disabled Sana be
 Before the fix: `AV f28601 ... (write 00000000)` (char_add_hp writing through char_apply's NULL).
 After: no crash, Sana respawns on the ground at f28610 with 0 HP; healthy Arche dropped at f28800
 respawns and loses 5% HP (77 → 72) as in the base game — PASS.
+
+Spell panel: `T4-drop` with `--shot-at 4450,4700,4900,5300` — f4450 leader portrait Arche (P1) with
+Sana's spells top right (P2 drives Sana); f4700 P2 out → no spells; f4900 / f5300 Sana is P1's →
+her panel as in the base game — PASS (checked on the screenshots).

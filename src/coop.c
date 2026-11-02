@@ -333,6 +333,23 @@ void coop_filter_cmd(wl_char *c)
     c->cmd.skill_kind = 0;
 }
 
+/* rd_498960's own gate: the skill keys are live (+0x14898 == 1), and not Arche before she learns magic */
+static int coop_casts(const wl_char *c)
+{
+    return c != NULL && c->skill_input == 1 && !(c->base.code == 50010 && c->party->f466 == 0);
+}
+
+wl_pslot *coop_spell_panel_slot(wl_pslot *leader)
+{
+    if (!g_coop || g_p2_out || leader == NULL || coop_casts(leader->ch) || g_eng.world == NULL ||
+        *g_eng.world == NULL) return leader;
+    const wl_room *r = (*g_eng.world)->room;
+    if (r == NULL || r->nin < COOP_NIN || !p1_in_control(r)) return leader;
+    wl_pslot *p2 = coop_p2_slot(r);
+    if (p2 != NULL && p2->active == 1 && p2->ch != NULL && p2->ch->f200 == 0 && coop_casts(p2->ch)) return p2;
+    return leader;
+}
+
 /* test only (rhost --coop-test-hp): set the HP of the leader's (who 0) or P2's (who 1) character */
 void coop_test_hp(int32_t who, int32_t hp)
 {

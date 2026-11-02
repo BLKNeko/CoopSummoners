@@ -53,6 +53,13 @@ int coop_p2_joined(void);
  * attack and the skill / spell from the command; moving, jumping and "use" stay.  The base
  * game never gives a Disabled member to the player, so this only applies with co-op on. */
 void coop_filter_cmd(wl_char *c);
+/* The HUD's spell panel (top right, rd_498960, drawn by the view render rd_494e60 right after the
+ * leader panel rd_497f40) shows the leader's slot, and only when that character casts (skill keys
+ * live, and not Arche before she learns magic).  With co-op on, when the leader does not cast but
+ * player 2 drives a character that does, return player 2's slot for the spell panel instead (the
+ * leader panel is untouched); otherwise `leader`.  An AI-driven caster never gets the panel, as in
+ * the base game. */
+wl_pslot *coop_spell_panel_slot(wl_pslot *leader);
 /* the joystick poll (0x5ba650) got `hr` from GetDeviceState: should it Acquire again now?
  * Retail re-acquires only on DIERR_INPUTLOST; a pad unplugged and plugged back in reports
  * another failure instead and stayed dead until the window was reactivated.  Co-op only,

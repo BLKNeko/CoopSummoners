@@ -28,6 +28,7 @@ static intptr_t rnd(void) { return (intptr_t)rng_rand(); }
 #include "char_attack.h"
 #include "char_hit.h"
 #include "char_status.h"
+#include "coop.h"
 #include "frame_load.h"
 #include "hud_view.h"
 #include "npc_ai.h"
@@ -7623,10 +7624,12 @@ LABEL_86:
         if ( F32(c, 0x24) == v51 )
         {
           rd_497f40(c, a2, v51, &F32(c, 0x20), F32(c, 0x10));
+          /* co-op: the spell panel can show player 2's caster instead of a non-casting leader */
+          int32_t *sp = (int32_t *)coop_spell_panel_slot((wl_pslot *)v50);
           v52 = rd_498960(
                   a2,
-                  (_DWORD *)v50[637],
-                  (int)(v50 + 644),
+                  (_DWORD *)sp[637],
+                  (int)(sp + 644),
                   F32(c, 0x20),
                   F32(c, 0x10),
                   F16(c, 0x34) != 0,
