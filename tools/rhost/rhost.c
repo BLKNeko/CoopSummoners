@@ -41,6 +41,7 @@
  * Output: <rundir>\rhost.log; last line "RESULT ..." (key=value, parsed by rhost.py). */
 #include "rhost.h"
 #include "msvc_crt.h"
+#include "coop.h"
 #include <ddraw.h>
 
 rh_opts_t O;
@@ -1093,8 +1094,9 @@ static void __cdecl pre_flip(void)
         uint16_t cw; __asm__ volatile("fnstcw %0" : "=m"(cw));
         char wb[256]; watch_str(wb, sizeof wb);
         char gb[128]; rh_gdi_stats(gb, sizeof gb);
-        rh_log("frame %u tick=%u vclock=%u rng=%08x cw=%04x creep=%u %s%s\n", g_frame, g_ticks, g_vclock,
-               G32(g_ed->rng_seed), cw, g_creep_total, gb, wb);
+        char cb[256]; coop_status(cb, sizeof cb);
+        rh_log("frame %u tick=%u vclock=%u rng=%08x cw=%04x creep=%u %s%s%s\n", g_frame, g_ticks, g_vclock,
+               G32(g_ed->rng_seed), cw, g_creep_total, gb, wb, cb);
     }
     if (O.fb_hash) {
         uint64_t fh;
@@ -1283,6 +1285,7 @@ static void parse(int argc, char **argv)
     O.seed = 0x4f5347; O.has_seed = 1; O.tail = 120; O.log_every = 600; O.frames = 0; O.quiet = 1;
     O.step_ms = 16; O.creep_after = 2000; O.stall_wall_ms = 60000; O.scrub_kb = 32; O.trap_max = 50; O.screen = 3;
     int seed_given = 0;
+    coop_init_from_env();
 #ifdef RH_PRODUCT
     O.standalone = O.live = 1;   /* the product: the port alone, on the real platform */
 #endif
@@ -1298,6 +1301,7 @@ static void parse(int argc, char **argv)
         else if (!strcmp(a, "--standalone")) O.standalone = 1;
         else if (!strcmp(a, "--live")) O.live = 1;
         else if (!strcmp(a, "--no-launcher")) O.no_launcher = 1;
+        else if (!strcmp(a, "--coop")) g_coop = 1;
         else if (!strcmp(a, "--screen")) O.screen = (int)strtoul(ARG(), 0, 0);
         else if (!strcmp(a, "--no-compat-layer")) O.no_compat_layer = 1;
         else if (!strcmp(a, "--no-seed")) O.has_seed = 0;

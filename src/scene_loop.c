@@ -5,6 +5,7 @@
  * 3 / 2; 0x560e90 / 0x4c5830 inline the fatal-log sequence = engine_fatal).  The save-file
  * reader (0x5b6060.. on a 0x414-byte stack object) stays behind slots (platform: file I/O). */
 #include "scene_loop.h"
+#include "coop.h"
 
 #include <stddef.h>
 #include <string.h>
@@ -982,8 +983,9 @@ int32_t scene_loop(uint8_t *ss, int32_t save, uint16_t sub, int32_t demo, int32_
     }
     if (start != 0) st32(r, 0x4104, start);
     else if (ld32(r, 0x4104) == 0) st32(r, 0x4104, 1010);
-    room_inputs_alloc(r, 1);
+    room_inputs_alloc(r, coop_room_inputs());   /* 1 = retail; 2 with co-op on */
     input_init(r, 0, 1, 1, 0);
+    coop_inputs_init(r);
     room_area_enter(key, 1, r);
     for (;;) {
         int32_t area = ld32(r, 0x4024), gate = ld32(r, 0x4028), a7 = ld32(r, 0x402c);

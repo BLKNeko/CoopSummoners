@@ -12,6 +12,7 @@
 #include "actor_update.h"
 #include "char_ai.h"
 #include "char_behave.h"
+#include "coop.h"
 #include "char_physics.h"
 #include "screen_fx.h"     /* screen_step 0x499ab0 */
 #include "engine_calls.h"
@@ -45,7 +46,8 @@ void room_input_update(wl_room *r)
             old[k] = m->axis_held[k];
             m->axis_held[k] = 0;
         }
-        if (m->src_kb != 0) input_dik_produce(m, sysp(0x2878));
+        if (m->src_kb == 2) coop_p2_produce(m, sysp(0x2878));   /* co-op only: never 2 in retail */
+        else if (m->src_kb != 0) input_dik_produce(m, sysp(0x2878));
         for (uint32_t k = 0; k < 2; k++) {
             void *joy = sysp(0x287c + 4 * k);
             if (m->src_joy[k] != 0 && joy != NULL) g_eng.h468b10(m, IP(joy), 0);
@@ -56,6 +58,7 @@ void room_input_update(wl_room *r)
             else if (old[k] == 0) m->axis_held_b[k] = (int32_t)now;
         }
     }
+    coop_tick(r);
 }
 
 int room_char_step(wl_char *c, int32_t cut)
