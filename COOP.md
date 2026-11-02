@@ -27,6 +27,11 @@ Build `opensummoners-standalone.exe` (see README.md, *Building*), copy it next t
 Player 2 takes the first free party member while player 1 is in control, and is released
 during cutscenes.
 
+A blue **P2** badge points at player 2's character. When the character is off the left or
+right of the screen, an arrow on that edge (with the badge) shows where they are. It is an
+overlay drawn on the finished frame (`coop_overlay_draw`, called by the host right before
+each Flip), so it never changes game state.
+
 ## How it works
 
 `src/coop.c`. The engine already keeps one input manager per party slot

@@ -192,6 +192,7 @@ uint64_t rh_scrub_pages(void);
 /* rh_shot.c */
 void rh_shot(const char *tag);
 int rh_fb_hash(uint64_t *out);   /* the back buffer's pixels, hashed; 0 = no back buffer yet */
+void rh_coop_overlay(void);      /* --coop: draw the P2 marker onto the back buffer (no-op otherwise) */
 
 /* rh_hooks.c */
 void rh_hooks_install(void);

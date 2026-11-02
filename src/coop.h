@@ -50,4 +50,12 @@ int coop_pad_reacquire_due(const void *dev, int32_t hr, int32_t acquired);
 /* a log summary (empty when co-op is off) */
 void coop_status(char *buf, size_t n);
 
+/* The P2 marker, drawn by the host onto the finished back buffer right before each Flip
+ * (an overlay: no game state is read back or changed).  A blue "P2" badge with a pointer
+ * above P2's character; while the character is left / right of the view, an arrow on that
+ * screen edge with the badge beside it.  `px` = the locked surface (`pitch` bytes per row,
+ * w x h, 16 or 32 bits per pixel with the given channel masks). */
+void coop_overlay_draw(uint8_t *px, int32_t pitch, int32_t w, int32_t h, int32_t bpp,
+                       uint32_t rmask, uint32_t gmask, uint32_t bmask);
+
 #endif /* OSS_COOP_H */

@@ -2,6 +2,7 @@
  * Written as PNG (stored deflate blocks, no zlib dependency) to <rundir>\shot_fNNNNNN.png.
  * (PNG writer from openrecet tools/rhost.) */
 #include "rhost.h"
+#include "coop.h"
 #include <ddraw.h>
 
 static uint32_t crc_tab[256];
@@ -105,4 +106,21 @@ int rh_fb_hash(uint64_t *out)
     IDirectDrawSurface7_Unlock(s, NULL);
     *out = h;
     return 1;
+}
+
+/* --coop: the P2 marker (src/coop.c) drawn onto the composed back buffer at Flip entry, before the shots and the
+ * --fb-hash see it.  An overlay: nothing the game reads is touched. */
+void rh_coop_overlay(void)
+{
+    if (!g_coop) return;
+    uint32_t zdd = G32(g_ed->zdd);
+    uint32_t bb = zdd ? G32(zdd + 0x16c) : 0;
+    IDirectDrawSurface7 *s = bb ? (IDirectDrawSurface7 *)(uintptr_t)G32(bb + 0x2c) : NULL;
+    if (!s) return;
+    DDSURFACEDESC2 d; memset(&d, 0, sizeof d); d.dwSize = sizeof d;
+    if (IDirectDrawSurface7_Lock(s, NULL, &d, DDLOCK_WAIT | DDLOCK_WRITEONLY, NULL) != DD_OK) return;
+    coop_overlay_draw((uint8_t *)d.lpSurface, (int32_t)d.lPitch, (int32_t)d.dwWidth, (int32_t)d.dwHeight,
+                      (int32_t)d.ddpfPixelFormat.dwRGBBitCount, d.ddpfPixelFormat.dwRBitMask,
+                      d.ddpfPixelFormat.dwGBitMask, d.ddpfPixelFormat.dwBBitMask);
+    IDirectDrawSurface7_Unlock(s, NULL);
 }

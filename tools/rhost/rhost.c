@@ -1085,6 +1085,7 @@ static void __cdecl pre_flip(void)
 {
     if (g_finished) return;
     if (g_nw) watch_arm_due();
+    rh_coop_overlay();
     char t[32]; snprintf(t, sizeof t, "f%06u", g_frame);
     if (is_dump_frame(g_frame)) dump_now(t);
     for (int i = 0; i < O.n_vmmap; i++) if (O.vmmap_at[i] == g_frame) vmmap_log();
