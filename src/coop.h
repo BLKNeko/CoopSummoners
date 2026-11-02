@@ -48,6 +48,11 @@ void coop_tick(wl_room *r);
 wl_pslot *coop_p2_slot(const wl_room *r);
 /* P2 is in the game (co-op on and P2 has not left with a switch hold) */
 int coop_p2_joined(void);
+/* After char_ai built a player-driven character's command (room_char_step): while that
+ * character is at 0 HP ("Disabled": in co-op a fallen member keeps its player), drop the
+ * attack and the skill / spell from the command; moving, jumping and "use" stay.  The base
+ * game never gives a Disabled member to the player, so this only applies with co-op on. */
+void coop_filter_cmd(wl_char *c);
 /* the joystick poll (0x5ba650) got `hr` from GetDeviceState: should it Acquire again now?
  * Retail re-acquires only on DIERR_INPUTLOST; a pad unplugged and plugged back in reports
  * another failure instead and stayed dead until the window was reactivated.  Co-op only,

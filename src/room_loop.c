@@ -69,7 +69,11 @@ int room_char_step(wl_char *c, int32_t cut)
     int32_t mode = c->f200;
     if (cut == 0 && c->base.coll_off != 0) mode = 1;
     if (mode == 0) {
-        if (cut == 0) return char_ai(c, b, gr);
+        if (cut == 0) {
+            int res = char_ai(c, b, gr);
+            coop_filter_cmd(c);   /* co-op only: a player's fallen character walks but cannot fight */
+            return res;
+        }
     } else if (mode == 1) return char_behave(c, cut, b, gr);
     return gr;
 }

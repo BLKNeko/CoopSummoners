@@ -13,6 +13,10 @@ and read the `coop[...]` status lines.
 | T4-drop | P2 hold f4500-4620, P1 tap f4800, P2 hold f5000-5120 | p2out=1 at f4600; P1 to Sana at f4825; P2 back on Arche at f5100 — PASS |
 | T5-late | P1 tap f4500, P2 tap f4545 (720 ms) | no swap — PASS |
 
-Falls: `rh-combat` with numpad stripped (`trace_p2.py`), `--coop-test-hp 27050:0:1` (test only):
+Falls: `F1-fall` = `rh-combat` with numpad stripped (`trace_p2.py`), no keys after f28500; run
+with `--coop-test-hp 27050:0:1` (test only), no save folder:
 Arche down at f27130, P1 stays on her, P2 keeps Sana; both down at f28510 → Game Over screen
 (f29200). With taps at f27300/f27305 the two swap: P1 on the healthy member, P2 on fallen Arche.
+Fallen-member filter (`--frames 28500 --log-every 2`): while Arche is down, `act14` (attack) and
+skills never appear in the status line, she still moves (x 0..152288); the run equals the
+unfiltered one up to the fall frame — PASS.

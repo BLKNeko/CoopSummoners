@@ -37,7 +37,8 @@ control, and is released during cutscenes.
 
 A fallen member stays with its player (player 1 does not take player 2's character). With
 a free AI member, the game's own rule still moves player 1 to it. Game over only when the
-whole party is down, as in the base game.
+whole party is down, as in the base game. A player's fallen character (0 HP, "Disabled")
+can still walk, jump and use/investigate, but cannot attack or cast (`coop_filter_cmd`).
 
 A blue **P2** badge points at player 2's character. When the character is off the left or
 right of the screen, an arrow on that edge (with the badge) shows where they are. It is an

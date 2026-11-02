@@ -311,15 +311,26 @@ void coop_status(char *buf, size_t n)
     for (int k = 0; k < 8; k++) if (r->slot[k] != NULL && r->slot[k]->active == 1) nact++;
     char a[96] = "-", b[96] = "-";
     if (ld != NULL && ld->ch != NULL && ld->ch->base.body != NULL)
-        snprintf(a, sizeof a, "%d@%d,%d/%d hp%d%s", (int)ld->code, (int)ld->ch->base.body->x,
+        snprintf(a, sizeof a, "%d@%d,%d/%d hp%d%s act%d sk%d st%d pose%d", (int)ld->code, (int)ld->ch->base.body->x,
                  (int)ld->ch->base.body->y, (int)ld->ch->f200, (int)ld->ch->party->hp,
-                 char_targetable(ld->ch, 0, 1) ? "" : " DOWN");
+                 char_targetable(ld->ch, 0, 1) ? "" : " DOWN", (int)ld->ch->cmd.act, (int)ld->ch->cmd.skill,
+                 (int)ld->ch->base.body->state, (int)ld->ch->base.body->pose);
     if (p2 != NULL && p2->ch != NULL && p2->ch->base.body != NULL)
         snprintf(b, sizeof b, "%d@%d,%d/%d hp%d%s", (int)p2->code, (int)p2->ch->base.body->x,
                  (int)p2->ch->base.body->y, (int)p2->ch->f200, (int)p2->ch->party->hp,
                  char_targetable(p2->ch, 0, 1) ? "" : " DOWN");
     snprintf(buf, n, " coop[nin=%u act=%d p1ctl=%d p2out=%d lead=%s p2=%s]", (unsigned)r->nin, nact,
              p1_in_control(r), g_p2_out, a, b);
+}
+
+void coop_filter_cmd(wl_char *c)
+{
+    if (!g_coop || c->party == NULL || c->party->hp > 0) return;
+    if (c->cmd.act == 14) c->cmd.act = 0;   /* 14 attack (15 use stays) */
+    c->cmd.skill = 0;
+    c->cmd.skill_arg = 0;
+    c->cmd.skill_ptr = 0;
+    c->cmd.skill_kind = 0;
 }
 
 /* test only (rhost --coop-test-hp): set the HP of the leader's (who 0) or P2's (who 1) character */
