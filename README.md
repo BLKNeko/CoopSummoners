@@ -1,226 +1,425 @@
-# OpenSummoners
+# CoopSummoners
 
-An open-source reimplementation of **Fortune Summoners: Secret of the
-Elemental Stone** (Lizsoft, 2008 JP / Carpe Fulgur, 2012 EN Steam release).
+**Local co-op for _Fortune Summoners: Secret of the Elemental Stone_.**
+A second player takes control of a party member that the AI would otherwise drive, on the
+same PC, with a second gamepad or the numpad.
 
-This is an **educational reverse-engineering and game-preservation project**.
-The goal is a drop-in replacement for `sotes.exe` that behaves
-indistinguishably from the original for a user who owns a legitimate copy of
-the game.
+In the base game you control one character and the AI controls the others. CoopSummoners
+lets a friend take over one of those allies: you explore, fight and cast spells together on
+one screen.
 
-**Not distributed:** no game assets, no decompiled binary code, no copyrighted
-content of any kind.  You supply your own copy of the game (Steam).
+> Unofficial fan project. Not affiliated with Lizsoft or Carpe Fulgur. **No game files are
+> included:** you need your own copy of the game.
 
-## Status (October 2026)
+---
 
-**The whole engine is ported, and the game runs on it with no original code at all.**
-`opensummoners-standalone.exe` plays the English 2012 release using only the *data* from
-your own `sotes.exe` and its DLLs (strings, tables, maps, sprites, sound). Every
-instruction it executes is OpenSummoners' C code. In the recorded playthroughs below, the
-port's output matches the original pixel for pixel.
+## Contents
 
-[![three frames from a recorded playthrough, played by the port](docs/media/standalone-frames.png)](docs/media/standalone-frames.png)
+- [Features](#features)
+- [Requirements](#requirements)
+- [Install the co-op mod](#install-the-co-op-mod)
+- [Controls](#controls)
+- [How co-op works in game](#how-co-op-works-in-game)
+- [Playing online with friends](#playing-online-with-friends)
+- [Known limits](#known-limits)
+- [Troubleshooting](#troubleshooting)
+- [Uninstall](#uninstall)
+- [Building from source](#building-from-source)
+- [How it works (technical)](#how-it-works-technical)
+- [Tests](#tests)
+- [Credits](#credits)
+- [License](#license)
 
-*Frames from a recorded play session, rendered by the standalone port. Each is
-pixel-identical to the original game at the same frame (`differ_px = 0`).*
+---
 
-- **Verified against the original game** on 10 recorded scenarios of the 2012 edition
-  (about 240,000 frames: intro, town and house errands, item finds, combat with a party
-  ally, a game over and retry, statue saves, the shop, the main menus, quitting). Every
-  presented frame has the same pixels, and each run ends on the same frame, tick count
-  and random-number state.
-- **Proven not to contain or run original code.** Each run writes an audit (which byte
-  ranges were read from your files, that every code byte is a trap, that nothing outside
-  the port is executable). `tools/standalone/prove_no_retail_code.py` re-checks the
-  binaries and sources independently.
-- **Ported:** 1,558 of the 1,824 functions in `sotes.exe` are reimplemented, which is
-  100% of the engine's code bytes. The rest are almost all C-runtime internals the game
-  never calls directly (the port has its own small C runtime). If a play session ever
-  reached original code with no port, the game would stop with a message naming the
-  address. None is known.
-- **Ported is not the same as verified or documented.** Only code the recorded plays
-  actually run is checked against the original. The recordings enter 1,304 of the 1,550
-  game functions at least once (90% of the code bytes, counting a function as reached
-  when its entry runs), and many branches inside those never run. The rest (mostly the
-  ending, the character types and move handlers not met yet, gamepad input, the title's
-  extras and the Japanese text paths) is translated from the decompilation and compiles,
-  but no recording has exercised it yet.
-  Bugs there will surface as those parts get played. Much of the port is also still
-  undocumented: more than half of the ported functions are decomp2c's translation, named
-  after their address, with structure fields as raw offsets. Full coverage, every
-  function exercised, verified and documented, is a long-term goal, and it takes many
-  more recorded playthroughs. Each new recording of new content becomes another
-  regression gate.
-- **Limits:** English 2012 edition only (the 2020 Special Edition comes later). Windows
-  only. The C runtime's heap places memory blocks differently from the original (no
-  visible effect; tracked in [`docs/port-debt.md`](docs/port-debt.md)). Long-play audio
-  hasn't been checked yet.
+## Features
 
-Details: [`docs/standalone.md`](docs/standalone.md) (how the standalone works, the proof),
-[`docs/STATUS.md`](docs/STATUS.md) (current front), [`docs/PROGRESS.md`](docs/PROGRESS.md)
-(changelog).
+- **Player 2 controls a party ally** (Sana, and later Stella) instead of the AI, with the
+  numpad or a second gamepad.
+- **Player 2 starts in the game** and takes the first free party member automatically.
+- **Swap characters LEGO-style**: both players press *switch* within half a second and
+  trade characters.
+- **Drop out / drop in**: player 2 holds *switch* for 1.5 s to leave (the AI takes the
+  character back) and again to rejoin.
+- **Fallen characters stay with their player**: a player at 0 HP can still walk, jump and
+  investigate, but cannot attack or cast until healed. Game over only when the whole party
+  is down, as in the base game.
+- **"P2" marker** above player 2's character, and an arrow on the screen edge when player 2
+  is off screen.
+- **Spell panel for player 2**: when player 2 drives a caster, their spells show in the
+  top-right panel.
+- **Gamepad hot-plug**: a pad that is unplugged and plugged back in works again within a
+  moment.
+- **Off by default**: without `--coop` the game runs exactly like the base game.
 
-## How the port got done so fast
+---
 
-The first two months (May–July 2026) went the classic way: run the original and the port
-side by side and compare screenshots and traces. That reached **233 functions** (boot, the
-title, the opening arc) because every mismatch had to be traced back from pixels to code.
-The project then switched methods, and **from October 14 to 24 the remaining ~1,300
-functions were ported**, with everything the recorded plays reach verified against the
-original:
+## Requirements
 
-1. **rhost, the original game as a test fixture.** `tools/rhost/` loads your `sotes.exe`
-   into our own process and runs it deterministically: virtual clock, scripted keyboard,
-   fixed heap, handles and stack. The same input recording gives the same game state,
-   bit for bit, at about 1,000 frames per second.
-2. **Verify each function in isolation.** Once a function is written in C, rhost runs the
-   original and the port on the same game state at every call during a recorded play
-   ("shadow" mode) and compares the results. A divergence names the function,
-   the call and the field.
-3. **Then replace it.** The port takes over from the original (`--hook replace:NAME`) and
-   the recorded corpus is replayed. Final game state, RNG, tick count and every presented
-   frame's pixels must match the original's.
-4. **A mechanical first draft.** `tools/ida/decomp2c.py` turns the IDA decompilation
-   (with recovered C++ classes) into compilable C that keeps the original's control flow,
-   stack layout and calling conventions. A person reviews and cleans it up, and steps 2–3
-   decide whether it's right.
-5. **The hybrid, then nothing.** With every ported function replacing the original at
-   once, rhost's coverage mode lists whatever original code still runs. That list went to
-   zero, and the standalone maps only the data sections of `sotes.exe`: code is filled with
-   traps plus jumps into the port.
+| | |
+|---|---|
+| Game | **Fortune Summoners: Secret of the Elemental Stone**, Steam 2012 English edition ([store page](https://store.steampowered.com/app/203510/Fortune_Summoners/), app 203510). The stock Steam files work as they are. |
+| Not supported | The 2020 **Special Edition** (app 1381770) and the Japanese release. |
+| OS | Windows 10 or 11. |
+| Controllers | Player 1: keyboard and/or gamepad. Player 2: the numpad and/or a second gamepad. |
 
-Method notes: [`CLAUDE.md`](CLAUDE.md) (the loop and gates), [`tools/rhost/`](tools/rhost)
-(the host), [`docs/audits/2026-10-14-rhost-methodology.md`](docs/audits/2026-10-14-rhost-methodology.md)
-(why the switch).
+Tested with Steam build 29910, `sotes.exe` SHA-256
+`7D779F2EB02B3C603857FEDBC52BE6973AC3B0B2C5C1BC696122DDAC89FB9F1B`.
 
-## Play it (Windows)
+To check your copy, run this in PowerShell inside the game folder:
 
-You need your own copy of **Fortune Summoners: Secret of the Elemental Stone** (Steam,
-2012). The stock Steam `sotes.exe` works as is.
-
-1. Download **[`opensummoners-standalone.exe`](https://github.com/Francesco149/OpenSummoners/releases/download/nightly/opensummoners-standalone.exe)** (the nightly build, see
-   *Downloads*), or build it (see *Building* below).
-2. Copy it into a folder holding `sotes.exe`, `sotesd.dll`, `sotesw.dll`, `sotesp.dll` and
-   `lizsoft.spl`, either the Steam install or a copy of it.
-3. Run it. The game's own launcher appears as usual. Saves and settings go to that
-   folder's `user\`.
-
-Notes: **Zoom Mode** is a borderless window covering the whole desktop (the original
-does the same), so it looks like fullscreen. **Fullscreen Mode** needs Windows' 16-bit
-color emulation, which the exe applies to itself (without it, the original can fail to
-start fullscreen on Windows 11). A log and the run's audit land in
-`opensummoners-standalone\`.
-
-## Get the game (support the author)
-
-Fortune Summoners is still on sale — if this project interests you, please buy the
-game and support Lizsoft:
-
-- **[Fortune Summoners Special Edition](https://store.steampowered.com/app/1381770/Fortune_Summoners_Special_Edition/)**
-  (Steam, 2020) — published by Lizsoft directly; Japanese + English, Windows 10
-  fixes. **Recommended**, and the edition the voice patch targets.
-- [Fortune Summoners: Secret of the Elemental Stone](https://store.steampowered.com/app/203510/Fortune_Summoners/)
-  (Steam, 2012) — the original Carpe Fulgur localization; the engine this port
-  reimplements.
-- The **voiced Japanese release** (the one that shipped the `sotesx_s.dll` voice
-  bank) is **out of print** — see
-  [`tools/ennse_voice/README.md`](tools/ennse_voice/README.md#where-the-voice-bank-comes-from)
-  for the exact edition metadata if you want to hunt down a second-hand copy.
-
-## Downloads
-
-Every build is produced by CI and published to **[Releases](../../releases)** — each
-ships **no game assets** (everything reads your own legitimately-owned files at
-runtime). The rolling **`nightly`** pre-release carries the latest build (rebuilt by
-hand when enough has changed; its notes list the commits since the previous one);
-tagged `vX.Y` releases are cut at milestones.
-
-### The port — `opensummoners-standalone.exe`
-
-The game itself, running on OpenSummoners' code (see *Status* and *Play it* above).
-**[Download the nightly build](https://github.com/Francesco149/OpenSummoners/releases/download/nightly/opensummoners-standalone.exe)** · docs: [`docs/standalone.md`](docs/standalone.md).
-
-### Resource explorer — `res_explorer.exe`
-
-[![the map inspector rendering the opening town](docs/media/res-explorer.png)](docs/media/res-explorer.png)
-
-[![browsing a sprite sheet](docs/media/res-explorer-sheets.png)](docs/media/res-explorer-sheets.png)
-
-A native viewer/exporter for **every resource type** in the game's files, decoding
-with the engine's own reverse-engineered code: **maps render exactly as in-game**
-(tiles + scenery + props + townsfolk, with per-cell/per-object inspection and debug
-overlays), sprite sheets (palette, colorkey, frame grid), sound effects and the
-1,448-clip Japanese voice bank (waveform, seekable playback), BGM streams, string
-tables — plus hex/info views and PNG/WAV/WMA/JSON/TXT export, per resource or in
-bulk. Drop-in run: it auto-detects your install.
-**[Download the nightly build](https://github.com/Francesco149/OpenSummoners/releases/download/nightly/res_explorer.exe)**
-· docs: [`tools/res_explorer/README.md`](tools/res_explorer/README.md).
-
-### Japanese voice patch (EN Special Edition)
-
-[![one-line install](docs/media/ennse-voice-install.png)](docs/media/ennse-voice-install.png)
-
-Restores **Japanese dialogue voice** to the English Special Edition (English text +
-JP audio) — something no official English release ever shipped. Install by pasting
-**one line into PowerShell** — it auto-detects your game + your JP `sotesx_s.dll`
-and installs; re-run to uninstall. The exe is not modified. One-liner + manual zip:
-[`tools/ennse_voice/README.md`](tools/ennse_voice/README.md).
-
-## Building
-
-Everything builds on Linux / WSL2 inside the Nix dev shell (mingw-w64 cross compiler;
-no game files needed to build):
-
-```fish
-nix develop
-bash tools/rhost/build.sh      # build/rhost/opensummoners-standalone.exe (+ rhost.exe)
-bash tools/ci/build_all.sh     # the port, the tools, the host test suite: the pre-push gate
+```powershell
+Get-FileHash .\sotes.exe -Algorithm SHA256
 ```
 
-Porting work needs more: your game files (`./tools/setup.sh` links them and unpacks the
-Steam DRM with [Steamless](https://github.com/atom0s/Steamless)), a Windows machine
-reachable as `ssh win` for rhost runs (wine works for most of them), and IDA 9.4 for the
-decompile export (`tools/ida/`).
+---
 
-## Layout
+## Install the co-op mod
+
+The mod is a single program, `opensummoners-standalone.exe`, that runs the game in place of
+`sotes.exe`. It reads the data from your own game files and **never changes them**.
+
+### Step 1: get `opensummoners-standalone.exe`
+
+- **Download** it from this repository's
+  [**Releases**](https://github.com/BLKNeko/CoopSummoners/releases) page, **or**
+- **build it** yourself (see [Building from source](#building-from-source)).
+
+> Do not use the `opensummoners-standalone.exe` from the upstream OpenSummoners project:
+> it has no co-op.
+
+### Step 2: make a play folder (recommended)
+
+You can put the exe straight into the Steam game folder, but a separate copy keeps your
+Steam install untouched.
+
+1. Open the game folder. In Steam: right-click **Fortune Summoners** → **Manage** →
+   **Browse local files**. The default location is
+   `C:\Program Files (x86)\Steam\steamapps\common\Fortune Summoners`.
+2. Create a new folder, for example `C:\Games\FortuneSummonersCoop`.
+3. Copy these 5 files from the game folder into the new folder:
+
+   ```
+   sotes.exe
+   sotesd.dll
+   sotesw.dll
+   sotesp.dll
+   lizsoft.spl
+   ```
+
+4. **(Optional) keep your progress:** also copy the game folder's `user` folder (your
+   saves and settings) into the new folder.
+
+### Step 3: add the mod
+
+Copy `opensummoners-standalone.exe` into the same folder. It should now contain:
 
 ```
-src/            the port: the engine reimplemented in C (one module per subsystem)
-tools/rhost/    the in-process host: deterministic retail runs, shadow / replace hooks,
-                corpus gates, the standalone (rhost.c built -DRH_PRODUCT)
-tools/ida/      IDA export (class recovery, knowledge pack) + decomp2c
-tools/standalone/  the no-retail-code prover, the play-folder installer
-tests/          host unit suite + tests/scenarios/rh-* (recorded plays + expected hashes)
-docs/           status, plans, findings (engine quirks, formats), proofs
+FortuneSummonersCoop\
+├── opensummoners-standalone.exe   ← the mod
+├── sotes.exe
+├── sotesd.dll
+├── sotesw.dll
+├── sotesp.dll
+├── lizsoft.spl
+└── user\                          ← (optional) your saves
 ```
 
-## Sibling projects
+### Step 4: create the launchers
 
-OpenSummoners is the third in a series of sibling RE projects, each
-distilling lessons from the last:
+Co-op is turned on with the `--coop` option. The easiest way is two small `.bat` files in
+the same folder.
 
-- **[openrecet](../openrecet)** — Recettear (the first; reference for
-  hard-earned conventions)
-- **[OpenMare](../OpenMare)** — Patrician III (newer, refined workflow —
-  the closer model for OpenSummoners' shape)
-- **OpenSummoners** *(this repo)* — Fortune Summoners
+1. In the folder, right-click → **New** → **Text Document**. Name it `Play Coop.bat`
+   (turn on *View → File name extensions* in Explorer so the name doesn't end in `.txt`).
+2. Open it in Notepad, paste the following and save:
 
-## Cross-references & credits
+   ```bat
+   @echo off
+   cd /d "%~dp0"
+   start "" opensummoners-standalone.exe --coop
+   ```
 
-OpenSummoners' reverse engineering is cross-checked against independent community
-work — most notably the **Fortune Summoners Fan Discord**
-([invite](https://discord.gg/N68c7pt)) and their *SotES Data Formats & Values*
-spreadsheet, which documents struct layouts, enums, addresses, and data tables for
-`sotes.exe`. Our thanks to that community for their preservation work.
+3. (Optional) make `Play Solo.bat` the same way, for the normal single-player game:
 
-Their spreadsheet is consulted as a **cross-reference / lead**, not as ground truth:
-every fact a port depends on is independently re-verified at the byte level against the
-decompile + a host test before it is relied upon (the same discipline applied to our own
-subsystem survey). Where our function-level RE 100%-proves something the spreadsheet is
-missing or marks uncertain, we publish a **human-verifiable proof** others can reproduce
-— see [`docs/ods-crossref.md`](docs/ods-crossref.md) and [`docs/proofs/`](docs/proofs).
+   ```bat
+   @echo off
+   cd /d "%~dp0"
+   start "" opensummoners-standalone.exe
+   ```
+
+**Alternatives to the `.bat` file:**
+
+- **Desktop shortcut:** right-click the exe → **Create shortcut** → shortcut **Properties**.
+  Under **Target**, add ` --coop` after the closing quote, for example:
+  `"C:\Games\FortuneSummonersCoop\opensummoners-standalone.exe" --coop`.
+- **Steam:** **Games** → **Add a Non-Steam Game to My Library** → pick
+  `opensummoners-standalone.exe` → in its **Properties**, set **Launch Options** to `--coop`.
+- **Environment variable:** `OPENSUMMONERS_COOP=1` has the same effect as `--coop`.
+
+### Step 5: play
+
+1. Plug in the gamepads **before** starting the game. The first pad Windows lists is
+   player 1's and the second is player 2's.
+2. Double-click `Play Coop.bat`.
+3. The game's usual launcher window appears: choose the screen mode and click Launch.
+4. Start a new game or load a save. Player 2 joins automatically as soon as an ally is in
+   the party. At the very start of a new game Arche is alone, so player 2 joins when Sana
+   joins the party.
+
+Saves and settings are written to the play folder's `user\` folder. A log and an audit
+file go to `opensummoners-standalone\`, and gamepad messages go to `coop.log`.
+
+---
+
+## Controls
+
+| Action | Player 1 | Player 2 |
+|---|---|---|
+| Device | keyboard (the game's key config) + gamepad 1 | numpad + gamepad 2 |
+| Move | arrow keys | numpad **8 / 5 / 4 / 6** (up / down / left / right) |
+| Attack | game config (default **X**) | numpad **1** |
+| Jump | game config (default **C**) | numpad **2** |
+| Use / investigate | game config | numpad **3** |
+| Sheathe / skill modifier | game config | numpad **0** |
+| Switch character | **Enter** / game config | numpad **+** |
+
+- **Both gamepads use the button layout from the game's own key configuration** (set it in
+  the game's options).
+- The numpad keys work whether Num Lock is on or off.
+- To cast or use a skill, player 2 holds numpad **0** with a direction, just as player 1 does
+  with their modifier key.
+
+---
+
+## How co-op works in game
+
+### Who controls what
+
+- **Player 1 is always the leader**: the camera follows player 1's character, and player 1
+  talks to people, opens menus and reads signs.
+- **Player 2** controls the first party member that is free (not the leader, and not
+  knocked down).
+- **During cutscenes and dialogue**, player 2's character goes back to the AI for the length
+  of the scene, then returns to player 2.
+
+### The switch key
+
+| What you do | What happens |
+|---|---|
+| **Both players tap switch within 0.5 s** | The two players **swap characters**, even if one of them is down. Player 1 still leads. |
+| **One player taps switch alone** | After the 0.5 s window, the base game's normal switch to a free AI member (nothing happens if there is none). |
+| **Player 2 holds switch for 1.5 s** | **Player 2 leaves**: the AI takes the character back. Hold again to **rejoin** with the first free member. |
+
+### Falling in battle
+
+- A character at 0 HP is **"Disabled"**, as in the base game: healed by items or by
+  returning to town.
+- **A fallen character stays with its player.** Player 1 never takes player 2's character.
+  If a free AI member exists, the base game's rule still moves player 1 to it.
+- A player's fallen character **can walk, jump and investigate, but cannot attack or cast.**
+- **Game over** only when the whole party is down, as in the base game.
+
+### On screen
+
+- A blue **P2** badge points at player 2's character. When that character is off the left or
+  right of the screen, an arrow on that edge shows where they are.
+- The **spell panel** (top right) shows up whenever a player controls a caster. If player 1's
+  leader does not cast, it shows player 2's spells; player 1's portrait stays where it is.
+
+---
+
+## Playing online with friends
+
+CoopSummoners is **local** co-op: everyone plays on the PC that runs the game. To play
+with friends far away, stream the game from the host PC:
+
+- **[Parsec](https://parsec.app/)**: the host runs the game, friends connect and their
+  gamepads show up as extra pads on the host. It is free for this use.
+- **Steam Remote Play Together** usually works only with games bought on Steam. The mod is
+  a separate program (even when added as a non-Steam game), so it will probably not work.
+
+Neither option has been tested with the mod yet. Real networked co-op (each player on
+their own PC) is planned as later work.
+
+---
+
+## Known limits
+
+- **One camera**, on player 1. Player 2 can walk off screen (the edge arrow helps).
+- **Player 2 cannot** open menus, talk to people or read signs: player 1 does those.
+- **Two players.** A third player (when Stella joins) is not supported yet.
+- **One spell panel.** If both players control casters, it shows player 1's.
+- **Not tested yet:** saving and loading with co-op on, every cutscene, streaming over
+  Parsec.
+- Only the **2012 English edition** is supported.
+
+Found a bug? Open an issue with what happened, the save if you can, and the
+`coop.log` / `opensummoners-standalone\` files from your play folder.
+
+---
+
+## Troubleshooting
+
+| Problem | What to try |
+|---|---|
+| Windows SmartScreen blocks the exe | The exe isn't signed. Click **More info** → **Run anyway**, but only for an exe you downloaded from this repository's Releases or built yourself. |
+| Player 2 can't do anything | Is there a second party member yet? In a new game Arche starts alone. Has player 2 left by holding switch? Hold numpad **+** for 1.5 s to rejoin. |
+| A gamepad does nothing | Plug both pads in **before** starting the game. A pad unplugged mid-game reconnects within a moment; check `coop.log` if it doesn't. |
+| Players 1 and 2 have the wrong pads | Windows decides the order. Unplug both, plug player 1's pad in first, then player 2's, and start the game again. |
+| The game starts without co-op | Check that `--coop` is in the `.bat` / shortcut / Steam launch options. |
+| The game won't start at all | Check the 5 game files are in the folder next to the exe, and that `sotes.exe` is the 2012 English Steam edition (see [Requirements](#requirements)). |
+
+---
+
+## Uninstall
+
+Delete the play folder. If you put the exe straight into the Steam game folder, delete
+`opensummoners-standalone.exe`, the `.bat` files, `coop.log` and the
+`opensummoners-standalone\` folder from it. The original game files were never changed.
+
+---
+
+## Building from source
+
+Everything builds on Linux or **WSL2 on Windows**, inside a Nix shell with the mingw-w64
+cross compiler. No game files are needed to build.
+
+### On Windows (WSL2)
+
+1. **Install WSL2 + Ubuntu** in PowerShell as administrator, then reboot:
+
+   ```powershell
+   wsl --install -d Ubuntu
+   ```
+
+2. **Install Nix** (single-user) in the Ubuntu terminal, and turn on flakes:
+
+   ```bash
+   sh <(curl -L https://nixos.org/nix/install) --no-daemon
+   mkdir -p ~/.config/nix
+   echo "experimental-features = nix-command flakes" >> ~/.config/nix/nix.conf
+   ```
+
+   Close and reopen the terminal (or run `. ~/.nix-profile/etc/profile.d/nix.sh`).
+
+3. **Clone inside the Linux file system** (not under `/mnt/c`: it is much slower there, and
+   Windows line endings break the build):
+
+   ```bash
+   git clone https://github.com/BLKNeko/CoopSummoners.git ~/CoopSummoners
+   cd ~/CoopSummoners
+   ```
+
+4. **Build:**
+
+   ```bash
+   nix develop .#ci --command bash tools/rhost/build.sh
+   ```
+
+   The first run downloads the toolchain and takes a few minutes. The result is
+   `build/rhost/opensummoners-standalone.exe` (the game, with co-op) and
+   `build/rhost/rhost.exe` (the test host).
+
+5. **Copy the exe to Windows**, for example:
+
+   ```bash
+   cp build/rhost/opensummoners-standalone.exe /mnt/c/Games/FortuneSummonersCoop/
+   ```
+
+The full pre-push check (the port, the tools and the host test suite) is
+`nix develop --command bash tools/ci/build_all.sh`.
+
+---
+
+## How it works (technical)
+
+CoopSummoners is built on **[OpenSummoners](https://github.com/Francesco149/OpenSummoners)**,
+an open-source C reimplementation of `sotes.exe` by its own author. OpenSummoners runs the
+game entirely on its own code, using only the *data* from your game files. Because the whole
+engine is readable C, co-op can be added to the game's own logic instead of being patched
+into the original, DRM-protected 32-bit binary.
+
+The engine already had the pieces co-op needs:
+
+- Each room keeps an array of **input managers** (`wl_room.nin` / `.in`); the base game
+  creates only one.
+- Each party slot holds the **manager that drives it** (`wl_pslot.in`), and the game's
+  `pslot_input_set` (0x4cc5a0) switches a member between player control (`char_ai`) and
+  the party AI (`char_behave`).
+- The leader switch (`room_leader_next`) only picks members with no manager, so a member
+  held by player 2 is never taken.
+
+With co-op on, the room gets a **second manager** (the numpad map + joystick slot 1), and
+`coop_tick` attaches it to a free party member while player 1 is in control.
+
+| File | What it does |
+|---|---|
+| `src/coop.c`, `src/coop.h` | Everything co-op: player 2's input, attach/release, the switch rules, the fallen-character filter, the spell panel choice, the P2 marker. |
+| `src/scene_loop.c` | Creates the second input manager when co-op is on. |
+| `src/room_loop.c` | Feeds player 2's keyboard map; runs `coop_tick`; filters a fallen player's commands. |
+| `src/input_dev.c` | Gamepad re-acquire after hot-plug (co-op only). |
+| `src/render_draw.c` | The spell panel can show player 2's caster. |
+| `src/char_state.c` | NULL guard in `char_add_hp` (a fallen player 2 falling into a pit crashed). |
+| `tools/rhost/` | The `--coop` option, the P2 marker overlay drawn before each Flip, and test-only options. |
+
+Every change is behind `g_coop`: **without `--coop` the game is identical to upstream
+OpenSummoners** (frame, tick, random-number state and every frame's pixels on the recorded
+scenarios).
+
+To learn how the port itself works (the engine, rhost, verification against the original),
+see the [OpenSummoners README](https://github.com/Francesco149/OpenSummoners#readme) and
+[`docs/`](docs/) (`docs/standalone.md`, `docs/STATUS.md`, `docs/findings/`).
+
+---
+
+## Tests
+
+The tests use OpenSummoners' **rhost**, which replays recorded keyboard input with a virtual
+clock, so a run is the same every time.
+
+- **Co-op off = upstream:** `tools/coop/gate.ps1` runs the recorded scenarios
+  (`tests/scenarios/rh-*`) through `rhost.exe --standalone` on a Windows PC. With co-op off,
+  frame, tick, random-number state and framebuffer hash match upstream OpenSummoners on all
+  10 fresh-start scenarios.
+- **Co-op behaviour:** traces in `tools/coop/tests/` (T1–T5: swap, lone taps, drop-out and
+  rejoin, late tap; F1: falls, the fallen-player filter, the pit crash). Their expected
+  results are in [`tools/coop/tests/README.md`](tools/coop/tests/README.md).
+- **Test-only options:** `--coop-test-hp FRAME:WHO:HP` sets a character's HP and
+  `--coop-test-drop FRAME:WHO` drops one below the map (WHO: 0 = leader, 1 = player 2).
+- `tools/coop/trace_p2.py` strips the numpad from a recorded trace and overlays player 2's
+  key holds.
+
+Example (from PowerShell, with the repository in WSL):
+
+```powershell
+.\tools\coop\gate.ps1 -Repo \\wsl.localhost\Ubuntu\home\<you>\CoopSummoners `
+    -Game C:\fs-base -Out C:\fs-gate -Coop
+```
+
+Some things can only be tested by hand: real gamepads (rhost has no joysticks) and long
+play sessions.
+
+---
+
+## Credits
+
+- **CoopSummoners** (the co-op mod): BLKNeko.
+- **[OpenSummoners](https://github.com/Francesco149/OpenSummoners)** by Francesco149 and
+  contributors: the C reimplementation of the engine this mod is built on (MIT). Without
+  it this mod would not exist.
+- **Fortune Summoners** by **Lizsoft**, English localization by **Carpe Fulgur**. Please
+  support them: buy the game on
+  [Steam](https://store.steampowered.com/app/203510/Fortune_Summoners/) (2012 edition, the
+  one this mod needs) or the
+  [Special Edition](https://store.steampowered.com/app/1381770/Fortune_Summoners_Special_Edition/).
+- The **Fortune Summoners Fan Discord** ([invite](https://discord.gg/N68c7pt)) for its
+  community reverse-engineering work, which OpenSummoners cross-checked against.
+
+---
 
 ## License
 
-MIT.  See [`LICENSE`](LICENSE).  The license covers OpenSummoners' own code
-only; no rights are granted to the original game.
+MIT, see [`LICENSE`](LICENSE). It covers OpenSummoners' code and the CoopSummoners co-op
+changes only. **No rights are granted to the original game or its assets**, and none are
+included in this repository or its releases.
