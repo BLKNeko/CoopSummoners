@@ -34,6 +34,9 @@ one screen.
 
 ## Features
 
+- **A launcher** (`CoopSummoners.exe`) that finds the game in Steam, installs the mod in one
+  click, backs up your saves, shows which gamepad is which player, and starts the game solo
+  or in co-op. English and Portuguese.
 - **Player 2 controls a party ally** (Sana, and later Stella) instead of the AI, with the
   numpad or a second gamepad.
 - **Player 2 starts in the game** and takes the first free party member automatically.
@@ -79,7 +82,40 @@ Get-FileHash .\sotes.exe -Algorithm SHA256
 The mod is a single program, `opensummoners-standalone.exe`, that runs the game in place of
 `sotes.exe`. It reads the data from your own game files and **never changes them**.
 
-### Step 1: get `opensummoners-standalone.exe`
+### Easiest: the CoopSummoners launcher
+
+1. Download **`CoopSummoners.zip`** from the
+   [**Releases**](https://github.com/BLKNeko/CoopSummoners/releases) page.
+2. Extract the **whole zip** into any folder (keep `CoopSummoners.exe` and
+   `opensummoners-standalone.exe` together).
+3. Run **`CoopSummoners.exe`**. It finds Fortune Summoners in your Steam libraries and
+   checks it is the supported version. If it can't find it, click **Browse...** and choose
+   the game folder (the one with `sotes.exe`).
+4. Click **Install mod**. The launcher copies the mod into the game folder and, the first
+   time, backs up your saves (`user\` → `user-backup-<date>`).
+5. Plug in the gamepads and click **Play Co-op** (or **Play Solo**). The game's own options
+   window appears as usual: choose the screen mode and click Launch.
+
+![the CoopSummoners launcher](docs/media/coop-launcher.png)
+
+The launcher also:
+
+- lists the **connected gamepads** in the same order the game sees them, so you know which
+  one is player 1 and which is player 2;
+- shows the full **controls** (button **Controls...**);
+- **updates** the mod when you extract a newer zip over the old one (button **Update mod**);
+- **uninstalls** it (button **Uninstall**): it removes only the mod's files, and your saves
+  and backups stay;
+- shows its text in **English or Portuguese**, depending on the Windows language.
+
+It remembers the game folder in `%APPDATA%\CoopSummoners\launcher.ini`.
+
+### Manual install
+
+If you prefer not to use the launcher, or want the mod in a separate folder instead of the
+Steam one:
+
+#### Step 1: get `opensummoners-standalone.exe`
 
 - **Download** it from this repository's
   [**Releases**](https://github.com/BLKNeko/CoopSummoners/releases) page, **or**
@@ -88,7 +124,7 @@ The mod is a single program, `opensummoners-standalone.exe`, that runs the game 
 > Do not use the `opensummoners-standalone.exe` from the upstream OpenSummoners project:
 > it has no co-op.
 
-### Step 2: make a play folder (recommended)
+#### Step 2: make a play folder
 
 You can put the exe straight into the Steam game folder, but a separate copy keeps your
 Steam install untouched.
@@ -110,7 +146,7 @@ Steam install untouched.
 4. **(Optional) keep your progress:** also copy the game folder's `user` folder (your
    saves and settings) into the new folder.
 
-### Step 3: add the mod
+#### Step 3: add the mod
 
 Copy `opensummoners-standalone.exe` into the same folder. It should now contain:
 
@@ -125,7 +161,7 @@ FortuneSummonersCoop\
 └── user\                          ← (optional) your saves
 ```
 
-### Step 4: create the launchers
+#### Step 4: create the shortcuts
 
 Co-op is turned on with the `--coop` option. The easiest way is two small `.bat` files in
 the same folder.
@@ -157,7 +193,7 @@ the same folder.
   `opensummoners-standalone.exe` → in its **Properties**, set **Launch Options** to `--coop`.
 - **Environment variable:** `OPENSUMMONERS_COOP=1` has the same effect as `--coop`.
 
-### Step 5: play
+#### Step 5: play
 
 1. Plug in the gamepads **before** starting the game. The first pad Windows lists is
    player 1's and the second is player 2's.
@@ -263,7 +299,10 @@ Found a bug? Open an issue with what happened, the save if you can, and the
 
 | Problem | What to try |
 |---|---|
-| Windows SmartScreen blocks the exe | The exe isn't signed. Click **More info** → **Run anyway**, but only for an exe you downloaded from this repository's Releases or built yourself. |
+| Windows SmartScreen blocks the exe | The exes (`CoopSummoners.exe`, `opensummoners-standalone.exe`) aren't signed. Click **More info** → **Run anyway**, but only for files you downloaded from this repository's Releases or built yourself. |
+| The launcher can't find the game | Click **Browse...** and choose the folder that has `sotes.exe` (in Steam: right-click the game → **Manage** → **Browse local files** shows it). |
+| "Install mod" says access is denied | Close the game if it's running and try again. If the game is under `C:\Program Files`, right-click `CoopSummoners.exe` → **Run as administrator**. |
+| Players 1 and 2 have the wrong pads in the launcher's list | Same fix as below: the list shows the order the game will use. |
 | Player 2 can't do anything | Is there a second party member yet? In a new game Arche starts alone. Has player 2 left by holding switch? Hold numpad **+** for 1.5 s to rejoin. |
 | A gamepad does nothing | Plug both pads in **before** starting the game. A pad unplugged mid-game reconnects within a moment; check `coop.log` if it doesn't. |
 | Players 1 and 2 have the wrong pads | Windows decides the order. Unplug both, plug player 1's pad in first, then player 2's, and start the game again. |
@@ -274,9 +313,14 @@ Found a bug? Open an issue with what happened, the save if you can, and the
 
 ## Uninstall
 
-Delete the play folder. If you put the exe straight into the Steam game folder, delete
-`opensummoners-standalone.exe`, the `.bat` files, `coop.log` and the
-`opensummoners-standalone\` folder from it. The original game files were never changed.
+- **With the launcher:** click **Uninstall**, then delete the launcher's folder. Your saves
+  (`user\`) and the save backups (`user-backup-<date>`) stay in the game folder.
+- **Manual install:** delete the play folder. If you put the exe straight into the Steam
+  game folder, delete `opensummoners-standalone.exe`, the `.bat` files, `coop.log` and the
+  `opensummoners-standalone\` folder from it.
+
+The original game files are never changed. (`temp\` and `fs_boot.log` in the game folder
+belong to the game itself; the original creates them too.)
 
 ---
 
@@ -327,6 +371,17 @@ cross compiler. No game files are needed to build.
    cp build/rhost/opensummoners-standalone.exe /mnt/c/Games/FortuneSummonersCoop/
    ```
 
+6. **The launcher and the release zip:**
+
+   ```bash
+   nix develop .#ci --command bash tools/launcher/build.sh --package
+   ```
+
+   This gives `build/launcher/CoopSummoners.exe` and `build/launcher/CoopSummoners.zip`
+   (the launcher, the mod exe and a short README.txt in English and Portuguese, with no game
+   files). Upload the zip to a GitHub release. The launcher accepts `--lang en` / `--lang pt`
+   to override the Windows language.
+
 The full pre-push check (the port, the tools and the host test suite) is
 `nix develop --command bash tools/ci/build_all.sh`.
 
@@ -362,6 +417,7 @@ With co-op on, the room gets a **second manager** (the numpad map + joystick slo
 | `src/render_draw.c` | The spell panel can show player 2's caster. |
 | `src/char_state.c` | NULL guard in `char_add_hp` (a fallen player 2 falling into a pit crashed). |
 | `tools/rhost/` | The `--coop` option, the P2 marker overlay drawn before each Flip, and test-only options. |
+| `tools/launcher/` | `CoopSummoners.exe`: finds the game in Steam (registry + `libraryfolders.vdf`), checks `sotes.exe` by SHA-256, installs / updates / removes the mod exe in the game folder, backs up `user\`, lists gamepads in the game's DirectInput 7 order, and starts the game with or without `--coop`. Not part of the port. |
 
 Every change is behind `g_coop`: **without `--coop` the game is identical to upstream
 OpenSummoners** (frame, tick, random-number state and every frame's pixels on the recorded
