@@ -42,9 +42,13 @@
 #include "rhost.h"
 #include "msvc_crt.h"
 #include "coop.h"
+#include "lang.h"
 #include <ddraw.h>
 
 rh_opts_t O;
+/* co-op mod translations: --lang NAME loads <gamedir>\lang\NAME.tsv, --lang-file PATH a given file
+ * (env OPENSUMMONERS_LANG = NAME); see src/lang.h */
+static const char *g_lang_name, *g_lang_file;
 volatile uint32_t g_frame, g_ticks;
 FILE *g_log;
 static FILE *g_logf;
@@ -1316,6 +1320,8 @@ static void parse(int argc, char **argv)
         else if (!strcmp(a, "--standalone")) O.standalone = 1;
         else if (!strcmp(a, "--live")) O.live = 1;
         else if (!strcmp(a, "--no-launcher")) O.no_launcher = 1;
+        else if (!strcmp(a, "--lang")) g_lang_name = ARG();
+        else if (!strcmp(a, "--lang-file")) g_lang_file = ARG();
         else if (!strcmp(a, "--coop")) g_coop = 1;
         else if (!strcmp(a, "--coop-test-hp") && g_n_test_hp < 8) {   /* FRAME:WHO:HP, WHO 0 leader / 1 P2 */
             const char *v = ARG();
@@ -1532,6 +1538,18 @@ int main(int argc, char **argv)
     for (size_t l = strlen(g_gamedir_abs); l && g_gamedir_abs[l - 1] == '\\'; ) g_gamedir_abs[--l] = 0;
     char exe_abs[MAX_PATH]; GetFullPathNameA(O.exe, sizeof exe_abs, exe_abs, NULL);
     if (!SetCurrentDirectoryA(g_gamedir_abs)) rh_fatal("cannot cd to %s", g_gamedir_abs);
+    {   /* co-op mod translations: before rh_hooks_install binds g_eng.data */
+        if (!g_lang_name && !g_lang_file) g_lang_name = getenv("OPENSUMMONERS_LANG");
+        char lp[MAX_PATH], why[256];
+        if (g_lang_file) snprintf(lp, sizeof lp, "%s", g_lang_file);
+        else if (g_lang_name && g_lang_name[0]) snprintf(lp, sizeof lp, "%s\\lang\\%s.tsv", g_gamedir_abs, g_lang_name);
+        else lp[0] = 0;
+        if (lp[0]) {
+            int n = lang_load(lp, why, sizeof why);
+            FILE *lf = fopen("lang.log", "w");   /* beside the game, like coop.log */
+            if (lf) { fprintf(lf, "%s: %s%s\n", lp, n ? "loaded, " : "NOT loaded: ", why); fclose(lf); }
+        }
+    }
     if (O.perturb_dlls) {
         /* force the DLLs retail's imports pull in to load at DIFFERENT bases than this boot's ASLR
          * slot (probe-load, note the base, free, reserve the range): simulates a reboot for the

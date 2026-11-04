@@ -16,6 +16,7 @@
 
 #include "engine_calls.h"
 #include "rng.h"
+#include "lang.h"   /* co-op mod translations: text_lead */
 
 #define W ((intptr_t)*g_eng.world)
 #define D(va) ((intptr_t)g_eng.data(va))
@@ -1190,7 +1191,7 @@ int32_t fm_5984c0(char * a1, char * a2, int32_t a3, char * a4)
             cut = i;
         char ch[4];
         ch[0] = a1[(uint16_t)i];
-        if ((signed char)ch[0] < 0) {
+        if (text_lead(ch[0])) {   /* co-op mod translations: single-byte accents (lang.h) */
             ch[1] = a1[(uint16_t)i + 1];
             ch[2] = 0;
             i++;

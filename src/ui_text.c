@@ -9,6 +9,7 @@
 
 #include "engine_calls.h"
 #include "glyph_text.h"   /* glyph_token_search 0x40fd20 (SJIS-aware search) */
+#include "lang.h"         /* co-op mod translations: text_lead / text_hi_letter (retail = the SJIS tests) */
 
 static int32_t  ld32(const void *p, uint32_t off) { int32_t v; memcpy(&v, (const uint8_t *)p + off, 4); return v; }
 static uint16_t ld16(const void *p, uint32_t off) { uint16_t v; memcpy(&v, (const uint8_t *)p + off, 2); return v; }
@@ -30,6 +31,7 @@ static int32_t digits_atol(const char *s)
  * (entries of 164 B: the word, one reading per character at +0x10 + 9k, a context test at +0xa0) */
 static void ruby_pass(uint8_t *g, const char *text, uint16_t len, uint16_t base)
 {
+    if (g_text_sbcs) return;   /* translation: Windows-1252 bytes would match the table's kanji (e.g. "ão") */
     for (const char *e = D(0x5cd978u); e[0] != 0; e += 164) {
         if (len == 0) continue;
         uint16_t from = 0;
@@ -40,7 +42,7 @@ static void ruby_pass(uint8_t *g, const char *text, uint16_t len, uint16_t base)
             if (cond == 0 || g_eng.h4034f0(text, cond, at, (int32_t)strlen(e)) != 0) {
                 int32_t ch = 0;
                 for (int32_t i = 0; i < at; i++, ch++)
-                    if ((signed char)text[i] < 0) i++;
+                    if (text_lead(text[i])) i++;
                 if (ld16((uint8_t *)ldp(g, 0) + 36u * (uint32_t)(base + ch), 0x1c) == 0) {
                     int32_t skip = 0, ofs = 0;
                     if (e[0] == '#') {
@@ -77,7 +79,7 @@ static uint16_t recs_fill(uint8_t *g, const char *text, uint16_t n, uint16_t o)
         uint8_t *r = (uint8_t *)ldp(g, 0) + 36u * o;
         char c = text[i];
         r[0] = (uint8_t)c;
-        if (c < 0) {
+        if (text_lead(c)) {
             i++;
             r[1] = (uint8_t)text[i];
             r[2] = 0;
@@ -169,7 +171,7 @@ char *text_parse(uint8_t *w, const char *text)
             } else {
                 char *out = ldp(w, 8);
                 out[o] = *s;
-                if (*s < 0) {
+                if (text_lead(*s)) {
                     o++;
                     p++;
                     out[o] = text[p];
@@ -184,7 +186,7 @@ char *text_parse(uint8_t *w, const char *text)
     return ldp(w, 8);
 }
 
-static int letter(signed char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z'); }
+static int letter(signed char c) { return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || text_hi_letter((char)c); }
 /* SJIS closing brackets ）」』 */
 static int closer(const char *q) { return !strcmp(q, "\x81\x6a") || !strcmp(q, "\x81\x76") || !strcmp(q, "\x81\x78"); }
 
@@ -203,7 +205,7 @@ uint8_t *text_wrap(uint8_t *w, uint16_t width)
         /* the word: a letter run (+ '), a number (1-9 , .), or SJIS glyphs bound to the punctuation /
          * closing bracket after them; a single other glyph alone.  A trailing blank / mark joins it. */
         signed char c0 = (signed char)recs[36u * s];
-        if (c0 < 0) cls = 3;
+        if (text_lead((char)c0)) cls = 3;
         else if (letter(c0)) cls = 1;
         else if (c0 >= '0' && c0 <= '9') cls = 2;
         else cls = 0;
@@ -238,7 +240,7 @@ uint8_t *text_wrap(uint8_t *w, uint16_t width)
         uint32_t wd = 0;
         if (s <= (uint16_t)end) {
             const uint8_t *r = recs + 36u * s;
-            for (uint32_t k = (end & 0xffffu) - s + 1; k != 0; k--, r += 36) wd += (signed char)r[0] < 0 ? 2 : 1;
+            for (uint32_t k = (end & 0xffffu) - s + 1; k != 0; k--, r += 36) wd += text_lead((char)r[0]) ? 2 : 1;
         }
         int broke = 0;
         if (col != 0 && (wd & 0xffffu) + col > width) {
@@ -294,7 +296,7 @@ uint8_t *text_wrap(uint8_t *w, uint16_t width)
                     }
                 }
                 signed char c = ((const char *)ldp(ldp(w, 0xc), 0))[ro];
-                if (c != 0) col = (uint16_t)(col + (c < 0 ? 2 : 1));
+                if (c != 0) col = (uint16_t)(col + (text_lead((char)c) ? 2 : 1));
                 it++;
                 idx++;
                 po += 12;

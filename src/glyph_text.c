@@ -7,6 +7,8 @@
 
 #include <string.h>
 
+#include "lang.h"   /* co-op mod translations: text_lead (retail = the SJIS lead test) */
+
 /*
  * FUN_0040fd20 (143 B) — SJIS-aware substring search.
  *
@@ -35,7 +37,7 @@ int32_t glyph_token_search(const char *hay, const char *needle, int32_t start)
                     return start;
                 }
             }
-            if ((signed char)*p < 0) { /* SJIS lead → skip the trail byte */
+            if (text_lead(*p)) {       /* SJIS lead → skip the trail byte */
                 start++;
                 p++;
             }

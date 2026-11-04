@@ -13,6 +13,7 @@
  *   hook-result shadow NAME calls=C diverge=D skipped=S [first: ...] */
 #include "rhost.h"
 #include "rng.h"
+#include "lang.h"   /* co-op mod translations (lang_data) */
 #include "input.h"
 #include "collision.h"
 #include "entity_move.h"
@@ -5521,8 +5522,8 @@ static void bind_engine_calls(void)
     *(void **)&g_eng.dbg_out             = iat_lookup("OutputDebugStringA");
     *(void **)&r_DeleteObject            = iat_lookup("DeleteObject");
     *(void **)&g_eng.gdi_delete          = (void *)gd_delobj;
-    g_eng.data = rh_data_identity;
-    *(void **)&g_eng.op_new    = (void *)(uintptr_t)0x5bf00du;   /* operator new (cdecl) */
+    g_eng.data = lang_count() ? lang_data : rh_data_identity;   /* co-op mod: --lang maps translated strings */
+    *(void **)&g_eng.op_new   = (void *)(uintptr_t)0x5bf00du;   /* operator new (cdecl) */
     *(void **)&g_eng.op_delete = (void *)(uintptr_t)0x5bef0eu;   /* operator delete (cdecl) */
 #define B(n) *(void **)&g_eng.h##n = (void *)(uintptr_t)0x##n##u
     B(44a740); B(44bc10); B(44c250); B(44bf60); B(446900);
