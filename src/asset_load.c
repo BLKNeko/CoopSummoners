@@ -10535,7 +10535,7 @@ void al_5752e0(void)
         API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
         API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
         API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v15));
-        g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 2);
+        g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 2);
         API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
         W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
         API_DeleteObject((intptr_t)(v15));
@@ -10573,7 +10573,7 @@ void al_5752e0(void)
           API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
           API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
           API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v23));
-          g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 4);
+          g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 4);
           API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
           W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
           API_DeleteObject((intptr_t)(v23));
@@ -10611,7 +10611,7 @@ void al_5752e0(void)
             API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
             API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
             API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v31));
-            g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 6);
+            g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 6);
             API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
             W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
             API_DeleteObject((intptr_t)(v31));
@@ -10649,7 +10649,7 @@ void al_5752e0(void)
               API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
               API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
               API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v39));
-              g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 8);
+              g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 8);
               API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
               W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
               API_DeleteObject((intptr_t)(v39));
@@ -10687,7 +10687,7 @@ void al_5752e0(void)
                 API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                 API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                 API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v47));
-                g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 10);
+                g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 10);
                 API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                 W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                 API_DeleteObject((intptr_t)(v47));
@@ -10725,7 +10725,7 @@ void al_5752e0(void)
                   API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                   API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                   API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v55));
-                  g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 12);
+                  g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 12);
                   API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                   W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                   API_DeleteObject((intptr_t)(v55));
@@ -10751,7 +10751,7 @@ void al_5752e0(void)
                     API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                     API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                     API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v57));
-                    g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 14);
+                    g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 14);
                     API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                     W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                     API_DeleteObject((intptr_t)(v57));
@@ -10777,7 +10777,7 @@ void al_5752e0(void)
                       API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                       API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                       API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v59));
-                      g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 16);
+                      g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 16);
                       API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                       W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                       API_DeleteObject((intptr_t)(v59));
@@ -10803,7 +10803,7 @@ void al_5752e0(void)
                         API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                         API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                         API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v61));
-                        g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 18);
+                        g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 18);
                         API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                         W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                         API_DeleteObject((intptr_t)(v61));
@@ -10829,7 +10829,7 @@ void al_5752e0(void)
                           API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                           API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                           API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v63));
-                          g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 20);
+                          g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 20);
                           API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                           W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                           API_DeleteObject((intptr_t)(v63));
@@ -10855,7 +10855,7 @@ void al_5752e0(void)
                             API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                             API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                             API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v65));
-                            g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 22);
+                            g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 22);
                             API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                             W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                             API_DeleteObject((intptr_t)(v65));
@@ -10881,7 +10881,7 @@ void al_5752e0(void)
                               API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                               API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                               API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v67));
-                              g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 24);
+                              g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 24);
                               API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                               W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                               API_DeleteObject((intptr_t)(v67));
@@ -10907,7 +10907,7 @@ void al_5752e0(void)
                                 API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                 API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                 API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v69));
-                                g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 26);
+                                g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 26);
                                 API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                 W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                 API_DeleteObject((intptr_t)(v69));
@@ -10933,7 +10933,7 @@ void al_5752e0(void)
                                   API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                   API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                   API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v71));
-                                  g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 28);
+                                  g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 28);
                                   API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                   W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                   API_DeleteObject((intptr_t)(v71));
@@ -10959,7 +10959,7 @@ void al_5752e0(void)
                                     API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                     API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                     API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v73));
-                                    g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 30);
+                                    g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 30);
                                     API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                     W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                     API_DeleteObject((intptr_t)(v73));
@@ -10986,7 +10986,7 @@ void al_5752e0(void)
                                       API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                       API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                       API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v75));
-                                      g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 32);
+                                      g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 32);
                                       API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                       W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                       API_DeleteObject((intptr_t)(v75));
@@ -11016,7 +11016,7 @@ void al_5752e0(void)
                                         API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                         API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                         API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v77));
-                                        g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 34);
+                                        g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 34);
                                         API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                         W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                         API_DeleteObject((intptr_t)(v77));
@@ -11046,7 +11046,7 @@ void al_5752e0(void)
                                           API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                           API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                           API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v79));
-                                          g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 36);
+                                          g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 36);
                                           API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                           W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                           API_DeleteObject((intptr_t)(v79));
@@ -11076,7 +11076,7 @@ void al_5752e0(void)
                                             API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                             API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                             API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v81));
-                                            g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 38);
+                                            g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 38);
                                             API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                             W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                             API_DeleteObject((intptr_t)(v81));
@@ -11106,7 +11106,7 @@ void al_5752e0(void)
                                               API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                               API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                               API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v83));
-                                              g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 40);
+                                              g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 40);
                                               API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                               W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                               API_DeleteObject((intptr_t)(v83));
@@ -11136,7 +11136,7 @@ void al_5752e0(void)
                                                 API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                                 API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                                 API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v85));
-                                                g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 42);
+                                                g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 42);
                                                 API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                                 W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                                 API_DeleteObject((intptr_t)(v85));
@@ -11166,7 +11166,7 @@ void al_5752e0(void)
                                                   API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                                   API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                                   API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v87));
-                                                  g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 44);
+                                                  g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 44);
                                                   API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                                   W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                                   API_DeleteObject((intptr_t)(v87));
@@ -11196,7 +11196,7 @@ void al_5752e0(void)
                                                     API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                                     API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                                     API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v89));
-                                                    g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 46);
+                                                    g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 46);
                                                     API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                                     W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                                     API_DeleteObject((intptr_t)(v89));
@@ -11226,7 +11226,7 @@ void al_5752e0(void)
                                                       API_SetTextColor((intptr_t)((*hdc__f)), (intptr_t)((uint32_t)D(0x808080)));
                                                       API_SetBkMode((intptr_t)((*hdc__f)), (intptr_t)(1));
                                                       API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v91));
-                                                      g_eng.h5bf3ee(LibFileName, "Now Loading % 3d%%", 48);
+                                                      g_eng.h5bf3ee(LibFileName, ((const char *)D(0x8a27e4)), 48);
                                                       API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                                       W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
                                                       API_DeleteObject((intptr_t)(v91));
@@ -11258,7 +11258,7 @@ void al_5752e0(void)
                                                         API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v93));
                                                         g_eng.h5bf3ee(
                                                           LibFileName,
-                                                          "Now Loading % 3d%%",
+                                                          ((const char *)D(0x8a27e4)),
                                                           50);
                                                         API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                                         W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
@@ -11294,7 +11294,7 @@ void al_5752e0(void)
                                                           API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v95));
                                                           g_eng.h5bf3ee(
                                                             LibFileName,
-                                                            "Now Loading % 3d%%",
+                                                            ((const char *)D(0x8a27e4)),
                                                             52);
                                                           API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                                           W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348) + 364)), (intptr_t)((intptr_t)(*hdc__f)));
@@ -11330,7 +11330,7 @@ void al_5752e0(void)
                                                             API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v97));
                                                             g_eng.h5bf3ee(
                                                               LibFileName,
-                                                              "Now Loading % 3d%%",
+                                                              ((const char *)D(0x8a27e4)),
                                                               54);
                                                             API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                                             W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348)
@@ -11367,7 +11367,7 @@ void al_5752e0(void)
                                                               API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v99));
                                                               g_eng.h5bf3ee(
                                                                 LibFileName,
-                                                                "Now Loading % 3d%%",
+                                                                ((const char *)D(0x8a27e4)),
                                                                 56);
                                                               API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                                               W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348)
@@ -11404,7 +11404,7 @@ void al_5752e0(void)
                                                                 API_SelectObject((intptr_t)((*hdc__f)), (intptr_t)(v101));
                                                                 g_eng.h5bf3ee(
                                                                   LibFileName,
-                                                                  "Now Loading % 3d%%",
+                                                                  ((const char *)D(0x8a27e4)),
                                                                   58);
                                                                 API_TextOutA((intptr_t)((*hdc__f)), (intptr_t)(320 - ((6 * strlen(LibFileName)) >> 1)), (intptr_t)(456), (intptr_t)(LibFileName), (intptr_t)(strlen(LibFileName)));
                                                                 W_rp_5b9500((intptr_t)(*(intptr_t *)(SYS32(10348)

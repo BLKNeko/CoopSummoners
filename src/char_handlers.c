@@ -1549,7 +1549,7 @@ LABEL_34:
           && (F16(F32(v16, 1872), 1098) == 0 || v17 == 10)
           && F32(v16, 51092) != 0 )
         {
-          g_eng.h5bf3ee(Buffer, "%s is outside the range of your magic!", *(const char **)(v16 + 1872));
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a46d0)), *(const char **)(v16 + 1872));
           v18 = 0;
           v19 = F32(W, 0x1024);
           while ( *(_DWORD *)&GAP(W, 0x0, 516 * v19 + 4) != 0 )
@@ -1675,7 +1675,7 @@ int32_t ih_5b28a0(wl_char *self, int32_t a2, int32_t a3, int32_t a4, int32_t a5,
       (*v50__f) = 1;
       if ( Buffer == 0 )
         goto LABEL_83;
-      g_eng.h5bf3ee(Buffer, "%s recovered %d HP.", (const char *)F32(c, 0x750), (*v52__f));
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a46a8)), (const char *)F32(c, 0x750), (*v52__f));
       return (*v50__f);
     case 10:
       v27 = F32(c, 0x750);
@@ -1699,7 +1699,7 @@ int32_t ih_5b28a0(wl_char *self, int32_t a2, int32_t a3, int32_t a4, int32_t a5,
       v29 = rnd();
       W_char_add_hp(c, a4 * v29 / 0x8000 + a3 + a7 * a5 / 1000, &(*v52__f), 0);
       if ( Buffer != 0 && (*v50__f) == 0 )
-        g_eng.h5bf3ee(Buffer, "%s recovered %d HP.", (const char *)F32(c, 0x750), (*v52__f));
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a46a8)), (const char *)F32(c, 0x750), (*v52__f));
       if ( a8 != 0 )
       {
         v30 = v11[11];
@@ -1874,7 +1874,7 @@ LABEL_83:
       (*v50__f) = 1;
       if ( Buffer == 0 )
         goto LABEL_83;
-      g_eng.h5bf3ee(Buffer, "%s recovered %d MP.", (const char *)F32(c, 0x750), (*v52__f));
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a46bc)), (const char *)F32(c, 0x750), (*v52__f));
       result = (*v50__f);
       break;
     case 19:
@@ -1912,7 +1912,7 @@ LABEL_83:
       (*v50__f) = 1;
       if ( Buffer == 0 )
         goto LABEL_83;
-      g_eng.h5bf3ee(Buffer, "%s's %s increased by %d.", (const char *)F32(c, 0x750), v55, (*v52__f));
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a468c)), (const char *)F32(c, 0x750), v55, (*v52__f));
       result = (*v50__f);
       break;
     default:

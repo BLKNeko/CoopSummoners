@@ -51,12 +51,21 @@ size_t lang_utf8_to_cp1252(const char *in, char *out)
     return o;
 }
 
-/* \n \r \t \\ -> the bytes (in place) */
-static void unescape(char *s)
+static int hexval(char c)
 {
-    char *o = s;
+    return c >= '0' && c <= '9' ? c - '0' : c >= 'a' && c <= 'f' ? c - 'a' + 10 : c >= 'A' && c <= 'F' ? c - 'A' + 10 : -1;
+}
+
+/* \n \r \t \\ \xHH -> the bytes (in place; run AFTER the Windows-1252 conversion, so \xHH can give any raw byte, such
+ * as the 0x81 lead of the SJIS arrow key tokens "@@\x81\xa9") */
+static size_t unescape(char *s)
+{
+    char *o = s, *b = s;
     for (; *s; s++) {
-        if (*s == '\\' && s[1] != 0) {
+        if (*s == '\\' && s[1] == 'x' && hexval(s[2]) >= 0 && hexval(s[3]) >= 0) {
+            *o++ = (char)(hexval(s[2]) * 16 + hexval(s[3]));
+            s += 3;
+        } else if (*s == '\\' && s[1] != 0) {
             s++;
             *o++ = *s == 'n' ? '\n' : *s == 'r' ? '\r' : *s == 't' ? '\t' : *s;
         } else {
@@ -64,6 +73,7 @@ static void unescape(char *s)
         }
     }
     *o = 0;
+    return (size_t)(o - b);
 }
 
 static int by_va(const void *a, const void *b)
@@ -93,8 +103,8 @@ int lang_load(const char *path, char *err, size_t errn)
         long max = strtol(t1 + 1, NULL, 10);
         char *text = t2 + 1;
         if (va == 0 || text[0] == 0) { skipped++; continue; }   /* an untranslated row keeps the original */
-        unescape(text);
-        size_t out = lang_utf8_to_cp1252(text, text);
+        lang_utf8_to_cp1252(text, text);
+        size_t out = unescape(text);
         if (max > 0 && out > (size_t)max) { skipped++; continue; }   /* too long for the buffer it's copied into */
         if (n == cap) {
             cap *= 2;

@@ -53,6 +53,9 @@ one screen.
   top-right panel.
 - **Gamepad hot-plug**: a pad that is unplugged and plugged back in works again within a
   moment.
+- **Brazilian Portuguese translation** (machine translated, being reviewed): pick
+  "Português (Brasil)" in the launcher, or start the game with `--lang pt-br`. See
+  [Portuguese translation](#portuguese-translation).
 - **Off by default**: without `--coop` the game runs exactly like the base game.
 
 ---
@@ -280,6 +283,29 @@ their own PC) is planned as later work.
 
 ---
 
+## Portuguese translation
+
+A Brazilian Portuguese translation of the dialogue and many menu words ships with the mod
+(`data/lang/pt-br.tsv`, Portuguese text only). It was machine translated with a fixed
+glossary ([`tools/translation/glossary-pt-br.md`](tools/translation/glossary-pt-br.md)) and is
+being reviewed by hand over time, so expect some odd lines.
+
+- **Use it:** choose **Português (Brasil)** under *Game language* in the launcher, or start the
+  game with `--lang pt-br` (it reads `lang\pt-br.tsv` from the game folder; `lang.log` says what
+  loaded). Accented letters need Windows' Western code page (any Portuguese or English Windows).
+- **Not translated yet:** names and descriptions that the game reads from tables (items,
+  monsters, places, speaker names in the dialogue box), and the few menu words that the port
+  writes itself. These are the next step.
+- **Review it:** see [Reviewing the translation](#reviewing-the-translation) under *Building
+  from source*.
+
+How it works: the 2012 edition keeps its text inside `sotes.exe`. With a translation loaded,
+`src/lang.c` hands the port the translated copy of each string it reads through `g_eng.data`,
+and the text layer treats bytes above 127 as single Windows-1252 letters instead of Japanese
+double-byte characters (`text_lead` in `src/lang.h`). Without `--lang`, nothing changes.
+
+---
+
 ## Known limits
 
 - **One camera**, on player 1. Player 2 can walk off screen (the edge arrow helps).
@@ -384,6 +410,30 @@ cross compiler. No game files are needed to build.
 
 The full pre-push check (the port, the tools and the host test suite) is
 `nix develop --command bash tools/ci/build_all.sh`.
+
+### Reviewing the translation
+
+The tools in `tools/translation/` (Python 3, no extra packages) work from your own copy of
+the game. Their working files go to `build/translation/`, which is not committed, because they
+contain the game's English text.
+
+```bash
+python tools/translation/extract_text.py "C:\path\to\Fortune Summoners"
+python tools/translation/review.py export
+```
+
+`build/translation/review-pt-br.csv` opens in Excel or LibreOffice with the English and the
+Portuguese side by side (plus STATUS / NOTE columns for you). Edit the PT column, save as CSV,
+then:
+
+```bash
+python tools/translation/review.py import
+```
+
+Each edit is checked (the game's codes such as `%n`, `%s`, `@@X` kept, the byte limit of
+strings copied into fixed buffers, characters the game can draw) and written into
+`data/lang/pt-br.tsv`. `make_batches.py` and `merge.py` are the tools that produced the
+machine translation.
 
 ---
 

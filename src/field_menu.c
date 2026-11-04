@@ -1019,7 +1019,7 @@ int32_t fm_597aa0(wl_char *self, int32_t * a2)
             }
             g_eng.h5bf3ee(Buffer, "%02d", (*v58__f));
             W_grid_cell_text((intptr_t)(v26), (intptr_t)(v37), (intptr_t)(1), (intptr_t)(Buffer));
-            g_eng.h5bf3ee(Buffer, "Day % 3d", *((uint16_t *)v33 - 4));
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a3768)), *((uint16_t *)v33 - 4));
             W_grid_cell_text((intptr_t)(v26), (intptr_t)(v37), (intptr_t)(2), (intptr_t)(Buffer));
             if ( strlen(v33 + 1160) != 0 )
             {
@@ -1292,7 +1292,7 @@ int32_t fm_5985f0(wl_char *self, int32_t a2, int32_t a3)
     F16(F32(v4, 368), 6) = 0;
     F32(v4, 28) = 0;
   }
-  g_eng.h5bf3ee(Buffer, "No.%d %s", a3, (const char *)(a2 + 20));
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a3870)), a3, (const char *)(a2 + 20));
   v6 = F32(c, 0x0);
   v7 = 0;
   v8 = 4;
@@ -1364,7 +1364,7 @@ int32_t fm_5985f0(wl_char *self, int32_t a2, int32_t a3)
   {
     (*v50__f) = -1;
   }
-  g_eng.h5bf3ee(Buffer, "Received:  Day % 3d", F16(a2, 4));
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a385c)), F16(a2, 4));
   W_grid_cell_text((intptr_t)(v14), (intptr_t)((*v50__f)), (intptr_t)(0), (intptr_t)(Buffer));
   if ( strlen((const char *)(a2 + 1172)) != 0 )
   {
@@ -1382,7 +1382,7 @@ int32_t fm_5985f0(wl_char *self, int32_t a2, int32_t a3)
         v22 = 13 * i;
         if ( 4 * v22 != -7040680 )
         {
-          g_eng.h5bf3ee(Buffer, " From: %s", (const char *)(4 * v22 + 7040688));
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a3850)), (const char *)(4 * v22 + 7040688));
           goto LABEL_26;
         }
         break;

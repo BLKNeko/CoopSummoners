@@ -491,7 +491,7 @@ int32_t lo_401210(int32_t hWnd, uint32_t Msg, uint32_t wParam, int32_t lParam)
     intptr_t *const v11__f = (intptr_t *)(frame_ + 0xc);   /* ebp-0x24 */
     intptr_t *const v12__f = (intptr_t *)(frame_ + 0x10);   /* ebp-0x20 */
 
-  strcpy(String, "Please wait.");
+  strcpy(String, ((const char *)D(0x854254)));
   v4 = F32(D(0x8a6b3c), 0);
   if ( Msg == 15 )
   {

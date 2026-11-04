@@ -645,7 +645,7 @@ LABEL_20:
             {
               g_eng.h5bf3ee(
                 Buffer,
-                "%s learned %s!",
+                ((const char *)D(0x854574)),
                 (const char *)(4 * v19 + 7040688),
                 (uint8_t *)v16 + 4);
               W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
@@ -1535,7 +1535,7 @@ LABEL_7:
     {
       g_eng.h5bf3ee(
         Buffer,
-        "Hmm... well, would you be willing to find a %s for me?",
+        ((const char *)D(0x855784)),
         (uint8_t *)v11 + 4);
       v38 = W_actor_by_handle(100000211);
       W_scene_msg(c, 0, v38, Buffer, 0, 1, 1, 0, 30, 0, 0);
@@ -1581,7 +1581,7 @@ LABEL_9:
     }
     if ( v14 != 0 )
     {
-      g_eng.h5bf3ee(Buffer, "Ah, it looks like you found a %s, Arche.", (uint8_t *)v11 + 4);
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x855a5c)), (uint8_t *)v11 + 4);
       v17 = W_actor_by_handle(100000211);
       W_scene_msg(c, 0, v17, Buffer, 0, 1, 1, 0, 30, 0, 0);
       v1 = W_script_wait(c);
@@ -1628,7 +1628,7 @@ LABEL_9:
           v25 = &((int32_t *)D(0x6c0cd0))[184 * v23];
           if ( v25 != 0 )
           {
-            g_eng.h5bf3ee(Buffer, "All right then! We now have %s in stock!", (uint8_t *)v25 + 4);
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x855990)), (uint8_t *)v25 + 4);
             v26 = W_actor_by_handle(100000211);
             W_scene_msg(c, 0, v26, Buffer, 0, 1, 1, 0, 30, 0, 0);
             v1 = W_script_wait(c);
@@ -1657,7 +1657,7 @@ LABEL_40:
   }
   if ( v3[4] == 0 || v3[4] > W_script_flag(c, 100100101) )
   {
-    g_eng.h5bf3ee(Buffer, "Looks like you haven't found %s yet, Arche.", (uint8_t *)v11 + 4);
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x855808)), (uint8_t *)v11 + 4);
     v35 = W_actor_by_handle(100000211);
     W_scene_msg(c, 0, v35, Buffer, 0, 1, 1, 0, 30, 0, 0);
     v1 = W_script_wait(c);
@@ -1669,7 +1669,7 @@ LABEL_40:
   v27 = (const char *)(v11 + 1);
   g_eng.h5bf3ee(
     Buffer,
-    "Looks like you still haven't found %s yet, Arche. Do you think you'll be able to find it?",
+    ((const char *)D(0x8558d4)),
     v27);
   v28 = W_actor_by_handle(100000211);
   W_scene_msg(c, 0, v28, Buffer, 0, 1, 1, 0, 30, 0, 0);
@@ -1687,7 +1687,7 @@ LABEL_40:
     return v1;
   if ( v29 != 14 )
   {
-    g_eng.h5bf3ee(Buffer, "Hmm, well then. Are you going to give up on finding %s?", v27);
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x85587c)), v27);
     v30 = W_actor_by_handle(100000211);
     W_scene_msg(c, 0, v30, Buffer, 0, 1, 1, 0, 30, 0, 0);
     v1 = W_script_wait(c);
@@ -1966,7 +1966,7 @@ int32_t sc_4b3f30(wl_char *self)
                 {
                   g_eng.h5bf3ee(
                     Buffer,
-                    "Hmm... the Fates tell me you've missed %d Marks of Heroism...",
+                    ((const char *)D(0x85e244)),
                     (*v6__f));
                   W_scene_msg(c, 0, F32(c, 0x4), Buffer, 0, 1, 1, 0, 0, 0, 0);
                   v4 = W_script_wait(c);
@@ -1979,7 +1979,7 @@ int32_t sc_4b3f30(wl_char *self)
                   v5 = 100 * (F32(F32(c, 0x8), 16412) + 1);
                   g_eng.h5bf3ee(
                     Buffer,
-                    "Okay, then! I'll tell you where the Marks are for %d copper!",
+                    ((const char *)D(0x85e1a8)),
                     v5);
                   W_scene_msg(c, 0, F32(c, 0x4), Buffer, 0, 1, 1, 0, 0, 0, 0);
                   v4 = W_script_wait(c);
@@ -1987,7 +1987,7 @@ int32_t sc_4b3f30(wl_char *self)
                     return v4;
                   g_eng.h5bf3ee(
                     Buffer,
-                    "You currently have %d copper.%%nWould you like to spend %d to learn where the Marks are?",
+                    ((const char *)D(0x85e14c)),
                     F32(F32(c, 0x8), 16404),
                     v5);
                   W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
@@ -2048,7 +2048,7 @@ int32_t sc_4b3f30(wl_char *self)
                     v4 = W_script_wait(c);
                     if ( v4 == 6 )
                       return v4;
-                    g_eng.h5bf3ee(Buffer, "You missed the mark in the %s.", v8);
+                    g_eng.h5bf3ee(Buffer, ((const char *)D(0x85e0b4)), v8);
                     W_scene_msg(c, 0, F32(c, 0x4), Buffer, 0, 1, 1, 0, 0, 0, 0);
                     v4 = W_script_wait(c);
                     if ( v4 == 6 )
@@ -2270,7 +2270,7 @@ int32_t sc_4b4570(wl_char *self)
   {
     g_eng.h5bf3ee(
       Buffer,
-      "What an odd nun... still, would you like to donate to her? You have %d copper (with a %d copper max) right now.",
+      ((const char *)D(0x85e7f0)),
       F32(F32(c, 0x8), 16404),
       F32(F32(c, 0x8), 16416));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);

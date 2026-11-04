@@ -77,6 +77,8 @@ def classify(b):
     """jp / tech / dialogue (a sentence) / label (a short name or menu word) / junk"""
     if is_sjis_text(b):
         return "jp"
+    # English text may carry SJIS symbols (0x81 xx: the arrow key tokens @@↑ @@→ ..., ♪): classify it without them
+    b = re.sub(rb"\x81[\x40-\xfc]", b"", b) if re.search(rb"[A-Za-z]{2,}.*[A-Za-z]{2,}", b) else b
     if any(c >= 0x80 for c in b):
         return "junk"                                      # high bytes that aren't Japanese: binary data
     s = b.decode("ascii")

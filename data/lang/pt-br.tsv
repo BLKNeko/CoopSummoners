@@ -7,36 +7,67 @@
 0x814b08	0	As Conquistas de Minasa-Ratis
 0x828bd0	0	Enciclopédia de Magias Travessas
 0x83cc98	0	Aventureira Sexy Mensal
+0x854254	15	Aguarde...
 0x85451c	0	GetHeadLeftRight State Count Over.
+0x854574	0	%s aprendeu %s!
+0x854584	0	Mas seu inventário está cheio, e você não pôde levar o item.
+0x8545cc	0	Você obteve: %s.
+0x8545e0	0	Você obteve: %d %s.
+0x854640	0	Mas seu inventário está cheio. Você devolveu: %s.
+0x854678	0	Você encontrou: %s.
+0x854688	0	Você encontrou %s dentro do %s.
+0x8546a4	0	O %s está vazio.
+0x8546b8	0	Você não consegue carregar mais dinheiro, então devolveu: %s.
+0x8546f4	0	Você encontrou: %d %s.
+0x854708	0	O %s tinha %d %s dentro.
 0x854724	31	Ganhou uma Marca do Heroísmo!
 0x854744	0	Success Resource Unload\n
 0x854760	0	Unload GDIs\n
 0x854770	0	Unload Waves\n
 0x854780	0	Unload Surface Sets\n
 0x854798	0	Unload Resource From 'StartEvent'\n
+0x8547d4	0	baú do tesouro
 0x8547e4	0	A porta está trancada.
+0x8547f8	0	Você foi teletransportada para um lugar seguro.
+0x854820	0	A armadilha de teletransporte te deixou em algum lugar...
+0x85499c	0	Você pode guardar até %d itens no baú de armazenamento.
+0x8549d0	0	Fechar Baú
+0x8549dc	0	Retirar Itens
+0x8549ec	0	Guardar Itens
+0x8549fc	0	Baú de Itens
 0x854a0c	0	Status do Grupo
+0x854a28	0	(Máx. %d)
+0x854a3c	0	Dinheiro
 0x854a4c	0	MP
 0x854a50	0	HP
+0x854adc	0	Não vende
+0x854ae8	0	x %d
 0x854b10	0	Você não pode carregar mais itens.
 0x854b7c	79	Vender
 0x854b84	79	Comprar
-0x854bc8	28	Dinheiro insuficiente.
-0x854be8	22	Item esgotado.
+0x854b88	0	Você tem %d
+0x854b98	0	Comprar este item
+0x854ba8	0	Gostaria de comprar: %s?
+0x854bc8	511	Dinheiro insuficiente.
+0x854be8	511	Item esgotado.
 0x854c00	0	Quem vai equipar isto?
 0x854c24	0	Não Equipar
 0x854c30	0	Em quem?
-0x854c38	6	MP Máx
-0x854c40	6	HP Máx
-0x854c48	6	Resist
-0x854c50	6	Espír.
-0x854c58	7	Defesa
-0x854c60	6	Ataque
+0x854c38	79	MP Máx
+0x854c40	79	HP Máx
+0x854c48	79	Resistência
+0x854c50	79	Espírito
+0x854c58	79	Defesa
+0x854c60	79	Ataque
+0x854c68	0	Não Equipável
+0x854c88	0	%s - %s
 0x854c90	0	Equipar
-0x854cb8	71	Não dá para mudar equipamento ou habilidades de alguém confuso!
+0x854cb8	511	Não dá para mudar equipamento ou habilidades de alguém confuso!
 0x854d00	79	Não
 0x854d04	79	Sim
-0x854d08	25	Nada para vender.
+0x854d08	511	Nada para vender.
+0x854d24	0	Vender %s por %s. Tem certeza?
+0x854d48	0	Vender %s por %s. Este é um item raro, vender mesmo?
 0x854d80	0	Escolha o item que deseja vender. Aperte @@Z para reorganizar seus itens.
 0x854dd0	0	Vender Item
 0x854ddc	0	O Menu Bônus foi expandido.
@@ -52,15 +83,19 @@
 0x854fc0	0	Escolha um espaço para salvar.
 0x854fec	0	Não, Obrigado
 0x854ff8	0	Ser Curado
+0x855004	0	Curandeiro - %s
 0x855010	0	Salvar
 0x855018	0	Não Descansar
 0x855024	0	Descansar
+0x85502c	0	Pousada - %s a estadia
 0x855040	0	The event flag area exceeded it.
+0x855064	0	Unknown Object Type Character.\n
 0x855148	0	Homem
 0x85514c	0	Garoto
 0x855174	0	Mulher
 0x85517c	0	Garota
 0x855184	0	Menininha
+0x8551dc	0	Object ID Case
 0x85525c	0	ReserveWave over index.
 0x855294	0	- Aperte Qualquer Tecla -
 0x8552c8	0	Você perdeu.
@@ -70,39 +105,51 @@
 0x8552f4	0	Terra
 0x8552fc	0	Água
 0x855304	0	Vento
-0x85530c	22	%s recupera a força!
-0x855324	25	%s saiu da confusão.
-0x855340	18	%s pode se mover!
-0x855354	11	%s acordou.
-0x855360	38	A defesa de %s voltou ao normal.
-0x855388	25	%s se livrou do veneno.
+0x85530c	511	%s recupera a força!
+0x855324	511	%s saiu da confusão.
+0x855340	511	%s pode se mover!
+0x855354	511	%s acordou.
+0x855360	511	A defesa de %s voltou ao normal.
+0x855388	511	%s se livrou do veneno.
 0x8553a4	0	O ataque de %%s aumentou em %d.
-0x8553d4	16	%s caiu...
-0x8553e8	16	Paralisia em %s!
-0x8553fc	26	Confusão em %s! Cuidado!
-0x855418	21	%s adormeceu.
+0x8553d4	63	%s caiu...
+0x8553e8	511	Paralisia em %s!
+0x8553fc	511	Confusão em %s! Cuidado!
+0x855418	511	%s adormeceu.
 0x855430	0	A defesa de %%s diminuiu em %d.
-0x855454	31	O veneno corre nas veias de %s!
+0x855454	511	O veneno corre nas veias de %s!
 0x8554a4	0	%d Máx
+0x8554ac	0	FPS %d
 0x8554c4	0	PRISÃO SOMBRIA
 0x8554d8	12	USAR MAGIA
+0x8554f0	0	%% %dd
 0x855508	0	Acerto
 0x85551c	10	Cura Ráp.
 0x855748	0	Certo!
 0x855750	0	Quero ver se é algo que eu queira vender.
+0x855784	0	Hmm... bem, você estaria disposta a encontrar isto pra mim: %s?
 0x8557bc	0	Acho que podemos usar isso aqui na loja, então traga pra mim se encontrar.
+0x855808	0	Parece que você ainda não encontrou %s, Arche.
 0x855834	0	Entendo... bom, sempre tem a próxima vez. Obrigado por tentar, pelo menos.
+0x85587c	0	Hmm, muito bem. Vai desistir de procurar %s?
 0x8558b4	0	Entendo. Então continue tentando!
+0x8558d4	0	Parece que você ainda não encontrou %s, Arche. Acha que vai conseguir encontrar?
 0x855930	0	Você precisa disso pra alguma coisa? Bom... tudo bem. Se conseguir mais, traz pra mim, tá?
+0x855990	0	Muito bem! Agora temos %s no estoque!
 0x8559bc	0	Hmmmm... ainda não tenho tudo o que preciso pro que quero vender...
 0x855a08	0	Obrigado, Arche.
 0x855a18	0	Pode me dar? Talvez a gente possa usar aqui na loja.
+0x855a5c	0	Ah, parece que você encontrou: %s, Arche.
 0x855a88	0	Hmm... obrigado, Arche, mas não tenho nada pra você fazer agora.
 0x855ad4	0	Ei, Papai! Posso fazer alguma coisa pra ajudar na loja?
 0x855b04	0	Aaaaah, não tenho dinheiro suficiente...
 0x855b2c	0	Aaaaah. Já tô com coisa demais...
 0x855b58	0	Será que tento de novo?...
+0x855b70	0	Aaah, só ganhei isto: %s...
+0x855b8c	0	Eba, ganhei: %s!
+0x855ba0	0	Eba! Ganhei: %s, o melhor prêmio daqui!
 0x855bd0	0	Será que eu tento?
+0x855be4	0	Vejamos, custa %s e o melhor prêmio é: %s...
 0x855c1c	0	Eba, uma Máquina de Cápsulas! Você põe dinheiro, gira a manivela e ganha coisas!
 0x855c6c	0	Queria tentar a Máquina de Cápsulas uma vez, mas se eu gastar dinheiro à toa, a Mamãe vai brigar comigo...
 0x855cc0	0	C-como se eu fosse usar uma Máquina de Cápsulas feito uma mendiga sem um tostão!
@@ -114,6 +161,7 @@
 0x855e68	0	O que será que está em promoção hoje?
 0x855e88	0	Acabei de ganhar minha mesada! Hora de GASTAR TUDO!
 0x855eb8	0	Uau, esta loja tem um montão de doces!
+0x855edc	0	O papel na parede diz '%s'.
 0x855f00	0	Temos tudo o que você vai precisar. Bem-vindo à Loja Plumfield!
 0x855f44	0	Chocolat, a coelhinha querida da Arche.
 0x855f68	0	Muito bem! Se precisar de mais alguma coisa, volte sempre!
@@ -124,7 +172,9 @@
 0x856034	0	Bem-vindo à Loja de Itens Plumfield. Em que posso ajudar hoje?
 0x856078	0	Hmm, o que será que eu faço pro jantar?
 0x85609c	0	O conteúdo do livro era complicado demais para a Arche entender...
+0x8560e4	0	%s continha informações sobre como usar a habilidade %s!
 0x856124	28	%nGostaria de ler?
+0x856144	0	Você encontrou um livro chamado '%s'.
 0x856164	0	Livro dos Segredos da Espada
 0x85617c	0	Me dê... só um momento...
 0x856198	0	Quando eu terminar este livro, vamos brincar de alguma coisa, tá bom?
@@ -151,9 +201,15 @@
 0x856708	0	Minha nossa, é tão difícil sair de casa na minha idade...
 0x85674c	0	Miau?
 0x856754	0	Certo, então! Se quiser testar alguma dessas, é só apertar @@Z para sacar a espada.
+0x8567a8	0	Virada para a esquerda, é @@X& @@\x81¨.
+0x8567cc	0	Virada para a direita, aperte @@X& @@\x81© juntos para fazer o golpe.
 0x856808	0	Uma estocada rápida para trás é útil se alguém conseguir te pegar pelo flanco!
+0x85684c	0	Aperte @@X& @@\x81ª juntos para fazer um.
 0x856878	0	Um corte em arco acima da cabeça é bom para acertar coisas acima de você.
+0x8568c0	0	Se estiver virada para a esquerda, é @@X& @@\x81©.
+0x8568e8	0	Para usar virada para a direita, aperte @@X& @@\x81¨ juntos.
 0x856928	0	Um corte amplo na altura do peito é eficaz se o inimigo estiver a um passo de distância.
+0x856978	0	É só apertar @@X& @@\x81« juntos para dar a estocada.
 0x8569a4	0	A estocada é um pouco mais rápida que o corte.
 0x8569d0	0	É só apertar @@X que você faz um.
 0x8569f4	0	O corte é a técnica de espada mais fácil de fazer.
@@ -171,8 +227,13 @@
 0x856e08	0	Mas nem a Defesa Automática impede que você seja atingido enquanto ataca ou pula.
 0x856e5c	0	No começo, é melhor deixar a Defesa Automática ligada.
 0x856e90	0	Você também pode ligar a 'Defesa Automática' no menu de opções; assim, você se defende automaticamente dos ataques inimigos.
+0x856f08	0	Se apertar @@\x81ª, você levanta a guarda contra os ataques inimigos.
 0x856f4c	0	Lembre-se de que também há golpes que só dá para fazer no ar, ou depois de outro golpe... leia as descrições!
+0x856fc0	0	Ah, vale lembrar que todas as descrições supõem que você está virada para a direita; se estiver virada para a esquerda, troque @@\x81© por @@\x81¨.
+0x85703c	0	Então, para '@@\x81¨@@-M@@\x81ª@@-M@@AB', você aperta @@\x81¨, @@\x81ª e @@XK nessa ordem, e tem que ser rápido!
 0x8570a8	0	você tem que apertar cada botão, começando pela esquerda, em ordem.
+0x8570ec	0	Se for algo como 'Comando: @@\x81¨@@-M@@\x81ª@@-M@@AB', com um @@-M em vez de%num @@+M,
+0x857150	0	Por exemplo, se a descrição disser%n'Comando: @@\x81ª@@+M@@AB', você aperta%n@@\x81ª& @@AB ao mesmo tempo.
 0x8571bc	0	Nas técnicas de espada, a descrição da técnica explica como usá-la.
 0x857210	0	Você sempre pode ver suas técnicas no menu Habilidades, dentro do menu Status (acessado com @@F1).
 0x857288	0	Conforme ganhar experiência, você vai descobrir sozinho todo tipo de técnica de espada nova.
@@ -267,6 +328,7 @@
 0x858820	0	Olha olha olha! Peguei uma borboleta!
 0x858848	0	Dona borboleta, espeeeera!
 0x858864	0	Se quiser parar de correr, é só apertar a direção oposta!
+0x8588a8	0	Se quiser correr, toque @@\x81¨ duas vezes para correr para a direita, e @@\x81© duas vezes para a esquerda.
 0x8588f4	0	Eu sou boa de corrida!
 0x85890c	0	Tem aparecido um monte de monstros no caminho da escola ultimamente.
 0x858948	0	Ah, receio que vou recusar.
@@ -404,6 +466,7 @@
 0x85a8b8	0	Beleza!
 0x85a8c4	0	Ei, vamos jogar bola!
 0x85a8dc	0	Claro!
+0x85a8e4	0	Ei, agora vamos brincar de %s%s%s!
 0x85a900	0	Tenta achar alguém pra te ensinar as regras básicas, e depois volta aqui falar comigo!
 0x85a958	0	Aaah, não sabe? Então não dá pra jogar com três pessoas logo de cara...
 0x85a9a0	0	Não sabe? Aaah...
@@ -439,6 +502,85 @@
 0x85af4c	0	Já sei! Vamos jogar pedra, papel e tesoura mágico em vez disso!
 0x85af84	0	Eu também...
 0x85af90	0	Aaah, cansei de jogar bola.
+0x85afb0	0	Ei, quando chegarmos em Korat, vamos brincar de %s%s%s!
+0x85afe0	511	vs. o Dragão Vermelho
+0x85aff4	1020	e o Grande Plano
+0x85b008	511	Precisa Se Apressar
+0x85b018	1020	Tá Ficando Bo-ni-to Demaaais
+0x85b034	511	Faz FUUU
+0x85b040	509	Tem O PODER
+0x85b050	511	É Perfeito
+0x85b05c	511	Pega no Ar
+0x85b068	511	e o Bibidi Bobidi Bu
+0x85b084	511	Vai Com Tudo
+0x85b090	508	É Très Bien
+0x85b0a0	511	É Tão Fofo
+0x85b0ac	1020	e Seu Esquadrão
+0x85b0b8	1020	e o Plano Secreto
+0x85b0cc	511	e Seus Amigos Engraçados
+0x85b0e4	511	Não É Como Aqueles Fracotes
+0x85b100	511	Faz Aeróbica
+0x85b10c	511	Leva Uma Boa Vida
+0x85b11c	511	Dança Por Três Horas
+0x85b134	511	Resolve o Mistério
+0x85b148	509	e a Aventura
+0x85b15c	509	e o Feijão
+0x85b168	508	Ciclope
+0x85b174	508	Cata-vento
+0x85b184	508	Guerreiro
+0x85b190	511	Prefeito
+0x85b198	509	Escorpião
+0x85b1a4	511	Globo Mágico
+0x85b1b0	511	Tapete
+0x85b1b8	511	Corredor
+0x85b1c0	508	Bicho-da-Seda
+0x85b1d0	508	Faraó
+0x85b1dc	508	Lámen
+0x85b1ec	508	Atirador
+0x85b1f8	511	Saltador
+0x85b200	511	Rabanete
+0x85b208	511	Iguanodonte
+0x85b214	511	Camarão
+0x85b21c	509	Mofo
+0x85b224	509	Resfriado
+0x85b22c	508	Colchão
+0x85b234	508	Taiyaki
+0x85b240	509	Esqueleto
+0x85b24c	511	Slime
+0x85b254	509	Rei
+0x85b25c	508	Pinguim
+0x85b268	508	Presunto
+0x85b270	511	Bruxo
+0x85b278	509	Sapo
+0x85b280	509	Marisco
+0x85b288	509	O Malvado
+0x85b294	509	O Rodopiante
+0x85b2a4	511	O Blindado
+0x85b2b4	508	O Fujão
+0x85b2c4	511	O Energético
+0x85b2d4	509	O Gatuno
+0x85b2e4	511	O Voador
+0x85b2f0	509	O Bicampeão de Gateball
+0x85b308	509	O Rastejante
+0x85b318	511	O Solitário
+0x85b324	511	Olha, É o
+0x85b334	509	O (Levemente) Picante
+0x85b34c	511	O Viajante
+0x85b35c	511	O Fresquinho
+0x85b368	511	O Rochoso
+0x85b374	511	O Animado
+0x85b380	509	O Escorregadio
+0x85b390	508	O Pulguento
+0x85b3a4	508	O Recém-Assado
+0x85b3b8	509	O Revivido
+0x85b3c8	508	O Novato
+0x85b3e4	509	O Temível
+0x85b3f4	511	O Caipira
+0x85b404	509	O Sulista
+0x85b414	511	O Matinal
+0x85b424	509	O Encantado
+0x85b434	511	O 'Bem'-de-Vida
+0x85b444	511	O Ensopado
 0x85b450	0	Ô, LEON! Para de ser tão medroso! Sério...
 0x85b480	0	É meio constrangedor ser um dos poucos meninos no meio de%ntodas essas meninas...
 0x85b4d0	0	Esta escola atrai muitas alunas porque todas admiram a sábia Minasa-Ratis.
@@ -488,6 +630,7 @@
 0x85bfdc	0	Precisa de alguma coisa?
 0x85bff4	0	Meta de hoje: tudo limpo e arrumado
 0x85c010	0	Há um horário de aulas afixado.
+0x85c02c	0	A placa diz '%s'.
 0x85c040	0	Lago Carudale: proibido brincar na beira d'água!
 0x85c070	0	Mas as paredes se romperam e a água vazou para o lago de verdade, então agora é só uma caverna.
 0x85c0cc	0	Antes havia um lago subterrâneo aqui; a gente chamava de 'Sublago de Carudale'.
@@ -632,10 +775,14 @@
 0x85dfe0	0	Não quer?... bem, se mudar de ideia (como eu prevejo que vai), venha me ver de novo!
 0x85e038	0	Bem, boa sorte! Lembre-se de mim se%nprecisar de uma visão além da visão no futuro!
 0x85e088	0	Está em algum lugar lá dentro... vá procurar!
+0x85e0b4	0	Você deixou passar a Marca em: %s.
 0x85e0d4	0	HYAAAAAAH! WHOYAAAAAAH!%nSAH-POH-ROH NIH HOH-CAI-DOH!
 0x85e10c	0	Muito bem.
 0x85e118	0	Aaah, acho que você não tem dinheiro suficiente, desculpe...
+0x85e14c	0	Você tem %d de cobre agora.%%nQuer gastar %d para saber onde estão as Marcas?
+0x85e1a8	0	Certo, então! Eu digo onde estão as Marcas por %d de cobre!
 0x85e1e8	0	Ah, quer saber quais você deixou passar? Essa é a parte que custa dinheiro, infelizmente.
+0x85e244	0	Hmm... o Destino me diz que você deixou passar %d Marcas do Heroísmo...
 0x85e284	0	Que exploradora, hein? Continue assim!
 0x85e2ac	0	Você não deixou passar nenhuma Marca do Heroísmo!
 0x85e2dc	0	E... A RESPOSTA!
@@ -665,6 +812,7 @@
 0x85e7c8	79	Doar 1000CP
 0x85e7d8	79	Doar 100CP
 0x85e7e8	79	Nunca!
+0x85e7f0	0	Que freira estranha... mesmo assim, quer fazer uma doação a ela? Você tem %d de cobre (máximo de %d de cobre) agora.
 0x85e860	0	Você tem fé, criança querida? Ah, aposto que tem! Por favor, faça uma doação ao meu humilde ministério!
 0x85e8c0	0	Que sonho malavilhoso!
 0x85e8dc	0	Eu coleciono balas. Quando eu crescer, quero ter balas de todos os cantos do mundo!
@@ -1004,6 +1152,8 @@
 0x8639bc	0	Gostou? Eu mesmo que escrevi!
 0x8639dc	0	Hã, Arche...
 0x8639ec	0	O Alex pode não saber cantar, mas pelo menos a música é meio legal!
+0x863a34	0	Meu amor é profuuuundo e escuuuuro\x81ô%ncomo uma masmooooorraaaaa\x81ô
+0x863a74	0	Uuuuh-huuuuh, sou um aventureiro solitário\x81ô%nMeu coração é frio e soliiiitáááário\x81ô
 0x863ac4	0	Posto da Guarda Norte de Chartreux
 0x863ae0	0	Precisa de mais alguma coisa?
 0x863afc	0	Ah, bem-vindos! Não temos muita coisa aqui, mas fiquem à vontade para olhar.
@@ -1039,6 +1189,9 @@
 0x864134	0	Tem alguma coisa brilhando entre os ossos. Quer examinar a pilha de ossos?
 0x864188	0	Parece que você colocou os números%nerrados... de repente você se sente muito leve!
 0x8641d4	0	A porta abriu!
+0x8641f0	0	%d%d%d%d
+0x8641fc	0	Definir %d
+0x864208	0	Em que número vai colocar o disco %d?
 0x864228	0	Há quatro discos com números de 0 a 9. Quer tentar girar os discos?
 0x864288	0	A porta está bem trancada. Não há como forçá-la.
 0x8642c0	0	Uma armadilha de teletransporte foi ativada!
@@ -1277,11 +1430,13 @@
 0x8673d0	0	Cluckadoodle, você precisa comer, sério!
 0x8673fc	0	Foi demais? Você entendeu tudo isso?
 0x867430	0	Se quiser, você pode ver as magias e outras coisas na opção 'Habilidades' do menu principal!
+0x86748c	0	Ah, e @@X com @@\x81ª, @@\x81«, @@\x81¨ ou%n@@\x81© juntos fazem um ataque mágico à distância.
 0x8674f0	0	Mas cada magia gasta um pouco de MP. Então não use demais!
 0x867538	0	Vai aparecer um círculo mágico. Se você soltar @@X quando ele terminar, a magia sai!
 0x86758c	0	Depois de escolher uma magia, segure%n@@X.
 0x8675b8	0	Se quiser usar magia, primeiro aperte @@Z pra escolher a magia que você quer usar.
 0x867608	0	Mas quem usa magia tem um monte de magias úteis!
+0x867638	0	Hum, deixa eu ver... @@C pula, @@X ataca, @@\x81ª defende... o básico é igual ao de todo mundo.
 0x867694	0	Ei, Sana? Como alguém que usa magia que nem você faz as coisas, afinal?
 0x8676d0	0	Quando estou com uma amiga, posso apertar%n@@EN pra trocar quem está sendo%ncontrolada diretamente!
 0x867724	0	Ah, espera, é mesmo. Agora tem, tipo, duas de nós!
@@ -1550,6 +1705,7 @@
 0x86b118	0	Sabe, o Grupo Mayberk tem tantas pedras em estoque que elas estão pegando poeira em caixotes...
 0x86b178	0	Ah, olá. Encontrou uma Pedra Elemental?
 0x86b1a4	0	Mesmo se eu cair, vai ser só um%ngaloinho, então hora de pular!
+0x86b1f0	0	Ah, e se eu apertar @@\x81© e @@\x81¨ eu consigo me mexer no ar!
 0x86b230	0	Bom, sem problemas! Pra pular, é só apertar @@C, e quanto mais eu segurar,%nmais longe eu vou.
 0x86b28c	0	Quer dizer, o caminho pra minha escola antiga era meio sem graça, mas... isso é perigo demais pro meu gosto...
 0x86b2f4	0	Hã, peraí. Eu tenho que pular esse buraco pra chegar na escola?
@@ -1557,6 +1713,8 @@
 0x86b378	0	Muito bem, slimes! Vocês perturbaram a paz pela última vez! Provem a justiça ardente da Arche!
 0x86b3d0	0	É só abrir o menu com %n@@F1 e olhar em 'Habilidades'!
 0x86b414	0	Sempre posso parar um pouco pra lembrar que 'Habilidades' eu tenho, se precisar!
+0x86b468	0	E eu posso apertar @@X com @@\x81¨, @@\x81©,%n@@\x81ª ou @@\x81« juntos para fazer%noutros golpes.
+0x86b4bc	0	E com a espada em mãos, aperto @@X para cortar, e @@\x81ª para aparar.
 0x86b4fc	0	Certo, Arche, lembre o que o Papai ensinou: primeiro, sacar a espada com @@Z.
 0x86b548	0	T-tudo bem. Eu consigo derrotar eles com a minha espada!
 0x86b57c	0	Caramba! Slimes no caminho da escola?!
@@ -1765,6 +1923,7 @@
 0x86e06c	0	Pode ir lá empurrar ela contra a parede da esquerda pra mim?
 0x86e0a0	0	Então, tem uma caixa grande no depósito que está atrapalhando umas coisas.
 0x86e0f0	0	Bom trabalho, Arche.
+0x86e104	0	Para passar por uma porta, chegue perto dela e aperte @@\x81ªK.
 0x86e13c	0	Nosso quarto fica neste andar, atrás da porta, querida.
 0x86e174	0	Você se importa de tirar eles de lá?
 0x86e198	0	Bem, se quiser ajudar, tem uns caixotes e barris sobrando no nosso quarto.
@@ -1855,6 +2014,7 @@
 0x86f2a0	0	Já decidi. Como o Papai e a Mamãe estão ocupados com a loja...
 0x86f2e4	0	Ei, Chocolat? Você acha que eu vou fazer muitos amigos na escola nova?
 0x86f32c	0	Ufa! Tô cansada de tanto ajudar hoje. E amanhã eu começo numa escola nova...
+0x86f388	0	Para andar, eu aperto @@\x81© e @@\x81¨, e para falar com as pessoas e fazer as coisas, aperto @@X, né?
 0x86f3e8	0	Tá bom, preciso ajudar com a mudança!
 0x86f414	0	Então o primeiro andar da nossa casa é a loja. Legal!
 0x86f448	0	Eu sei, Mamãe!%nTá bom, até mais!
@@ -1878,6 +2038,7 @@
 0x86f898	0	Então eu saco a espada com @@Z e uso @@X pra golpear, né?
 0x86f8d8	0	Bom, acho que a Mamãe não vai gostar da violência, mas eu vou quebrar tudo com a minha espada!
 0x86f930	0	Uau, tem um monte de caixotes, barris e coisas aqui!
+0x86f96c	0	Então, para empurrar coisas pesadas, é só apertar @@\x81© ou @@\x81¨ encostada nelas, eu acho...
 0x86f9c0	0	Então é só empurrar até a parede da esquerda...
 0x86f9f0	0	Uaaah, essa caixa é enorme! É maior que eu!
 0x86fa20	0	Hmm, este é o nosso depósito?
@@ -1929,6 +2090,7 @@
 0x8702ac	0	É-é... sim, é meio que...%ndivertido?...
 0x8702d4	0	Ooooh sim, isso... isso tá bem popular hoje em dia...
 0x87030c	0	Não posso partir enquanto não ouvir isso!
+0x870330	0	Preciso ouvir a história de '%s%s%s' antes de morrer!
 0x870364	0	O QUE EU PRECISO FAZER É!....
 0x87037c	0	O que você precisa fazer é?...
 0x870394	0	O que eu preciso fazer é...
@@ -3238,6 +3400,7 @@
 0x8804e8	0	já que você realmente passou um tempo do outro lado...
 0x880524	0	Pensei que talvez isso te lembrasse%nalguma coisa, Arche,
 0x880560	0	Hã...
+0x880568	0	O número %04d estava escrito na primeira página.
 0x880598	0	Sim. Não faço ideia do que possa significar, mas...
 0x8805d4	0	Um número?
 0x8805e0	0	Logo na primeira página, achei um número que consegui ler.
@@ -3894,11 +4057,16 @@
 0x888b8c	0	Um desvio ou dois também não faria mal, imagino.
 0x888bc0	0	Agora, hora de terminar os preparativos%naqui em Chartreux e então seguir para Barness.
 0x888c0c	0	Pronto, deve ser tudo... será que eu reviso tudo mais uma%nvez?...
+0x888c58	0	E, claro, posso me defender%nusando @@\x81ª.
+0x888c84	0	E apertar @@\x81« e depois %n@@\x81© ou @@\x81¨ me faz%npular para trás.
 0x888cd8	0	então posso ser um pouco... violenta se precisar!
 0x888d04	0	Ao usar magia, gasto minha reserva de energia mágica, mas a Muralha de Fogo não precisa de muita...
 0x888d64	0	Quando o círculo mágico estiver completo, solto @@X para lançar a magia.
 0x888db4	0	Também tenho magias. Posso escolher magias com @@Z e segurar @@X%npara começar a conjurar.
+0x888e0c	0	@@X com @@\x81« é o ataque de perto, e @@X com @@\x81ª dispara uma bola de fogo para o alto.
+0x888e68	0	@@X com @@\x81¨ juntos é o ataque de longe,
 0x888e98	0	O Domínio do Fogo me permite incendiar meus inimigos sem gastar energia mágica.
+0x888ee8	0	E também posso apertar @@X e @@\x81© (virada para a direita) para atacar para trás.
 0x888f30	0	Minha adaga é fácil de usar; é só apertar @@X para golpear rápido um inimigo.
 0x888f7c	0	Certo. Minhas armas são minha adaga, meu Domínio do Fogo e minhas magias.
 0x888fc0	0	Hmm. Será que devo revisar como%nluto contra monstros?
@@ -4424,6 +4592,7 @@
 0x88f15c	0	Ouvi dizer que por aqui tem um tipo de dragãozinho chamado Filhote de Dragão.
 0x88f1a8	0	Eu não sabia que excursões eram uma%nexperiência tão perigosa. A gente aprende%numa coisa nova todo dia, né?
 0x88f214	0	Achei que ia virar comida de tigre-dentes-de-sabre,%nmas de algum jeito cheguei a Korat inteiro...
+0x88f268	0	Depois das fontes termais e do almoço, vamos brincar de %s%s%s!
 0x88f2b0	0	Mas tentar guiar os pequenos pelo Vale Cranbal? Isso foi difícil!
 0x88f2f8	0	Ainda bem que os meninos dos outros grupos derrotaram todos os monstros...
 0x88f33c	0	Fiquei encarregado de guiar as crianças bem pequenininhas.
@@ -4728,7 +4897,7 @@
 0x8931c4	0	Graças aos céus... se algo acontecesse com vocês, crianças, eu... eu...
 0x893204	0	Não, Profa. Sophia. A Arche e a Stella me salvaram.
 0x893230	0	Sana, você se machucou?
-0x893244	0	Acabei de saber pelo Representante da Turma o que aconteceu; eu e o Harnel íamos sair a cavalo.
+0x893244	0	Acabei de saber pela Representante da Turma o que aconteceu; eu e o Harnel íamos sair a cavalo.
 0x8932a0	0	Vocês três! Ah, graças aos céus... graças aos céus vocês estão bem...
 0x8932e0	0	Como eles AINDA têm tanta%nenergia...
 0x89330c	0	Fwoooo!
@@ -5001,3 +5170,1374 @@
 0x8967b8	0	...Uuuuuuuuuuuooooooouuuuh...%nUuuuhuuuhuhuuuuh....
 0x8967e8	0	Mas nunca pensei que a entrada estaria escondida desse jeito.
 0x896830	0	Eu tinha ouvido falar que havia uma grande cripta no cemitério%ndaqui...
+0x896878	0	Grrr, tá bom... é o único jeito. Vamos lá, vamos mostrar pra eles a nossa violência DE VERDADE!
+0x8968c8	0	Pelo menos vamos lutar com eles juntas, por favooooor!...
+0x8968fc	0	E-eu não chamaria um fantasma%nde vizinho!
+0x896924	0	Eu não lembro dissoooo! E Stellaaaa, eles são seus vizinhos, lute você com eles!
+0x896978	0	Eu... tô no comando de todos os outros monstros! Então vai, dá umas... espetadas sei lá!
+0x8969c8	0	É pra isso que você está aqui, lembra?! Você é a grande e forte caçadora de fantasmas!
+0x896a10	0	Por que eeeeu?
+0x896a1c	0	D-droga, Arche! Pare eles com a sua violência, como você sempre faz!
+0x896a60	0	P-por que vocês duas estão surtando?%nÉ uma cripta, é claro que vai%nter fantasmas!
+0x896ab0	0	Buaaaaa, Mamããããe!..
+0x896ac8	0	Tem fantasmas de veldade!...
+0x896ae4	0	AAAHÉOFANTASMA!
+0x896af8	0	T-talvez seja mesmo um fantasma...
+0x896b18	0	Então de onde vem esse barulho estranho?...
+0x896b44	0	Mas isso quer dizer que não tem ninguém aqui embaixo, né?
+0x896b70	0	Palece que o al aqui está palado faz muito tempo.
+0x896bb0	0	Eles são meio assustadores...
+0x896bc8	0	Então essas são as Catacumbas%nde Chartreux...
+0x896bf4	0	Boa soLte, pessoal!
+0x896c0c	0	É-é... tô com medo, mas a gente%ntem que derrotar ele!
+0x896c3c	0	Arche, deve ser isso! A%norigem do barulho!
+0x896c70	0	E eu que já tava me acostumando%ncom os normaaaais!...
+0x896ca4	0	E é enooooolme!
+0x896cb8	0	Mais um!
+0x896cc8	0	Aaaaah!
+0x896cd0	0	V-vamos só pegar o relógio e%nir embora, tá?
+0x896cfc	0	N-não diga isso!
+0x896d10	0	Então aquele fantasma grandão roubou alguma coisa da sua família, Stella?
+0x896d60	0	Minha nossa... este relógio pertencia à minha família!
+0x896d90	0	M-A-Y-B... E... R...
+0x896da8	0	Espere, tem uma gravação na tampa. Parece um nome...
+0x896de8	0	É um... relógio de bolso. Que%nestranho.
+0x896e10	0	Deixe-me ver isso.
+0x896e24	0	Arche, olha. Aquele fantasma%ngrandão deixou cair alguma coisa.
+0x896e54	0	Ei, isso é!...
+0x896e68	0	Ufa, essa é a Arche que a gente conhece!
+0x896e88	0	Certo! Já viemos até aqui e não vamos embora até descobrir o que está acontecendo!
+0x896edc	0	D-de qualquer jeito... precisamos continuar.
+0x896f04	0	Talvez tenha um fantasma AINDA MAIOR%nmais pla flente...
+0x896f3c	0	E... é impressão minha,%nou o som está... diferente aqui embaixo?...
+0x896f88	0	Então aquele fantasma não era a origem%ndo barulho? Mas então, o quê?...
+0x896fcc	0	Mas... que estranho. A gente%nderrotou MESMO todos os fantasmas...
+0x89700c	0	Nãããão! É o barulho de novo!
+0x89702c	0	Uuuuuuh-uuuuuuh...%nUuuuuuuu-ah-uuuuuuh...
+0x897058	0	Felizmente, sim.
+0x89706c	0	Conseguimos, conseguimos! Agora não%nvamos mais ter que ouvir aquele barulho assustador!
+0x8970b8	0	A gente... conseguiu mesmo derrotar%naquilo. Ufa...
+0x8970e8	0	É bem ali na frente. Vamos!
+0x897108	0	Espera, é mesmo, parece... natural. Como uma pessoa.
+0x89713c	0	Está bem perto agora. E... será que%nmeus ouvidos são de madeira? Eu SÓ POSSO%nestar ouvindo errado...
+0x897198	0	Lá está o barulho de novo!
+0x8971b4	0	Uuuuuuh-huuuuuuuh...%nUu-hu-huuuuuuuuh...
+0x8971e0	0	Adeus...
+0x8971ec	0	Pode deixar. Se cuida, Alex!
+0x897208	0	Tomem cuidado no caminho de volta, meninas.
+0x89722c	0	Vamos voltar para a mansão, que tal?
+0x897254	0	Hihi, obrigada, Alex!
+0x897268	0	Eu não preciso mais dela, então, por favor,%nfique com ela.
+0x89729c	0	Não sei do que ela é, mas%ndeve ter pertencido aos bandidos que%nse escondiam nestas catacumbas.
+0x89730c	0	Eu a encontrei na minha primeira aventura aqui embaixo, há muito tempo.
+0x897348	0	Ah, na verdade! Tome, aceite isto como agradecimento.
+0x897374	0	Eu... acho que sim...
+0x897388	0	Bom, é, missão...%ncumprida?...
+0x8973b0	0	Entendo. Muito obrigado, mocinha!
+0x8973d0	0	Pode ficar com ele, desde que prometa cantar só durante o dia.
+0x897418	0	Sim. E é de ótima qualidade,%ntambém, então não vai quebrar.
+0x897450	0	Isto é um... relógio de bolso? É antigo, mas ainda funciona.
+0x89748c	0	Stella deu o relógio de bolso para o Alex.
+0x8974b0	0	Hmmmmmpf. Tá bom. Tome, eu peguei%nisto agora há pouco. Pode ficar.
+0x8974f8	0	Então é por isso que de repente%ncomeçamos a ouvir a voz à noite,%nentão...
+0x897544	0	Imagino que não dê pra saber que horas são, morando num lugar%ncomo este...
+0x897590	0	Mas hoje em dia eu tenho que adivinhar se é dia ou noite.
+0x8975d4	0	Para falar a verdade, o relógio que eu usava%nhá muito tempo quebrou há pouco. Eu só cantava ao meio-dia.
+0x89763c	0	Ah, me desculpe.
+0x89764c	0	e mesmo sabendo que é só você cantando desafinado, não tem como eu dormir com isso!
+0x8976a4	0	Para começar, eu fico ouvindo você cantar à noite,
+0x8976d8	0	Só pode ser brincadeira.
+0x8976f0	0	HÃ?!
+0x8976f8	0	Obrigado, Arche, mas... eu estou confortável aqui embaixo, sério. Acho que vou viver o resto dos meus dias aqui.
+0x897768	0	Quer voltar pra cidade com a gente?
+0x897794	0	Ah, Alex! A gente acabou com o fantasma grandão do andar de cima.
+0x8977d0	0	Prazer em conhecer vocês! Ah, há quantos anos%neu não falo com outro ser humano...
+0x897834	0	Eu sou a Arche, e essas são a Sana, a Stella e a Chiffon.
+0x897868	0	Ah, quase me esqueci. Meu nome é Alex. Quem%nsão vocês três?
+0x8978a4	0	Na verdade, é mais agradável do que parece. No mínimo, é bem calmo e silencioso.
+0x8978f8	0	Que tipo de coragem... ou pura distração... é preciso%npara morar num lugar como ESTE?...
+0x897958	0	Por isso, não tive escolha a não ser fazer meu lar aqui embaixo, do jeito que deu.
+0x8979a0	0	Depois de um tempo, aquele Fantasma Mestre se instalou%nno andar acima de mim, e eu não consegui%npassar por ele.
+0x897a04	0	Mas eu me separei do meu grupo%ne fiquei completamente perdido.
+0x897a48	0	Eu era aventureiro, sabe. Meus companheiros e eu viemos aqui em busca de um tesouro deixado por um bando de ladrões.
+0x897ac4	0	Por que diabos você...
+0x897ae0	0	Sim, isso mesmo.
+0x897af4	0	Espera aí! Então o senhor MORA%naqui embaixo, moço?!
+0x897b24	0	Eu pratico canto sempre que não tenho nada melhor pra fazer.
+0x897b60	0	O que eu - ah, bem, praticando meu%ncanto, como podem ver. Não há muito mais o que fazer aqui embaixo.
+0x897bc8	0	Essa fala é nossa! O que o senhor está fazendo aqui embaixo, moço?
+0x897c00	0	Hm? Quem são vocês três?!
+0x897c18	0	Ele é meio desafinado...
+0x897c30	0	... E não ajuda nada o fato de que o canto dele%né horrível.
+0x897c7c	0	A voz dele deve ter ecoado nas paredes, e é por isso que soava tão estranha lá na superfície.
+0x897cdc	0	Então o barulho estranho que ouvimos deve%nser esse homem cantando!
+0x897d18	0	Meu amor é profuuuundo e escuuuuro~%ncomo uma masmooooorraaaaa...
+0x897d58	0	Uuuuuh-huuuuh, sou um aventureiro solitário~%nMeu coração é frio e solitááááário...
+0x897da8	0	É, vamos!
+0x897db8	0	Enfim, é melhor a gente ir pra casa também.
+0x897de8	0	Vou ser sincera: não esperem muito. Pedras Elementais seladas já são raras por si só.
+0x897e44	0	Sério?! Com você ajudando, Stella,%na gente vai descobrir com certeza!
+0x897e88	0	Podemos não saber agora, mas vou pesquisar quando chegar em casa.
+0x897ec4	0	Mas o que mais a gente pode fazer?%nA placa não dizia...
+0x897efc	0	Deve haver mais uma etapa para quebrar o selo.
+0x897f34	0	Agora que você falou,%na minha Pedra Elemental não parece nada diferente.
+0x897f80	0	... Mas será que é tão simples%nquanto conseguir os três%nbrasões?...
+0x897fc8	0	Finalmente temos todos!
+0x897fe4	0	De qualquer jeito, pegamos o último brasão! Eba!
+0x89800c	0	Não acredito que perdemos para aqueles idiotas no último instante! Acho que vou morrer de vergonha!
+0x898074	0	Haha... hã...
+0x898084	0	Aquele moleque egoísta e mal-educado...
+0x8980a4	0	Ele provavelmente só cansou%nde juntar eles.
+0x8980d4	0	Ele deixou o brasão para%ntrás de propósito?...
+0x898100	0	Por que tá perguntando pra mim? Faz o que quiser.
+0x898120	0	E-ei, espera, Colm! Se você não vai levar o brasão, a gente pode ficar com ele?
+0x898164	0	Bom... o objetivo não era ficar%ncom ele. Vamos, vamos pra casa!
+0x8981a0	0	Hã? Depois de todo o trabalho%npra pegar?
+0x8981c8	0	Bom, não tem... por que%nlevar uma tralha dessas%npra casa, então vou deixar aqui!
+0x89821c	0	Ah, é...
+0x898228	0	Hã, a gente vai mesmo levar o brasão, Colm? Quer dizer...
+0x898264	0	Beleza! Ganhamos a corrida, então vamos pra casa, turma!
+0x898298	0	Que seja.
+0x8982a4	0	Mmpf...
+0x8982ac	0	Então agora você tem que parar de agir%ncomo se fosse muito melhor que eu! Entendeu?
+0x8982f8	0	Hehehe! Que tal essa! Você perdeu!
+0x89831c	0	Eu... suponho que sim.
+0x898334	0	Aaah... tá, vocês ganharam, é.
+0x898354	0	... Bom, a gente ganhou a corrida!%nPegamos o brasão primeiro, de forma justa!
+0x89839c	0	Nnngh!...
+0x8983a8	0	E eu que já tava começando%na achar você legal!
+0x8983e0	0	Por que NÃO me surpreende que foi%nassim que você aprendeu a controlar o vento com tanta precisão...
+0x89842c	0	Você é um tarado, Colm!
+0x898444	0	L-levantar saias?...
+0x89845c	0	Nnk! Chupil! Não precisa contar isso na frente das meninas!
+0x898488	0	Depois de tanto treinar%nlevantando saias, você%nconsegue fazer qualquer coisa!
+0x8984d0	0	Isso foi incrível, Colm!
+0x8984e8	0	Hehe! Quando eu fico sério, eu%nconsigo fazer qualquer coisa.
+0x89851c	0	É! Você é muito bom, Colm.
+0x89853c	0	Isso foi... um controle elemental realmente impressionante.%nEstou... chocada.
+0x89858c	0	É, foi muito bom de veldade!
+0x8985a8	0	Isso foi DEMAIS, Colm!
+0x8985c0	0	E aí? Sou ou não sou demais, hein?
+0x8985e0	0	Você moveu com o vento!
+0x8985fc	0	DOMÍNIO DO VENTO!
+0x89860c	0	Venha, redemoinho!
+0x898620	0	Só olha!
+0x89862c	0	Isso vai ser moleza.
+0x898640	0	Como assim, 'só isso'?
+0x898660	0	O quê? É só por isso que vocês%nestão tristes?
+0x898688	0	É, a gente achou, mas não tem%ncomo chegar até ele...
+0x8986c0	0	Mas aquela plataforma está a uns bons seis metros de altura, e não vejo%nnenhuma escada nem nada...
+0x898718	0	Ei, é mesmo, lá está ele!
+0x898730	0	Bom, a gente achou o brasão, mas...
+0x898754	0	Tem... algum problema, gente?%nVocês parecem meio pra baixo.
+0x898794	0	... Hmpf.
+0x8987a0	0	Hã... é...
+0x8987b0	0	Argh, aquele quebra-cabeça idiota! Se%nnão fosse por ele, a gente tinha ganhado deles com folga!
+0x898810	0	Eles devem ter passado pela gente quando ficamos presas na porta da marca de estrela...
+0x898858	0	Como é que vocês passaram na nossa frente?!
+0x89887c	0	Ah, oi, meninas.
+0x89888c	0	Mas o quê! Como vocês...
+0x8988a8	0	Bom... acho que a gente não tem%nmuita escolha...
+0x8988dc	0	Aaah, e depois de subir todo%no caminho até aqui...
+0x898910	0	Vamos descer de volta, por enquanto.
+0x898930	0	Talvez a gente consiga uma corda%nou uma escada ou algo assim%nem Barness.
+0x898978	0	Então não tem jeito mesmo. A gente%nvolta.
+0x8989a4	0	Mas então, o que mais a gente pode fazer?...
+0x8989c8	0	Pelo que sabemos, os brasões provavelmente perturbam o poder%nelemental do vento. Então...
+0x898a14	0	Mas por que isso estaria%nacontecendo?...
+0x898a40	0	Você é mesmo completamente inútil!
+0x898a64	0	Ah... pensando bem,%nvocê nunca chegou perto dos outros brasões.
+0x898ab0	0	Se eu tentasse pegal, ia acabal dormindo lá em cima.
+0x898ae8	0	Sempre que eu toco num brasão, fico com muito sono.
+0x898b18	0	Desculpa... acho que não consigo.
+0x898b3c	0	Já sei! Chiffon, você voa,%nvai lá pegar.
+0x898b6c	0	Como a gente vai pegar%nse está lá em cima?...
+0x898ba4	0	Mas a plataforma é meio alta,%nné...
+0x898bd0	0	É ele!
+0x898bd8	0	Olha! O último Brasão do Vento!
+0x898bfc	0	Vamos... vamos lá!
+0x898c10	0	Arche, mire na cabeça!%nCostuma ser o ponto fraco de%numa criatura assim!
+0x898c60	0	... Não que a gente tenha tempo pra isso! Defendam-se!
+0x898c98	0	Eu já disse, não é um dragão...%ne desde quando você é%numa 'matadora de dragões'?!
+0x898ce8	0	Muito bem! A Matadora de Dragões Arche vai sair vitoriosa!
+0x898d20	0	Cuidado! Isso não é como nada que já enfrentamos antes!
+0x898d60	0	Ahhh...
+0x898d68	0	Bom, ele ESTÁ olhando pra gente do jeito que um cachorro olha pra um bife...
+0x898dac	0	Hã. Por que eu tô com a sensação de que ele vai atacar a gente?
+0x898de0	0	Nunca pensei que um monstro assim viveria tão perto de uma%ncidade...
+0x898e28	0	UMA WYVERN?!
+0x898e34	0	Olhe bem. É um predador réptil voador de duas patas... uma wyvern!
+0x898e7c	0	S-sua boba! Não teria um dragão aqui!
+0x898eac	0	Aquilo é um d-dragão?!
+0x898ec4	0	É-é enolme!...
+0x898ed8	0	Aquilo é!...
+0x898ee4	0	Hã... aquilo não é meio... grande?!...
+0x898f08	0	Tá vindo pra cá.
+0x898f20	0	Tá voando no céu... será que%né um pássaro?
+0x898f50	0	O que é aquilo, lá longe?
+0x898f70	0	Chiffon? O que foi?
+0x898f88	0	Eu sabia que eles iam empacar no meio do caminho.
+0x898fac	0	A gente passou eles no%ncaminho! Ganhamos deles!
+0x898fe0	0	Interessante, a Equipe Machão%nainda não chegou.
+0x89900c	0	Eu c-consigo ver bem daqui...%nEu, hã, tenho medo de altura...
+0x89904c	0	Sana, vem ver!
+0x899064	0	Oooh, olha, olha! A vista é%nincrível!
+0x89908c	0	Finalmente chegamos no topo%nda torre! Eba!
+0x8990bc	0	Enfim... o último brasão deve estar por perto. Vamos dar uma olhada.
+0x899104	0	mas eu tenho um destino maior do que ser o lanchinho da tarde%nde alguém.
+0x899150	0	Era a gente ou ele, e eu não%nsei vocês,
+0x899188	0	Vai ver o Seu Wyvern só estava%ncom muita fome...
+0x8991b8	0	Pra falar a verdade, sinto um pouco de pena dele.
+0x8991e4	0	O wyvern está imóvel.
+0x8991fc	0	Uiii, nunca imaginei ouvir uma coisa DESSAS!
+0x899234	0	Bem, isso certamente abala minha teoria de que 'o Colm tem uma queda pela%nArche'... hmm-hmm-hmm!...
+0x899294	0	AAAAH! CHUPIL! A gente jurou%nnunca, jamais falar disso de novo, lembra?!
+0x8992e4	0	O Colm acabou me abraçando depois%nque ficou confuso com o canto das harpias...
+0x899330	0	Tinha harpias grandes no andar anterior também, não só pequenas!
+0x899378	0	Aaaah, que frustrante!
+0x899398	0	Hã, e-ei, eu não quis dizer%nisso... não fica triste...
+0x8993d8	0	Será que é porque estou atrasando todo mundo?...
+0x899404	0	deixaram passar algo importante e empacaram feito bobos.
+0x89943c	0	Hmmm... impressionante. Claro, o final da piada vai ser que vocês foram%nrápido demais,
+0x899488	0	Ha-haaa! Chegamos primeiro DE NOVO!%nVocês tão com pedra na saia%nou o quê?
+0x8994dc	0	Dizem que o 'Brinco Abençoado' dificulta que coisas como o canto das harpias confundam você.
+0x899540	0	de uma torre pra resolver%num enigma, mas será que dá pra, bem... sobreviver?...
+0x899594	0	Sabe, pensando bem... eu me lembro de uma história em que o protagonista pulava do alto
+0x8995f0	0	Ah, é, a pedra do Colm é toda%nventosa!
+0x899618	0	O Colm usou a pedra dele pra apagar as tochas.
+0x899648	0	Como o seu grupo passou pela%nporta, Chupil?
+0x899678	0	A gente só pediu pra Sana apagar as%ntochas, foi fácil!
+0x8996ac	0	... mas uma porta que abre quando as tochas apagam é meio maldade!
+0x8996f0	0	Já ouvi falar de portas que abrem quando você acende um montão de tochas...
+0x899730	0	Ah, cala a boca! A gente vai passar vocês a partir de agora!
+0x899768	0	Vocês são rápidos!
+0x89977c	0	Chegar primeiro não é tudo, meu caro palhaço!
+0x8997ac	0	Hmpf. Deixa eu adivinhar: vocês só fugiram de todos os monstros%ne não pegaram tesouro nenhum, certo?
+0x899810	0	Quê, suas lerdas só chegaram%nagora? A gente tá aqui faz%num tempão!
+0x899858	0	É. Acho que ninguém sabe a%nidade que elas têm de verdade.%nFico pensando...
+0x8998a4	0	Elas são meio grandes pra serem filhotes...
+0x8998c8	0	Os monstros lá embaixo, com asas, se chamam harpias. Dizem que aquelas são as jovens.
+0x899928	0	Vamos depressa!
+0x899938	0	Eu me RECUSO a perder para gente%ndaquela laia! Vamos!
+0x89996c	0	O Colm... já está longe demais pra te ouvir.
+0x89999c	0	Ora, espere aí! NÓS é que abrimos a porta, para começo%nde conversa!
+0x8999e4	0	E-esperem por miiiim!
+0x8999f8	0	Espera, Colm!... *suspiro*... isso vai acabar muito bem...
+0x899a30	0	Vamos, pessoal! Não podemos perder%npra um bando de meninas!
+0x899a60	0	Por mim, tudo bem!
+0x899a70	0	Então tá, vamos apostar corrida pra ver quem chega primeiro no brasão!
+0x899ab4	0	Até parece!
+0x899ac8	0	A gente vai achar o último brasão antes de vocês!
+0x899af8	0	Ha-ha! Você ouviu bem! E, ei, adivinha só?
+0x899b24	0	SRTA. BRUTAMONTES?!
+0x899b38	0	Além disso, quem é que ia ter uma queda pela Srta. Brutamontes aqui...
+0x899b78	0	caverna atrás da escola é verdade%nou não!
+0x899ba0	0	Eu... só quero descobrir%nse a história do vovô sobre a pedra elemental na
+0x899bec	0	Hã, bom...
+0x899bf8	0	Então por que, diga-me, você está tão obcecado em nos ajudar?
+0x899c34	0	N... DE JEITO NENHUM!
+0x899c44	0	É por isso que você está se esforçando tanto, tanto, pra se exibir.
+0x899c8c	0	Você tem a maior queda pela%nArche... da história das quedas.
+0x899cd0	0	E-entendeu o quê?
+0x899ce0	0	Agoooora eu entendi...
+0x899cf4	0	A-haaaaaa.
+0x899d00	0	Hmmmmmmm...
+0x899d0c	0	Eu n-não tô sendo teimoso nem%nnada. Eu só... prometi,%nsacou?
+0x899d50	0	então ele tá ficando meio teimoso.
+0x899d74	0	Hã, o Colm tá ajudando a gente a pegar os brasões, mais ou menos, mas eu peguei o primeiro e o segundo,
+0x899dcc	0	Que é isso - ME CONTA!
+0x899de0	0	He-he! Isso é segredo meu!
+0x899e04	0	O brasão? E por que cargas d'água VOCÊ quer ele?
+0x899e2c	0	Ué, dããããã! A gente veio atrás do Brasão do Vento!
+0x899e64	0	Eu é que pergunto. Por que cargas%nd'água VOCÊ está aqui, Sr. Palhaço da Turma?
+0x899eb0	0	Isso não é da sua conta, de forma alguma!
+0x899edc	0	Por que a Stella tá com vocês de novo? Desde quando vocês são amigas?
+0x899f1c	0	... Hã? A Stella também tá aqui.
+0x899f38	0	A gente meio que achou sem querer, na verdade...
+0x899f64	0	Em Chartreux? Como sabiam que era pra procurar lá?
+0x899f94	0	É! A gente achou a chave ontem, numa aventura nas criptas debaixo de Chartreux!
+0x899fec	0	Vimos que a Torre do Cata-vento estava destrancada, então entramos - %nachei que seriam vocês!
+0x89a048	0	Ah, oi, Colm.
+0x89a058	0	E aí, Arche!
+0x89a064	0	Ah, é, bem lembrado...
+0x89a084	0	A esta altura, qualquer coisa pode ter feito ninho aqui.
+0x89a0c0	0	A torre está abandonada há sabe-se lá quanto tempo.
+0x89a0f4	0	Claro, vamos só passear torre%nacima, vai ser moleza.
+0x89a134	0	A vista lá de cima deve ser muito legal! Vamos subir!
+0x89a174	0	Nossa, isso é muito antigo...
+0x89a190	0	Mas com certeza ela existe há%npelo menos trezentos anos. Os registros mostram isso.
+0x89a1e8	0	Mas ninguém sabe ao certo quando ela foi construída.
+0x89a21c	0	O povo de Barness usou esta%ntorre por gerações para observar os ventos e o tempo.
+0x89a274	0	Incrível... construir uma torre tão alta deve ter sido muito difícil!
+0x89a2b4	0	É! Faz uma eternidade que eu tô doida pra ver o lado de dentro! Ou, bom, uns%ndias, pelo menos.
+0x89a304	0	Chegamos finalmente na Tolle do Cata-vento!
+0x89a328	0	Sério? Bom, tá bom...
+0x89a340	0	Hã, desculpa...
+0x89a350	0	Ah, é. Desculpa, Stella!
+0x89a36c	0	Francamente, vocês duas, não temos tempo a perder aqui. Vamos!
+0x89a3ac	0	Aaah, obrigada, Sana!
+0x89a3c0	0	Toma, Arche, eu colho pra você!
+0x89a3e4	0	Tem sim! É da mesma cor,%nmas a flor tem outro formato.
+0x89a428	0	Arche, olha. Tem outro tipo de flor aqui.
+0x89a464	0	Ah, olha!
+0x89a470	0	Elas tão muito concentladas%nnas flores.
+0x89a498	0	... E nem estão escutando.
+0x89a4bc	0	Isso não é hora de%nficar brincando, vocês duas!
+0x89a4f8	0	Então eu faço um colar pra você!
+0x89a518	0	É! Eu faço uma coroa de flores pra você, Sana!
+0x89a548	0	Ei, Arche, vamos trançar umas coisas com as flores!
+0x89a580	0	... São só flores cleitcailin.%nFrancamente...
+0x89a5b4	0	Uaaau, tem mesmo! Um monte de flores brancas lindas!
+0x89a5e4	0	Arche, vem cá ver! Tem um monte de flores lindas!
+0x89a620	0	Nossa!
+0x89a62c	0	Se você me trouxer algo%ndelicioso, em troca eu lhe conto um segredo interessante.
+0x89a684	0	Mais importante, temos um novo caminho para explorar. Vamos?
+0x89a6c0	0	É! Queria poder viajar pelo mundo inteiro...
+0x89a6f0	0	Acho que as pessoas têm vários motivos diferentes pra viajar. Dá até pra viajar por comida!
+0x89a74c	0	Eu diria mais 'bizarro' do que 'engraçado'...
+0x89a774	0	O Senhor Grande Gourmet era%num cara engraçado.
+0x89a7a4	0	Pois bem, preciso continuar minha jornada em busca das maiores comidas do mundo. Adeus!
+0x89a800	0	Eu é que devo agradecer.%nFiquei encantado em provar um pão tão maravilhoso.
+0x89a858	0	Obrigada, Senhor Grande Gourmet!
+0x89a878	0	Eu nunca teria visto se%nninguém tivesse me mostrado.
+0x89a8b8	0	Ah, legal! É difícil de ver,%nmas tem mesmo um caminho!
+0x89a8ec	0	Pra falar a verdade, achei há pouco um%ncaminho escondido. Bem entre estas rochas.
+0x89a938	0	Só pra lembrar: a gente TEM armas.
+0x89a95c	0	Um segredo interessante? Como assim?
+0x89a980	0	Você aquece meu coração e meu estômago, menina!%nEm troca, deixe-me mostrar um segredinho interessante.
+0x89a9dc	0	Tem bastante, pode pegar um%npouco também, Senhor Grande Gourmet.
+0x89aa1c	0	Esta casca macia e fofinha! Este aroma inebriante! Este é mesmo o pão supremo!
+0x89aa70	0	... Céus misericordiosos!...
+0x89aa8c	0	'Pão Supremo', você diz? Deixe-me provar%nisso, menina...
+0x89aac4	0	Ei, que tal este pão? O%npadeiro chamou de Pão Supremo!
+0x89ab08	0	Se souber de algo delicioso, por favor, me avise.
+0x89ab40	0	O Grande Gourmet?...
+0x89ab58	0	Eu viajo pelo mundo em busca do delicioso! Eu sou...%no Grande Gourmet!
+0x89aba4	0	Ele É o ex-diretor... o que você esperava?
+0x89abd8	0	Sim, senhor...
+0x89abe4	0	Entendido?
+0x89abf0	0	e voltem para a escola e para as aulas da Sophia.
+0x89ac1c	0	Falando nisso, ainda é horário de aula. Esqueçam por ora as divagações deste velho,
+0x89ac74	0	Grandes aventuras podem esperar até vocês saberem se cuidar.
+0x89acb8	0	Até onde sei, vocês ainda são alunas da Minasa-Ratis. Creio que têm outra coisa a fazer, não?
+0x89ad20	0	Há mais uma coisa.
+0x89ad3c	0	Tá bom! A gente não vai esquecer!
+0x89ad54	0	Não se esqueçam disso... nem do poder do que vocês têm em mãos.
+0x89ad8c	0	Dependendo de como forem usadas, elas podem mudar a forma do mundo.
+0x89add8	0	As Quatro Grandes Pedras têm, cada uma, um tremendo poder mágico... alguns diriam horrendo.
+0x89ae30	0	Não vou impedir vocês de tentarem. Mas direi uma coisa.
+0x89ae7c	0	Embora... se fosse possível...
+0x89aea0	0	Não sejam IDIOTAS. Como se fossem tão fáceis de achar!
+0x89aed4	0	É! Seria incrível se a gente achasse todas!
+0x89af0c	0	vamos ver se a gente acha as outras duas Grandes Pedras Sei-lá-o-quê!
+0x89af4c	0	Ah! Ei, Sana, Stella, já que a gente conseguiu duas,
+0x89af84	0	... Eu, hã, não entendi nada do que vocês tão falando, mas parece muito incrível...
+0x89afe0	0	Isso é nada menos que um milagre. Então era isto o que%nestava escrito nas estrelas...
+0x89b034	0	aparecessem diante de mim, mas também se unissem num mesmo propósito...
+0x89b070	0	No entanto... pensar que eu veria o dia em que não só uma,%nmas duas dessas pedras não apenas
+0x89b0d0	0	há eras... pouco resta. É surpreendente que você%ntenha ouvido falar de Silpheed.
+0x89b11c	0	Não me surpreende que não saiba. Quase todas as referências às quatro foram relegadas à escuridão
+0x89b180	0	As Quatro... o quê?!...
+0x89b198	0	Sim. Silpheed e Alagorn são, juntas, duas das Quatro Grandes Pedras criadas pela própria Minasa-Ratis.
+0x89b1fc	0	Então esta... esta pedra...
+0x89b218	0	invocador forte o bastante para prender os reis num%ncontrato em toda a nossa longa história foi Minasa-Ratis.
+0x89b288	0	O meio de colocar o poder dos Reis Elementais em%npedras se perdeu há muito, muito tempo. Além disso, o único
+0x89b2f0	0	Ho-ho-ho! Você deve estar enganada, criança.
+0x89b318	0	Além disso, foi a empresa do meu pai que fez esta pedra...
+0x89b348	0	com o poder de Algorn...
+0x89b360	0	Minha mãe nunca me disse nada sobre a Royal Scarlet ser a única pedra
+0x89b3a8	0	O Q-QUÊ?! Não, isso é ridículo...%nimpossível... v-você está mentindo...
+0x89b3f0	0	Assim como Silpheed, só uma pedra tem tal poder...%ne você a usa agora, Stella.
+0x89b444	0	Essa pedra já foi conhecida como Alagorn.
+0x89b46c	0	Royal Scarlet, que tem o poder do Rei do Fogo, Algorn...
+0x89b4b0	0	O q...%no que é... não, isso é...
+0x89b4d4	0	Na verdade, Silpheed é irmã da própria pedra que você usa no bracelete.
+0x89b520	0	E-eu sabia...
+0x89b530	0	A única pedra do mundo que tem o poder do%nRei do Vento, Eolia.
+0x89b584	0	Não tenho dúvida nenhuma de que é.
+0x89b5b0	0	Essa é... a Silpheed?...
+0x89b5c8	0	Essa pedra é uma das lendárias pedras que a própria Minasa-Ratis criou?
+0x89b610	0	... Diretor, preciso perguntar mais uma coisa.
+0x89b640	0	Eu quelo voar com a Arche agola mesmo!
+0x89b668	0	Que incrível!
+0x89b678	0	Peraí. Então. Eu posso voar?! EU POSSO VOAR!!!
+0x89b69c	0	Conforme quem usa ganha experiência, imagino que também vá descobrir novas habilidades.
+0x89b6ec	0	Por exemplo, a habilidade de se impulsionar mais alto%nao pular.
+0x89b734	0	Com um elemental do vento, eu esperaria pelo menos alguma mobilidade aérea.
+0x89b77c	0	Por isso, as habilidades exatas dependem de quem usa.
+0x89b7c0	0	Como eu disse, o poder do elemental é infundido em quem conjura.
+0x89b804	0	Diretor Towarin, o que exatamente o Unísono faz por%nquem usa?
+0x89b844	0	Nnrnrnrnrhghgh...
+0x89b858	0	Hã? O que eu poderia estar esquecendo?
+0x89b87c	0	Você está esquecendo de algo importante.
+0x89b8a4	0	Arche, pare de agir feito criança com brinquedo novo.
+0x89b8d4	0	Nossa, entendi! Unísono, que demais!
+0x89b8fc	0	Naturalmente, você precisará de poder mágico para usar o Unísono, então tenha cuidado.
+0x89b940	0	Como qualquer outra magia, segure @@X para ativá-la e solte quando o círculo estiver completo.
+0x89b9a8	0	E então é só gritar "Unísono"!
+0x89b9cc	0	Deve ser bem simples. Feche os olhos e estenda seu coração até a Chiffon.
+0x89ba1c	0	Como eu faço o Unísono, Sr. Towarin?
+0x89ba40	0	D-deixando de lado toda essa parte complicada...
+0x89ba70	0	... Mas por que ela...
+0x89ba8c	0	e isto é magia em seu nível mais profundo, Stella Mayberk. Faria bem em aprender com este exemplo.
+0x89baf4	0	Esta é a genialidade do criador da pedra em ação...
+0x89bb2c	0	se o elemental não desejar se unir, a própria%npedra não vale nada.
+0x89bb78	0	Em outras palavras, se o usuário e o elemental forem incapazes de unir seus pensamentos,
+0x89bbd0	0	mas sim agir como catalisador para fundir seu elemental, Chiffon, e seu usuário.
+0x89bc20	0	O propósito da pedra não é guardar nenhum poder útil dentro de si...
+0x89bc68	0	Esta pedra é fundamentalmente diferente de qualquer outra.
+0x89bca0	0	Isso não quer dizer que quem conjura usa o poder%ndo próprio elemental, e não o da pedra?
+0x89bcfc	0	Mas isso é estranho...
+0x89bd18	0	Isso é inclível, Arche!
+0x89bd34	0	Nossaaa, a única espadachim mágica do mundo,%nisso é muito, muito legal!
+0x89bd7c	0	Só pode existir uma pessoa assim no mundo... e é quem possuir esta pedra.
+0x89bdd4	0	e, assim, seria capaz de incríveis proezas de força.
+0x89be10	0	Exatamente. E um espadachim seria capaz de usar magia nesse estado...
+0x89be5c	0	Elemental e conjurador num só corpo?...
+0x89be84	0	e concede um poder imenso ao usuário.
+0x89beac	0	Unísono é uma magia incrivelmente poderosa que funde um elemental e quem conjura em um só corpo,
+0x89bf0c	0	Não precisa ter vergonha. Ainda mais agora.
+0x89bf40	0	S-sim, Sr. Towarin... Eu vou praticar, prometo...
+0x89bf78	0	Arche. Você parece ter mais talento com a espada%ndo que com magia.
+0x89bfc0	0	A única do mundo? Como assim?...
+0x89bfe4	0	É, por sua vez, a única pedra em todo o mundo%ncom tal poder.
+0x89c02c	0	Exatamente. É o único poder que a pedra possui.
+0x89c05c	0	Hã? "Unísono"?...
+0x89c070	0	Ela possui o poder... do Unísono.
+0x89c094	0	O senhor sabe, Sr. Towarin? O que esta Pedra Elemental faz?
+0x89c0d4	0	Hum... Eu não sinto nada, não.
+0x89c0f8	0	Você nem consegue senti-lo, não é?%nO imenso poder que a pedra possui...
+0x89c140	0	... Mas não parece tão diferente assim.
+0x89c178	0	Ebaaaaa! Conseguimos, conseguimos!
+0x89c198	0	E assim, o selo está rompido.
+0x89c1b8	0	O pote brilhou com uma luz%nmisteriosa, que foi sumindo aos poucos.
+0x89c1f4	0	Towarin colocou a pedra e os três brasões no Pote do Refinamento.
+0x89c23c	0	Comecemos, então.
+0x89c250	0	Muito bem. Só as estrelas sabem que destino isto lhe trará...
+0x89c294	0	Sr. Towarin, vamos quebrar o selo!
+0x89c2b8	0	Eu também! E a memória da Chiffon pode voltar!
+0x89c2e8	0	Vocês concordam, né?
+0x89c300	0	Quer dizer, mesmo que seja%nperigoso, foi por isso que a gente se aventurou esse tempo todo.
+0x89c358	0	... Eu quero quebrar o selo!
+0x89c374	0	Ligada... hã? Eu que tenho que decidir?...
+0x89c39c	0	A pedra está ligada a você,%nArche, e é você quem deve decidir se vai quebrar o selo.
+0x89c3f0	0	Essa decisão não cabe a mim.
+0x89c410	0	Tá... então a gente já pode quebrar%no selo?
+0x89c438	0	Pelo que pude apurar, o poder da sua pedra foi dividido entre os brasões.
+0x89c490	0	transferi-la ou refiná-la em outros objetos.
+0x89c4bc	0	O Pote do Refinamento foi feito especialmente para extrair a magia dos itens e
+0x89c50c	0	Pote do Refinamento, que vocês acabaram de consertar. %n(Depois de quebrá-lo... *resmungo*)
+0x89c55c	0	Como vocês têm os três brasões, basta colocá-los junto com a pedra no meu
+0x89c5b0	0	Não se preocupem. O processo deve ser bem simples, na verdade.
+0x89c5ec	0	O que precisamos fazer? Não encontrei nenhuma informação sobre Pedras Elementais seladas...
+0x89c644	0	Uma coisa de cada vez, Arche. Primeiro, vamos quebrar o selo desta pedra.
+0x89c680	0	Bom, isso é ótimo, mas...
+0x89c69c	0	Oh, não tema quanto a isso. Esta é, sem dúvida, uma Pedra Elemental.
+0x89c6e8	0	Ela não é amaldiçoada nem nada, né?
+0x89c70c	0	Ei, Sr. Towarin, isso é mesmo%numa Pedra Elemental, né?
+0x89c748	0	Mas esta, desta eu só ouvi%nfalar... em lendas.
+0x89c77c	0	É fascinante. Já vi mais Pedras Elementais na vida do que consigo contar...
+0x89c7d0	0	Não tenho dúvida de que você conseguirá dominar todo o poder da pedra.
+0x89c818	0	Ho-ho! Muito bem! Acho que isto vai correr muito bem.
+0x89c850	0	Fuu! É, a gente é a melhol dupla do mundo!
+0x89c874	0	... Não entendi, mas%na Chiffon e eu somos%nmuito amigas!
+0x89c8b8	0	Os corações delas devem estar...
+0x89c8d0	0	Exatamente. Os corações do elemental e de quem empunha a pedra%ndevem estar muito próximos.
+0x89c924	0	A chave?
+0x89c930	0	A Chiffon é a chave para extrair%no poder da pedra.
+0x89c968	0	O que a Chiffon e a pedra%ntêm a ver uma com a outra?
+0x89c9a4	0	Hã? Como assim, Sr. Towarin?
+0x89c9c8	0	Hmmmm. Então é por isso que você está%ncom a criança elemental do vento...
+0x89ca08	0	Então viemos perguntar pro senhor, Sr. Towarin!
+0x89ca2c	0	mas a gente não sabe como usar...
+0x89ca4c	0	Aí a gente pegou os três Brasões do Vento que a tábua de pedra que achamos junto com a pedra mencionava,
+0x89caac	0	mas tem algum tipo de selo%nna pedra, e eu não consigo usar.
+0x89caf0	0	Hum... Eu achei isso na caverna da montanha perto da escola...
+0x89cb34	0	Hmmmmmm...
+0x89cb40	0	Hmm?!
+0x89cb48	0	Hmm... hmm.
+0x89cb54	0	... Entendo...
+0x89cb64	0	Isto é...
+0x89cb70	0	Arche entregou a Pedra Elemental a Towarin.
+0x89cba0	0	É mesmo? Deixe-me ver.
+0x89cbb8	0	É sobre esta Pedra Elemental...
+0x89cbdc	0	Hum, Sr. Towarin, senhor? Viemos%nperguntar uma coisa pro senhor.
+0x89cc18	0	Fascinante. Faz muito tempo que não vejo um elemental manifestado.
+0x89cc64	0	Fuu! Eu sou a Chiffon, elemental do vento!
+0x89cc90	0	Hm? Você aí. É um elemental do vento, não é?
+0x89ccc8	0	A Profa. Sophia escreveu uma carta de apresentação, mas... acho que%nnão é necessária...
+0x89cd1c	0	S-sério, senhor?!
+0x89cd30	0	Eu... sou Towarin, o antigo diretor da Minasa-Ratis.
+0x89cd68	0	Espere, senhor, então o senhor deve ser...
+0x89cd88	0	O quê! Como...
+0x89cd98	0	... e você deve ser Stella Mayberk.
+0x89cdc0	0	Você é Sana Poanet...
+0x89cdd8	0	Hm! Não só você. Eu sei o%nnome de cada criança da Escola de Magia Minasa-Ratis.
+0x89ce2c	0	Hã? Moço, como o senhor sabe%no meu nome?
+0x89ce54	0	Pois bem, Arche Plumfield. O que a traz à minha torre hoje?
+0x89ce94	0	Sim, senhor!
+0x89ce9c	0	Sim, bem. Tenham mais cuidado%nda próxima vez, hein?
+0x89cecc	0	Minhas mais sinceras desculpas, senhor...
+0x89ceec	0	Desculpa mesmo, por favor não fique bravo com a gente...
+0x89cf1c	0	Peldão!
+0x89cf2c	0	Moço, desculpa mesmo por quebrar o seu pote...
+0x89cf5c	0	Ufa...
+0x89cf64	0	Longe de perfeito... mas pelo menos foi aprovado.
+0x89cf98	0	... Hmmmmm...
+0x89cfa8	0	A gente ainda não tem todas as coisas%npra consertar o pote...
+0x89cfd8	0	Quer começar a consertar o pote?%n(Recomendamos salvar na sala%nmais à frente antes.)
+0x89d038	0	Vamos começar!
+0x89d04c	0	Bom, se a gente trabalhar junto,%ntalvez a gente consiga!
+0x89d07c	0	Eu ajudo!
+0x89d088	0	Isso vai levar um tempo irritante, mas a gente tem que%nfazer.
+0x89d0d0	0	Mas são tantos%npedaços...
+0x89d0f8	0	Pronto, temos a cola e as%ncoisas, agora é só consertar.
+0x89d138	0	É. Precisamos achar algum%njeito de consertar o pote...
+0x89d170	0	O pote tá em um monte de%npedaços...
+0x89d1a0	0	O Sr. Towalin tá todo endemoniado de novo...
+0x89d1c4	0	S-sim, senhor!
+0x89d1d0	0	Raios, parem de perder tempo!%nMinha torre NÃO é parquinho!%nVoltem para a escola!
+0x89d220	0	O material de que vocês precisam deve%nestar por aqui em algum lugar! Agora, andem logo!
+0x89d26c	0	Bom, eu... acho que vamos consertar um pote.
+0x89d294	0	*Snif*... Buáááá...
+0x89d2ac	0	S-sim, senhor...
+0x89d2bc	0	Se entenderam, xô! Fora daqui!%nNão direi uma palavra até voltarem.
+0x89d304	0	Vasculhem a torre! Vocês vão achar um jeito de consertar esse pote!
+0x89d33c	0	Argh, seus diabinhos imbecis!
+0x89d360	0	M-mas não tem como consertar%nisso...
+0x89d388	0	O QUE MAIS EU QUERERIA DIZER?! Conversamos%nquando terminarem.
+0x89d3c0	0	O senhor quer dizer consertar o pote?!
+0x89d3d8	0	Se fazem tanta questão de falar comigo, primeiro consertem o que quebraram.
+0x89d418	0	Iiih!
+0x89d420	0	EU MANDEI CALAR A BOCA!
+0x89d430	0	Hum, moço, escuta. A gente veio%nfazer uma coisa muito importante,%nentão...
+0x89d47c	0	Não, é... só meio que é...%num pouquinho...
+0x89d4a8	0	O-o que a gente faz?! A culpa é toda sua!
+0x89d4d4	0	EU NÃO QUERO OUVIR!
+0x89d4f0	0	É que a gente-
+0x89d500	0	D-desculpa, moço. Esse pote%nera seu?
+0x89d52c	0	Vocês quebram o meu precioso pote e%nÉ ISSO que têm a dizer?!
+0x89d578	0	D-de onde ele saiu...
+0x89d594	0	Aaah!
+0x89d59c	0	O QUE PENSAM QUE ESTÃO FAZENDO?!
+0x89d5c0	0	SEUS TOLOS PATETAS!
+0x89d5d8	0	Tááá bom, a gente sai de fininho%ne...
+0x89d600	0	Queblou...
+0x89d60c	0	Ah. Ah, não...
+0x89d61c	0	Ih.
+0x89d620	0	Se continuarem assim, o pote vai queb-
+0x89d648	0	RRRRRGH!
+0x89d654	0	Nnnngh!
+0x89d65c	0	Parem as duas!
+0x89d678	0	Para VOCÊ, Stella!
+0x89d68c	0	Para VOCÊ de puxar e me deixa colocar de volta!
+0x89d6b8	0	Ei, para, Stella, você tá puxando!
+0x89d6dc	0	Eu disse que não! Não mexa nas%ncoisas dos outros! Solte isso!
+0x89d71c	0	Só estou dando uma olhada!
+0x89d734	0	Não, para com isso!
+0x89d744	0	Está tudo bem, só estou girando um pouquinho.
+0x89d770	0	Ei, para com isso. Não mexe sem permissão!
+0x89d7a4	0	Vou dar uma olhada!
+0x89d7bc	0	Ei, será que tem um desenho%natrás também?
+0x89d7e8	0	Um pote mágico... hã.
+0x89d7fc	0	Acho que este é um pote mágico.
+0x89d820	0	É, tem pedras preciosas e um desenho esquisito e tal. Que legal!
+0x89d860	0	É meio estranho, né?
+0x89d880	0	Olha, tem um tipo de pote aqui.
+0x89d8a8	0	Acho que... a gente mesmo vai ter que salvar a escola!
+0x89d8d8	0	Que diabos ele pode estar fazendo%nnuma hora dessas?!
+0x89d910	0	Hã? Parece que o Sr.%nTowarin não está...
+0x89d93c	0	Senão, vocês podem acabar se prendendo dentro do pote!
+0x89d978	0	E, se eu fosse vocês, deixaria as peças%num e três por último.
+0x89d9b8	0	Lembrem-se: dá pra empurrar as peças, mas não puxar. Cuidado ao empilhá-las!
+0x89da10	0	V-v-vamos sim...%n*snif*...
+0x89da2c	0	S-s-sim, senhor!
+0x89da38	0	ENTÃO VOLTEM AO TRABALHO!
+0x89da50	0	Se entenderam isso, VOLTEM AO TRABALHO!
+0x89da7c	0	Isso é muito plático!
+0x89da94	0	Se puxarem aquela alavanca, ela alinha os blocos, desde que estejam mais ou menos no lugar certo.
+0x89daf4	0	Hmpf. Se estiverem com dificuldade, usem aquela alavanca ali.
+0x89db30	0	Iiih!
+0x89db38	0	NÃO ME RESPONDA, SEU TOLO!
+0x89db58	0	N-não seja ridículo! Não tem%ncomo acertar EXATAMENTE!
+0x89db98	0	Organizem-nas com PRECISÃO de acordo com o desenho na parede. Não admitirei nem o menor erro!
+0x89dc00	0	RAIOS, ISSO NÃO CHEGA NEM PERTO!
+0x89dc24	0	Vejamos...
+0x89dc34	0	Consertaram o meu pote?
+0x89dc48	0	Se quebrar algum bloco com a arma, você pode reiniciar o quebra-cabeça.
+0x89dc94	0	Mova os nove blocos de forma%nque fiquem iguais ao desenho na parede atrás deles.
+0x89dcf0	0	Consertando o Pote Quebrado
+0x89dd08	0	Então, pra consertar o pote, precisamos de cola, Seiva de Poton e polidor Rozack?
+0x89dd48	0	E isso é... tudo. Que útil.
+0x89dd6c	0	Certo, então...
+0x89dd7c	0	Aqui, deixa eu ver isso.
+0x89dd94	0	Considerando que o título é literalmente o que precisamos, sim, talvez seja útil.
+0x89dde4	0	É, esse livro pode ajudar!
+0x89de08	0	O título é... 'Conserto de Potes Mágicos para Iniciantes - Comece em 5 Minutos!'
+0x89de54	0	Ei, e esse livro aqui?
+0x89de70	0	São todos tão difíceis de ler,%nnem consigo saber do que%neles falam...
+0x89deb8	0	Parece que esse não é o%nque a gente quer...
+0x89dee8	0	Não temos escolha. Vamos começar a procurar.
+0x89df14	0	Peraí, então a gente tem que olhar%nTODOS esses livros pra achar o certo?!
+0x89df5c	0	Não diga isso. Um desses livros pode muito bem explicar como consertar aquele pote quebrado.
+0x89dfb4	0	Aposto que não consigo ler%nnada aqui dentro!
+0x89dfdc	0	Mas os livros são todos glandes e glossos e palecem difíceis...
+0x89e018	0	Olha quantos livros!
+0x89e030	0	Isso parece uma biblioteca.
+0x89e04c	0	Seja como for. Por enquanto, precisamos de%num jeito de consertar o maldito pote dele.
+0x89e088	0	Mas quem É aquele velho, afinal? Será que ele...
+0x89e0b4	0	*Snif*... Eu fiquei com tanto medo...
+0x89e0d4	0	A cara dele tava tão velmelha, palecia um demônio!
+0x89e104	0	Aquele velho tava muito bravo.
+0x89e124	0	A gente pode, hã, torcer...
+0x89e138	0	Aaah... Espero que a aula de matemática%npelo menos já tenha acabado...
+0x89e168	0	Hã, sim?
+0x89e174	0	A gente precisa mesmo?
+0x89e18c	0	Agora que isso está resolvido, vamos voltar para a escola.
+0x89e1c0	0	Fuu! Vou fazel o possível pla lemblar!
+0x89e1e4	0	É! Você deve ir se%nlembrando das coisas aos poucos agora.
+0x89e220	0	Chiffon, você provavelmente%nnão vai lembrar de tudo logo depois que o selo for quebrado.
+0x89e274	0	Por que será que isso não me surpreende...
+0x89e290	0	... Isso pode sel veldade!...
+0x89e2ac	0	Já pensou que talvez você não tenha amnésia, mas simplesmente NÃO TENHA memórias?
+0x89e300	0	Desculpa... Eu ainda não consigo lemblar de nada...
+0x89e330	0	A gente quis dizer algo que você tinha esquecido até agora!
+0x89e360	0	Mas isso a gente já sabia!
+0x89e37c	0	Eu lembro... que meu nome%né Chiffon!
+0x89e3a4	0	Ooooh, o que é, o que é?!
+0x89e3c4	0	Ah, é! Eu lembro de uma coisa, sim!
+0x89e3e8	0	Deixa eu vel...%nhmmmmmmmmmmmmmmm...
+0x89e40c	0	Nada mesmo? Nadinha?
+0x89e428	0	Hum... Eu não lemblo de nada novo, não...
+0x89e458	0	E aí? Que tal?
+0x89e46c	0	Ah, é! Agora que o selo sumiu, você lembra das coisas, Chiffon?
+0x89e4b0	0	V-você acha?...
+0x89e4c4	0	O diretor deve ser um mago muito assustador se ele nem liga pros monstros!
+0x89e518	0	Deixar monstros andando soltos na mesma torre onde você mora...
+0x89e558	0	Tem mesmo! O que...
+0x89e56c	0	Monstros!
+0x89e578	0	Olha, ali!
+0x89e58c	0	Mesmo se a gente gritasse 'com licença!' aqui de baixo, a torre é tão grande que quem tá lá dentro não ia ouvir.
+0x89e5f0	0	Bom, a gente meio que precisa!
+0x89e608	0	Será que ele vai ficar bravo com%na gente por entrar sem permissão?
+0x89e650	0	Hmm. Acho que essa é a torre%nonde mora o antigo diretor.
+0x89e694	0	Pessoal... a gente vai ajudar vocês,%neu prometo...
+0x89e6bc	0	Os alunos foram todos transformados em pedra.
+0x89e6e8	0	Isso é... horrível demais!...
+0x89e700	0	Representante... Chupil...
+0x89e720	0	Eles devem ter ficado... apavorados...
+0x89e744	0	A Ellie e a Marina estavam%nchorando quando... elas...
+0x89e774	0	A gente... a gente vai salvar vocês!%nEu prometo!
+0x89e7a0	0	Colm, Leon...
+0x89e7b0	0	Você não vai sair impune dessa,%nBruxa das Trevas!
+0x89e7dc	0	O Sr. Hawnel virou pedra%ntambém...
+0x89e804	0	Srta. Remi...
+0x89e814	0	Profa. Sophia, a gente vai fazer você%nvoltar ao normal, só... aguenta firme...
+0x89e850	0	Por que tem todas essas estátuas aqui?...
+0x89e874	0	Agora tem estátuas da Marina e da Ellie!
+0x89e8a0	0	Aqui há estátuas de crianças.
+0x89e8c0	0	Nós não vamos perder!...
+0x89e8d4	0	Rumo à vitória!
+0x89e8e0	0	Pessoal! Vamos lá!
+0x89e8f4	0	VOU ARRANCAR AS ALMAS DOS%nSEUS CORPOS E FAZER VOCÊS SOFREREM PARA SEMPRE! SOFRAAAAAM!!!
+0x89e948	0	Eu ainda sou uma ADOLESCENTE, suas pirralhas podres! Ah, agora CHEGA, a morte é BOA demais pra vocês!
+0x89e99c	0	Ve... velha...%nBRUXA VELHA?!...
+0x89e9b8	0	Vem logo, Bruxa das Trevas, sua bruxa velha!
+0x89e9dc	0	Me derrotar? Hi hi! Você conta as piadas mais adoráveis, criança. Pois bem...
+0x89ea20	0	Se... se você acha que consegue,%nentão vem! A gente vai te derrotar e salvar todo mundo!
+0x89ea6c	0	Terei o prazer de tirá-las%nde suas mãos frias e sem vida,%nse é isso que você quer.
+0x89eac0	0	É mesmo? Bem, eu queria pintar estes corredores com o seu sangue de qualquer jeito, então está ótimo.
+0x89eb24	0	Nós sabemos o quanto elas são poderosas,%ne NUNCA vamos te dar esse poder!
+0x89eb6c	0	Boa tentativa. Você nunca vai ter estas pedras, bruxa!
+0x89eba0	0	Se vocês me entregarem essas 'pedras%nbobas', talvez eu dê o que vocês querem.
+0x89ebec	0	Hmmmm... bem.
+0x89ebfc	0	Se não fizel, a Arche vai dar um cascudo na sua cabeça!
+0x89ec30	0	Chega de conversa! Faça todo mundo voltar ao normal agora mesmo, SENÃO!
+0x89ec70	0	Ou será que você criou coragem desde então? Vamos ter que ver...
+0x89ecc0	0	Você fica bem diferente%nquando está cercada pelas suas amigas, hmm?
+0x89ed0c	0	Ah, entendi, você é aquela menina de antes.
+0x89ed34	0	P-Por favor, faça todo mundo voltar ao normal!
+0x89ed54	0	Que horror! Você machucou todo mundo da escola só por causa dessas%npedras bobas?!
+0x89eda0	0	Mas aí vocês foram tão gentis de trazê-las direto pra mim! Que crianças bondosas vocês são. Hi hi...
+0x89ee00	0	Eu não sabia que as pedras ainda teriam tanto poder. Fiquei um pouco nervosa quando vocês escaparam.
+0x89ee64	0	Não esperava que as pedras protegessem vocês da petrificação, porém... um probleminha, isso.
+0x89eecc	0	Foi para pôr as mãos nas suas antigas Pedras Elementais, é claro.
+0x89ef10	0	Coisas malvadas? Ahhh, você quer dizer transformar os humanos em pedra.
+0x89ef4c	0	B-Bruxa das Trevas! Por que você fez todas essas coisas malvadas?!
+0x89ef84	0	Ah, droga! É mesmo!
+0x89ef98	0	Aquela é a BRUXA. DAS. TREVAS. Por que você leva a sério qualquer coisa que ela%ndiz?!
+0x89efe4	0	Sua cabeça é tão oca quanto um BALÃO, Arche.
+0x89f00c	0	Peraí, uma festa?! Ooooh, parece divertido, vamos!
+0x89f040	0	Afinal, eu preparei uma FESTA tão adorável para vocês. He he...
+0x89f084	0	Vocês me deixaram esperando, sabiam? Que falta de educação!
+0x89f0b0	0	Bem-vindas ao meu humilde castelinho no Mundo das Trevas, crianças.
+0x89f0f0	0	Finalmente criou coragem%npra mostrar a cara, 'Bruxa das Trevas'?!
+0x89f130	0	Uaaah, ela tá aqui mesmo!
+0x89f14c	0	É a Bruxa das Trevas!
+0x89f164	0	V-você é!...
+0x89f174	0	Hi hi hi...
+0x89f184	0	Arche, prepare-se!
+0x89f198	0	... Ah, esquece, não é hora pra isso.
+0x89f1c0	0	Onde foi que você aprendeu sobre teletransporte, afinal?...
+0x89f1f8	0	Gente, não briguem!%nArche, tem alguma coisa se teletransportando pra cá!
+0x89f22c	0	Aaah, isso não é verdade!
+0x89f244	0	Argh, você é mesmo insensível à magia!
+0x89f26c	0	Hããã? Eu não sinto nada.%nHum, bom, talvez meu nariz esteja coçando...
+0x89f2b0	0	Ooooh, eu também tô sentindo...
+0x89f2c8	0	Eu também sinto... é como se eu estivesse sufocando...
+0x89f2f8	0	A magia no ar... é imensa...
+0x89f31c	0	Cale a boca! Shh!...
+0x89f330	0	Stella, o que foi? Por que a gente parou?
+0x89f35c	0	Aqui é peligoso!
+0x89f374	0	Arche, a gente tem que correr!
+0x89f38c	0	NÃO HÁ TEMPO! Temos que sair antes que o nexo desmorone por completo!
+0x89f3d8	0	M-m-mas e todo mundo-
+0x89f3f8	0	Isso é ruim. Arche, precisamos sair daqui! Agora!
+0x89f430	0	Um terremoto?! Espera, não...%no nexo está desmoronando! Não!...
+0x89f470	0	Mas o quê?!
+0x89f47c	0	Você vai simplesmente fugir?! Sua COVARDE!
+0x89f4a8	0	Ei, espera!
+0x89f4b4	0	Bem... nos veremos de novo, meninas. Isso se vocês sobreviverem. Hi hi!
+0x89f500	0	Parece que jogaram areia nos nossos planos...
+0x89f534	0	Aham, sim! Acho que vocês venceram por hoje, meninas. Temos que%nnos despedir aqui.
+0x89f584	0	Sim, simsim...%nSeja, seja feita a vossa vontade...
+0x89f5b0	0	Basta. O plano mudou. Desfaça esse nexo e retorne imediatamente.
+0x89f5f4	0	D-de onde tá vindo isso?!%nEu não tô vendo...
+0x89f624	0	O que... é essa VOZ?!
+0x89f63c	0	Quê?!
+0x89f644	0	Uaaaaah!!!
+0x89f650	0	Selene, por que te demoraste!%nELE nos encontrou!
+0x89f680	0	Hi hi! Ah, o verdadeiro horror está só COMEÇANDO...
+0x89f6b8	0	Ooooh... acham que venceram,%né?...
+0x89f6e4	0	Desiste, Bruxa das Trevas!
+0x89f6fc	0	Argh! Gastei força demais criando o nexo dimensional...
+0x89f748	0	É, deve ser uma boa ideia...
+0x89f770	0	Talvez a gente devesse procurar em outro lugar até descobrir o número?
+0x89f7b0	0	Ah, é. Isso, hã, faz sentido.
+0x89f7d4	0	Precisamos ter muito mais%ncuidado do que isso.
+0x89f800	0	Já pensou na possibilidade de que PODE ter uma armadilha se você colocar o número errado?!
+0x89f85c	0	Você... está brincando.
+0x89f870	0	Que ideia ótima! Muito bem,%nArche!
+0x89f898	0	Hã, eu... sei lá...
+0x89f8ac	0	Beleza! Então se a gente girar os discos de qualquer jeito, uma hora vai abrir, né?
+0x89f8fc	0	Hmmmmm...
+0x89f908	0	Deve ser um cadeado de combinação. Se você colocar os quatro discos no número certo, a porta vai abrir.
+0x89f96c	0	Discos?...
+0x89f978	0	Parecem ser discos giratórios.
+0x89f990	0	São quatlo deles.
+0x89f9a8	0	Ah, ei. O que é isso? Hmm... umas coisas redondas que giram, com números nelas...
+0x89f9f4	0	Arche, olha. Tem alguma coisa na porta.
+0x89fa20	0	Não consigo abrir essa porta%nnão importa o quanto eu empurre...
+0x89fa5c	0	A porta está selada.
+0x89fa78	0	Essas estátuas são iguaizinhas ao Colm e ao Leon...
+0x89faa8	0	Aaaaaah!...
+0x89fab4	0	Aiiiiii!
+0x89fac0	0	O chão tá cedendo!%nPULA! PU-
+0x89fae4	0	Então nós... chegamos tarde demais...
+0x89fb00	0	Desabou!
+0x89fb14	0	Ah! A-a ponte!
+0x89fb28	0	Fuu! Vamos lá!
+0x89fb38	0	C-certo!...
+0x89fb44	0	A gente tem que fazer isso... a gente CONSEGUE fazer isso!
+0x89fb6c	0	e a magia da Sana, e a Chiffon!
+0x89fb8c	0	A gente pode vencer, eu sei! Temos a Silpheed, e a Royal Scarlet,
+0x89fbcc	0	Vamos salvar todo mundo... vamos%nsalvar a nossa escola!
+0x89fbfc	0	Pessoal... vamos derrotar%na Bruxa das Trevas!
+0x89fc2c	0	... Certo.
+0x89fc38	0	Se conseguirmos derrotá-la e fechar o nexo, todos vão voltar%nao normal.
+0x89fc84	0	Aquela bruxa deve estar em algum lugar desta masmorra.
+0x89fcb4	0	A gente tem que DERROTAR ela?!
+0x89fccc	0	Precisamos derrotar a Bruxa das Trevas!
+0x89fcec	0	O jeito mais garantido é derrotar quem criou o nexo, para começo de conversa...
+0x89fd40	0	Há... sim. É fácil na%nteoria, mas fazer de verdade...
+0x89fd7c	0	Stella, tem algum jeito de fazer tudo voltar ao normal?
+0x89fdb8	0	Suspeito que foi graças à Silpheed e à Royal Scarlet, de novo, que conseguimos entrar.
+0x89fe10	0	Além disso, normalmente um nexo%ndimensional é uma transferência única.
+0x89fe4c	0	barreira para nos proteger do efeito corruptor do Mundo das Trevas.
+0x89fe94	0	Só podem ser as nossas pedras.%nA Silpheed e a Royal Scarlet estão agindo como uma espécie de
+0x89fee4	0	Mas por que a gente não virou estátua?...
+0x89ff04	0	Não... isso é!....
+0x89ff18	0	Sim... são nossos colegas de classe.
+0x89ff38	0	E-então... todas as estátuas%nque a gente viu...
+0x89ff64	0	Humanos levados para o Mundo das Trevas viram todos pedra.
+0x89ff9c	0	É uma magia vil, de alto nível, que nenhum humano jamais poderia conjurar.
+0x89ffe4	0	Uma magia de nexo dimensional transporta o espaço normal para outro mundo... o Mundo das Trevas.
+0x8a0038	0	Do que você está falando, afinal?...
+0x8a005c	0	A bruxa puxou a escola%npara o Mundo das Trevas! Como eu sou idiota...
+0x8a00a4	0	Magia de nexo dimensional... foi isso que a Profa. Sophia disse...
+0x8a00e0	0	Por que isso está acontecendo?!
+0x8a00f8	0	Por que isso está acontecendo...
+0x8a0114	0	... Pedra!... será que...
+0x8a0134	0	Ela é pedla sólida...
+0x8a014c	0	Nããão, Profa. Sophiaaaa...
+0x8a0164	0	Profa. Sophia!...
+0x8a0174	0	Profa. SOPHIAAAA!
+0x8a0184	0	... corr...%n... am...
+0x8a019c	0	Vocês precisam... correr... fugir...
+0x8a01c0	0	O que é-
+0x8a01cc	0	Dimensio-quê-quê?!
+0x8a01e0	0	Aquela bruxa... lançou uma magia de nexo dimensional... na escola...
+0x8a0224	0	Profa. Sophia, o que aconteceu?!
+0x8a0240	0	Vocês precisam... escapar...%nenquanto podem...
+0x8a0270	0	Arche... que bom que vocês%nestão... a salvo...
+0x8a029c	0	Não, Profa. Sophia!
+0x8a02ac	0	Profa. Sophia!
+0x8a02b8	0	A-aquela era a Bruxa das Trevas!
+0x8a02d4	0	Adeus, humanos...
+0x8a02e8	0	Beeeeem... sem vento nem chuva pra desgastar vocês, esse "tempinho" vai%nser... uns milênios. Hihi!
+0x8a0344	0	Bom, fiquem assim por um tempinho.
+0x8a0370	0	Aaaah. A aplicação prática foi demais para os professores?
+0x8a03b8	0	AIEEEEEEEEEEEE!...
+0x8a03cc	0	ARRRRRGH!...
+0x8a03dc	0	O meu pior? Pois bem. Se o poder do Mundo das Trevas não petrifica vocês,%neu... vou acelerar um pouquinho as coisas.
+0x8a0440	0	Ah, é mesmo? Veremos! Faça o seu pior!
+0x8a0474	0	Infelizmente, as suas magias%nhumanas patéticas não me fariam%nnem um arranhãozinho.
+0x8a04c4	0	Hihi! Falar vocês sabem, isso eu%nadmito, queridos professores.
+0x8a0510	0	R-renda-se, Bruxa das Trevas!
+0x8a052c	0	Acabou. Vou arrancar esse sorrisinho convencido da sua cara e usar pra limpar as paredes!
+0x8a0584	0	Não me importa como você se chama. Você é muito atrevida de pôr as mãos na nossa escola.
+0x8a05dc	0	Devolva a nossa escola...%ne as crianças...%nao que eram antes!
+0x8a0620	0	Acho que os professores de uma escola de magia precisam ter%nPELO MENOS um pouquinho de habilidade mágica.
+0x8a067c	0	Ora, ora, ora. Ainda não petrificados, mesmo depois de a escola ser arrastada por um nexo dimensional.
+0x8a06dc	0	Você... você ousa fazer isso? Acha que vai sair impune?!
+0x8a0724	0	A gente já concluiu que%nhoje NÃO é o Dia de Esportes...
+0x8a075c	0	Vai ver são prêmios do Dia de Esportes?...
+0x8a0780	0	Mas por que teria estátuas do Colm e do Leon aqui?...
+0x8a07bc	0	Quem será que fez essas? Estão muito boas!
+0x8a07ec	0	Arche, olha! Tem uma que palece o Leon!
+0x8a081c	0	Parece mesmo...
+0x8a0828	0	Ei, essa estátua é igualzinha%nao Colm.
+0x8a0850	0	É... uma estátua.
+0x8a0864	0	Ei, Arche? O que é aquilo ali?
+0x8a0888	0	Pare de agir feito uma boba.%nNão existe magia que possa-
+0x8a08c4	0	Será que a Profa. Sophia e os outros professores lançaram uma magia?...
+0x8a0900	0	Isso é estranho demais!
+0x8a0920	0	E mais importante, por que isso transformaria a escola NUMA masmorra?!
+0x8a0964	0	Mas... hoje não é o Dia de%nEsportes na Masmorra!
+0x8a098c	0	Já sei! Vai ver todo mundo decidiu%nfazer exercício numa masmorra?
+0x8a09d0	0	Como isso... é possível?...
+0x8a09f4	0	Por que a escola virou uma masmorra?
+0x8a0a14	0	É, mas, mas... isso é uma masmorra!
+0x8a0a3c	0	Hã... a gente ENTROU pela porta da escola, né?
+0x8a0a70	0	Hãããã?
+0x8a0a78	0	Vamos... entrar mais um pouco.
+0x8a0a98	0	Você usou: %s.
+0x8a0aa8	0	Você usou: %s.%%n%s quebrou.
+0x8a0acc	511	Você não tem a chave desta fechadura!
+0x8a0af8	0	Unknown Object Type Treasure.\n
+0x8a0b18	0	%s subiu de nível!
+0x8a0b28	0	SEM DADOS
+0x8a0b30	0	Dados: Prólogo Concluído
+0x8a0b44	0	Dados: Jogo Concluído
+0x8a0b54	0	%s NV%d
+0x8a0b5c	0	Ponto de Salvamento
+0x8a0b80	0	The locale was set.
+0x8a0b9c	0	The application was started.
+0x8a0bd8	0	Unload Resource From 'CAppMain'\n
+0x8a0bfc	0	Unload Resource From '_TerminateGame'\n
+0x8a0c24	0	Title Menu completion.
+0x8a0c3c	0	Input Divice completion.
+0x8a0c58	0	Preparation completion.
+0x8a0c74	0	The input device connection setting was done.
+0x8a0ca4	0	Music was set.
+0x8a0cb4	0	SP-MGR Preparation
+0x8a0cc8	0	The resource was set.
+0x8a0ce0	0	Pixel Drawer was set.
+0x8a0cf8	0	The screen was set.
+0x8a0d10	0	CooperativeLevel was set.
+0x8a0d58	0	ZDD was set.
+0x8a0d88	0	ZDM was set.
+0x8a0d98	0	ZDS was set.
+0x8a0da8	0	ZDI was set.
+0x8a0e18	0	The window was set.
+0x8a0e30	0	An intermittent timer was set.
+0x8a0e50	0	The environmental setting was read.
+0x8a0e78	0	GD-MGR Preparation
+0x8a0e8c	0	W-MGR Preparation
+0x8a0ea0	0	SS-MGR Preparation
+0x8a0eb4	0	Area information check end
+0x8a0ed0	0	Area information exceeds it to the area.
+0x8a0efc	0	AS Start
+0x8a0f08	0	Nenhum personagem foi escolhido para participar.
+0x8a0f3c	511	Ir para a tela de seleção de dados.
+0x8a0f64	511	Jogar Modo Vs.
+0x8a0f74	511	Iniciar Autojogo
+0x8a0f88	511	Confirmar opções e iniciar o jogo.%n(Dá para mudar as opções durante o jogo.)
+0x8a0fe0	511	Salvar e sair.
+0x8a0ff8	511	Sair sem salvar.
+0x8a1010	511	Restaurar valores padrão.
+0x8a102c	0	Opções: Som
+0x8a1044	0	Opções: Jogo e Controles
+0x8a1068	0	Opções: Controle Analógico
+0x8a108c	0	Configurar Modo Vs.
+0x8a10a0	0	Seleção de Dados
+0x8a10b0	0	Iniciar Modo Arena
+0x8a10c4	0	Iniciar
+0x8a10cc	0	Configurar Autojogo
+0x8a10e0	0	Iniciar Jogo
+0x8a10ec	0	Salvar e Sair
+0x8a10fc	0	Descartar
+0x8a110c	0	Padrão
+0x8a1120	511	Mostrar FPS
+0x8a112c	511	Círculo Mágico
+0x8a1144	511	Medidor de Combo
+0x8a1158	511	Velocidade do Texto
+0x8a1168	511	Brilho
+0x8a1174	511	Contraste
+0x8a1180	511	Qualidade Visual
+0x8a1194	0	Opções: Tela
+0x8a11b0	0	Sensibilidade Analógica
+0x8a11cc	0	Uso do Analógico
+0x8a11e0	0	Sensibilidade da Corrida
+0x8a1204	0	Seleção Rápida de Magia
+0x8a1218	0	Avançar Texto com a Voz
+0x8a1238	0	Voz de Combate
+0x8a124c	0	Voz dos Diálogos
+0x8a125c	0	Volume da Voz
+0x8a126c	0	Volume do Texto
+0x8a127c	0	Volume da Música
+0x8a128c	0	Volume do Som
+0x8a129c	0	Modo
+0x8a12a4	0	Fase
+0x8a12ac	0	Dano da Equipe 2
+0x8a12c4	0	Dano da Equipe 1
+0x8a12dc	0	Força da IA da Equipe 2
+0x8a12f0	0	Força da IA da Equipe 1
+0x8a1304	0	Equipe 2 Personagem 2
+0x8a1318	0	Equipe 2 Personagem 1
+0x8a132c	0	Equipe 1 Personagem 2
+0x8a1340	0	Equipe 1 Personagem 1
+0x8a1354	0	Nível de %s
+0x8a1360	0	Inimigos
+0x8a136c	0	Submodo
+0x8a1374	0	Autodefesa
+0x8a1380	0	Dificuldade
+0x8a1390	0	Escolha se este personagem participa. Um personagem sem dados não pode participar, seja qual for a escolha.
+0x8a1400	0	Escolha o submodo. O 'Modo Morte Súbita' reduz o HP de todos os monstros a 1.
+0x8a1448	0	Escolha quantos monstros enfrentar. Será que um número alto demais torna a vitória impossível?...
+0x8a14a4	0	Escolha a fase onde lutar.
+0x8a14c4	0	Escolha Jogador vs. IA ou IA vs. IA.
+0x8a14f0	0	Altera o dano que uma equipe causa. 100 por cento é o normal, 50 é metade do dano.
+0x8a1544	0	Altera a capacidade da IA.
+0x8a1568	0	Escolha o Personagem Dois.
+0x8a1580	0	Escolha o Personagem Um.
+0x8a1598	0	Escolha o nível dos personagens no modo de autojogo.
+0x8a15d0	0	Use @@Z + @@\x81©& @@\x81¨ para escolher uma magia, e @@Z + @@\x81ª& @@\x81« para pôr nos atalhos 1-6 ou nos livros de magia.
+0x8a1644	0	Define se os círculos mágicos aparecem por cima de todos os efeitos da tela.
+0x8a1690	0	Altera a sensibilidade do controle analógico. Controles mais sensíveis respondem a movimentos mais sutis.
+0x8a16f8	0	Escolha se e como usar um controle com alavanca analógica conectado.%n'Corrida Analógica' faz o personagem correr ou andar conforme o uso da alavanca.
+0x8a1780	0	Permite ajustar o brilho da imagem do jogo (separado dos ajustes do monitor).
+0x8a17d0	0	Permite ajustar o contraste da imagem do jogo (separado dos ajustes do monitor).
+0x8a181c	0	Permite alterar o intervalo em que um segundo toque de movimento inicia uma corrida.
+0x8a1870	0	Permite alterar a velocidade de rolagem das mensagens.
+0x8a189c	0	Configura o volume dos 'bipes' feitos ao exibir o texto num balão de fala.
+0x8a18f0	0	Permite fazer os balões de fala dos eventos avançarem sozinhos depois que a fala termina.
+0x8a1950	0	Permite escolher qual conjunto de vozes usar em combate.
+0x8a1988	0	Configura o volume das vozes nos eventos.
+0x8a19a8	0	Configura o volume das vozes.
+0x8a19c4	0	Configura o volume dos efeitos sonoros.
+0x8a19e8	0	Configura o volume da música.
+0x8a1a04	0	Liga e desliga a exibição de quadros por segundo. Útil para avaliar o desempenho.
+0x8a1a54	0	Escolha se o medidor de combo aparece depois de iniciar um ataque combo com sucesso.
+0x8a1aac	0	Permite alterar a qualidade gráfica do jogo. Escolha baixa se o jogo estiver lento no seu computador.
+0x8a1b14	0	A autodefesa se defende automaticamente de ataques se o seu personagem não estiver fazendo nenhuma outra ação.
+0x8a1b88	0	Permite configurar a dificuldade do jogo. Nas dificuldades maiores, os inimigos são mais fortes e a experiência sobe mais rápido.
+0x8a1c00	0	5 (Alto)
+0x8a1c0c	0	4 (Semialto)
+0x8a1c1c	0	3 (Normal)
+0x8a1c28	0	2 (Semibaixo)
+0x8a1c38	0	1 (Baixo)
+0x8a1c40	0	Desativar
+0x8a1c48	0	Ativar
+0x8a1c50	0	Corrida Analógica
+0x8a1c5c	0	10 (Máximo)
+0x8a1c6c	0	0 (Mínimo)
+0x8a1c78	0	5 (Longo)
+0x8a1c84	0	4 (Semilongo)
+0x8a1c94	0	2 (Semicurto)
+0x8a1ca4	0	1 (Curto)
+0x8a1cb0	0	Desligado
+0x8a1cb4	0	Não Usar
+0x8a1cc0	0	Seleção pelo Livro de Magias
+0x8a1cd8	0	Seleção Direta de Magia
+0x8a1cf4	0	5 (Rápido)
+0x8a1d00	0	4 (Semirrápido)
+0x8a1d10	0	2 (Semilento)
+0x8a1d20	0	1 (Lento)
+0x8a1d2c	0	5 (Alto)
+0x8a1d38	0	4 (Semialto)
+0x8a1d48	0	2 (Semibaixo)
+0x8a1d58	0	1 (Baixo)
+0x8a1d64	0	Inativo
+0x8a1d70	0	6:Cobrir o Sol
+0x8a1d84	0	5:Um Montão
+0x8a1da4	0	2:Mais Alguns
+0x8a1dbc	0	Vozes Deluxe
+0x8a1dcc	0	Vozes Originais
+0x8a1ddc	0	Ativo
+0x8a1de4	0	Modo Normal
+0x8a1df0	0	Modo Morte Súbita
+0x8a1e04	0	Fase 5
+0x8a1e0c	0	Fase 4
+0x8a1e14	0	Fase 3
+0x8a1e1c	0	Fase 2
+0x8a1e24	0	Fase 1
+0x8a1e2c	0	Jogador vs. IA
+0x8a1e3c	0	IA vs. IA
+0x8a1e48	0	Torre
+0x8a1e50	0	Caverna de Vapor
+0x8a1e5c	0	Masmorra
+0x8a1e64	0	Atrás da Escola
+0x8a1ea0	0	5: Arrasador
+0x8a1eb0	0	4: Forte
+0x8a1ebc	0	3: Normal
+0x8a1ec8	0	2: Fraco
+0x8a1ed0	0	1: Saco de Pancada
+0x8a1ee0	0	%s Nível %d
+0x8a1eec	0	Não Participar
+0x8a1f00	0	Nível 4
+0x8a1f08	0	Nível 3
+0x8a1f10	0	Nível 2
+0x8a1f18	0	Nível 1
+0x8a1f20	0	Sem Participante
+0x8a1f30	0	Baixo
+0x8a1f34	511	Normal
+0x8a1f3c	0	Alto
+0x8a1f44	0	Ligado
+0x8a1f7c	0	Pad Esq-Cima
+0x8a1f88	0	Pad Esquerda
+0x8a1f94	0	Pad Esq-Baixo
+0x8a1fa0	0	Pad Baixo
+0x8a1fac	0	Pad Dir-Baixo
+0x8a1fb8	0	Pad Direita
+0x8a1fc4	0	Pad Dir-Cima
+0x8a1fd0	0	Pad Cima
+0x8a1fd8	0	RS Baixo
+0x8a1fe0	0	RS Cima
+0x8a1fe8	0	RS Esquerda
+0x8a1ff0	0	RS Direita
+0x8a1ffc	0	Gatilho Dir.
+0x8a2008	0	Gatilho Esq.
+0x8a2014	0	Botão 15
+0x8a2020	0	Botão 14
+0x8a2034	0	Botão 13
+0x8a2040	0	Botão 12
+0x8a204c	0	Botão 11
+0x8a2058	0	Botão 10
+0x8a2064	0	Botão 9
+0x8a2070	0	Botão 8
+0x8a207c	0	Botão 7
+0x8a2088	0	Botão 6
+0x8a2094	0	Botão 5
+0x8a20a0	0	Botão 4
+0x8a20ac	0	Botão 3
+0x8a20b8	0	Botão 2
+0x8a20c4	0	Botão 1
+0x8a20d0	0	Botão 0
+0x8a20dc	0	Num0
+0x8a20e4	0	Num9
+0x8a20ec	0	Num8
+0x8a20f4	0	Num7
+0x8a20fc	0	Num6
+0x8a2104	0	Num5
+0x8a210c	0	Num4
+0x8a2114	0	Num3
+0x8a211c	0	Num2
+0x8a2124	0	Num1
+0x8a2140	0	Num.
+0x8a2148	0	Num+
+0x8a2150	0	Num-
+0x8a2158	0	Num*
+0x8a2160	0	Delete
+0x8a2168	0	Insert
+0x8a2190	0	Espaço
+0x8a2204	0	Restaurar o padrão. Tem certeza?
+0x8a222c	0	Sair sem salvar. Tem certeza?
+0x8a2254	0	Volta para a tela de título.
+0x8a2278	0	Configura as teclas do teclado.
+0x8a2294	0	Configura os botões do gamepad.
+0x8a22b4	0	Ajusta o volume da música, dos efeitos e das vozes.
+0x8a22dc	0	Altera as configurações gráficas.
+0x8a22f8	0	Configura gamepads analógicos conectados ao seu PC.
+0x8a232c	0	Altera a dificuldade do jogo e as opções de controle.
+0x8a2360	0	Voltar
+0x8a2368	0	Config. de Gamepad Analógico
+0x8a2380	0	Config. de Gamepad
+0x8a2390	0	Config. de Teclado
+0x8a23a0	0	Config. de Som
+0x8a23b0	0	Config. Gráficas
+0x8a23c4	0	Jogo e Controles
+0x8a23dc	0	Opções
+0x8a23e4	0	Pular, Atacar e Selecionar Magia não estão definidos.
+0x8a2414	0	Este botão já está em uso.
+0x8a2434	0	Aperte o botão que deseja definir. Redefinir um botão já usado apaga a definição anterior.
+0x8a2490	0	As teclas permitidas são A-Z, Espaço e o teclado numérico. Mudar as teclas pode deixar os tutoriais do jogo errados.
+0x8a24f0	0	Salvar e Sair
+0x8a2504	0	Restaurar Padrão
+0x8a2518	0	Sair Sem Salvar
+0x8a252c	0	Selecionar Magia 0
+0x8a253c	0	Selecionar Magia 9
+0x8a254c	0	Selecionar Magia 8
+0x8a255c	0	Selecionar Magia 7
+0x8a256c	0	Selecionar Magia 6
+0x8a257c	0	Selecionar Magia 5
+0x8a258c	0	Selecionar Magia 4
+0x8a259c	0	Selecionar Magia 3
+0x8a25ac	0	Selecionar Magia 2
+0x8a25bc	0	Selecionar Magia 1
+0x8a25cc	0	Mover Visão p/ Esquerda
+0x8a25dc	0	Mover Visão p/ Direita
+0x8a25ec	0	Mover Visão p/ Baixo
+0x8a25fc	0	Mover Visão p/ Cima
+0x8a2608	0	Mudar Modo de Rolagem
+0x8a261c	0	Mudar Modo de Uso de Magia
+0x8a2634	0	Mudar Modo de Seguir
+0x8a2648	0	Usar Item de Cura
+0x8a265c	0	Mudar Visão
+0x8a2668	0	Pausar
+0x8a2670	0	Trocar Livro de Magias
+0x8a2684	0	Abrir Menu
+0x8a26ac	0	Examinar
+0x8a26e8	0	Config. de Gamepad
+0x8a26fc	0	Config. de Teclado
+0x8a2710	0	Estes dados não%npodem ser carregados.
+0x8a2730	0	LD Init
+0x8a2738	0	Seleção de Missão
+0x8a2748	36	Bônus: 'A Outra, Outra Caverna'
+0x8a2770	10	Principal
+0x8a277c	0	Title Menu - Flipping
+0x8a27b0	0	Title Menu - InitTimeManager
+0x8a27e4	0	Carregando % 3d%%
+0x8a27f8	255	Pronto
+0x8a2838	0	The file is not found.
+0x8a2944	0	O Modo Zoom só funciona em resoluções maiores que 1280x960. Aumente a resolução ou use o 'Modo Tela Cheia'.
+0x8a2a44	0	ActivateInputDevice CP3
+0x8a2a5c	0	ActivateInputDevice CP2
+0x8a2a74	0	ActivateInputDevice CP1
+0x8a2a8c	0	Volta para a tela anterior.
+0x8a2aac	0	Abra caminho por hordas furiosas de monstros.
+0x8a2ae0	0	Explore uma masmorra gerada aleatoriamente. Os dados podem ser transferidos de e para o jogo principal.
+0x8a2b38	0	No Modo Automático, você assiste ao computador controlar todos os personagens.
+0x8a2b84	0	Escolha seus personagens favoritos e lute no Modo Versus.%nMais personagens ficam disponíveis conforme você avança no Modo História.
+0x8a2c04	0	Labirinto Maravilhoso da Arche
+0x8a2c20	0	Arena da Arche
+0x8a2c30	0	Modo Automático
+0x8a2c40	0	Modo Versus
+0x8a2c4c	0	Menu Bônus
+0x8a2c58	0	Você ainda não pode acessar este menu.
+0x8a2c7c	0	Clear All Cash\n
+0x8a2c8c	0	Unload Resource From 'StartGameRPGMode'\n
+0x8a2d50	0	The gate is not found. 
+0x8a2d8c	0	The map data is not found. 
+0x8a2da8	0	NO:%d
+0x8a2eb4	0	Sistema
+0x8a2ebc	0	Mensagens
+0x8a2ec8	0	Comandos do Grupo
+0x8a2ed8	511	Poderes
+0x8a2ee4	0	Status
+0x8a2eec	511	Itens-chave
+0x8a2efc	511	Itens
+0x8a2f04	0	Menu Principal
+0x8a2f10	0	Novos Poderes
+0x8a2f20	0	Próximo Nível
+0x8a2f2c	0	Nível
+0x8a2f34	0	Info. de Nível
+0x8a2f44	0	Magia
+0x8a2f54	0	Arma
+0x8a2f5c	0	Dano Máximo
+0x8a2f70	0	Maior Combo
+0x8a2f80	0	Mortes do Grupo
+0x8a2f94	0	EXP Obtida
+0x8a2fa0	0	Dinheiro Obtido
+0x8a2fb0	0	Monstros Derrotados
+0x8a2fcc	0	Marcas Obtidas
+0x8a2fdc	0	Estatísticas
+0x8a2fec	0	Nível de Combate
+0x8a2ffc	0	Nível de Aventureiro
+0x8a3010	0	EXP p/ nível
+0x8a3028	0	(MÁX:%d)
+0x8a3034	0	Acessório
+0x8a3040	0	Armadura #2
+0x8a304c	0	AP:
+0x8a3050	0	Armadura #1
+0x8a305c	0	WP:
+0x8a3060	0	Equipamento
+0x8a306c	0	Você não tem: %s.
+0x8a3084	0	Você descartou: %s.
+0x8a3098	0	Tem certeza que quer descartar: %s?
+0x8a30c4	0	%s é um item raro. Tem certeza que quer descartar?
+0x8a30fc	0	Descartar
+0x8a3104	0	Usar
+0x8a3108	0	Remover
+0x8a3110	0	Em quem você quer usar isto?
+0x8a3130	511	Isto não pode ser usado em combate.
+0x8a3154	0	Deseja se teletransportar para um lugar seguro?
+0x8a317c	511	Por algum motivo, o teletransporte falha aqui.
+0x8a31ac	0	(Custo de MP:%d)
+0x8a31bc	0	Escolha uma habilidade com @@\x81ª ou @@\x81«, e defina se ela deve ser usada ou não.
+0x8a3220	0	Usar no Livro C
+0x8a3230	0	Usar no Livro B
+0x8a3240	0	Usar no Livro A
+0x8a3250	0	%s (%s)
+0x8a3328	0	Livro de Magia C
+0x8a3338	0	Livro de Magia B
+0x8a3348	0	Livro de Magia A
+0x8a3358	0	Escolha o personagem cujos poderes você quer configurar.
+0x8a3394	0	Tem certeza de que deseja voltar à tela de título?
+0x8a33cc	0	Você não pode desistir aqui.
+0x8a33e8	0	Tem certeza de que quer desistir?
+0x8a340c	0	Volta para a tela de título. Esta opção não salva o jogo.
+0x8a3450	0	Desistir causa game over na hora. Isso permite voltar ao último lugar seguro em que você esteve. Não pode ser usado em lugares seguros, como cidades.
+0x8a34f0	0	Configura a exibição do dinheiro. Você pode escolher mostrar GP ou CP. 1 GP vale 100 CP.
+0x8a3544	0	Configura o sistema de cura rápida (ativado com @@F2).
+0x8a357c	0	Configure várias opções. Mudanças na dificuldade e afins terão efeito quando você mudar de área.
+0x8a35e8	0	Voltar ao Título
+0x8a35f8	0	Desistir
+0x8a3600	0	Exibir Dinheiro
+0x8a3610	0	Exibir dinheiro em ouro
+0x8a3628	0	Exibir dinheiro em cobre
+0x8a3640	0	Define se a cura rápida também cura envenenamento.
+0x8a3678	511	Auto-cura de Veneno
+0x8a3690	0	Define se itens de cura serão usados em personagens com%n75 por cento de vida ou mais.
+0x8a36e4	511	Curar Feridas Leves
+0x8a36fc	0	Define se itens obtidos derrotando monstros serão usados na cura rápida.
+0x8a3750	511	Itens Raros
+0x8a3768	0	Dia % 3d
+0x8a377c	0	Uma coleção de mensagens e anotações da Arche e de suas amigas. Inclui cartas de fora do grupo.
+0x8a3818	0	Título
+0x8a3820	0	De
+0x8a3828	0	Data de Envio
+0x8a3834	0	Nº
+0x8a3838	511	Nenhuma mensagem.
+0x8a3850	0	 De: %s
+0x8a385c	0	Recebido:  Dia % 3d
+0x8a3870	0	Nº%d %s
+0x8a387c	0	Veja as mensagens com @@\x81ª& @@\x81«.
+0x8a38a4	0	Todos
+0x8a38b0	0	Permite ou proíbe que os membros do grupo usem magia.
+0x8a38e8	0	Configura a formação em batalha. Quando monstros se aproximam, o grupo se posiciona automaticamente ao redor do personagem do jogador.
+0x8a3968	0	Define se os membros do grupo seguem o jogador ou ficam parados.
+0x8a39ac	0	Formação
+0x8a39b8	0	Seguir
+0x8a39c4	0	Uso de Magia
+0x8a39d0	511	Do grupo
+0x8a39dc	511	Sem limites
+0x8a39ec	511	Uso normal
+0x8a39f8	511	Economizar
+0x8a3a08	511	Só curar
+0x8a3a14	511	Não usar magia
+0x8a3a24	0	Segue a configuração de magia do grupo.
+0x8a3a4c	0	Usa todo tipo de magia sem economizar.
+0x8a3a74	0	Magias de ataque, cura e suporte serão usadas quando for adequado.
+0x8a3ab4	0	Usa magias de ataque de vez em quando. Magias de cura serão usadas normalmente. Magias de suporte não serão usadas.
+0x8a3b1c	0	Permite apenas magias de cura.
+0x8a3b38	0	Proíbe qualquer uso de magia.
+0x8a3b60	0	Escolha personagens com @@\x81ª& @@\x81«, e use @@\x81©& @@\x81¨ para mudar a posição deles.
+0x8a3bb0	0	Ordem de Batalha
+0x8a3bc0	511	'Siga-me!'
+0x8a3bd0	511	'Fique aí!'
+0x8a3be0	511	'Lute livre!'
+0x8a3bf0	0	A personagem segue a configuração do grupo para acompanhar e para a formação de combate.
+0x8a3c40	0	Personagens da IA seguem o personagem do jogador, mas ignoram a formação em combate.
+0x8a3c94	0	Personagens da IA seguem o personagem do jogador. Em combate, tentam manter a formação. Bom para ficarem perto umas das outras.
+0x8a3d1c	0	Personagens da IA ficam onde estão. Se houver combate, enfrentam o inimigo e voltam à última posição no fim. Útil para resolver quebra-cabeças.
+0x8a3dbc	0	Você ativou uma armadilha de teletransporte!
+0x8a3ddc	0	Por algum motivo, o teletransporte não funciona aqui.
+0x8a3e08	0	Você já tem todo o dinheiro que consegue carregar.
+0x8a3e30	0	Suas bolsas estão cheias, então você não pode pegar o conteúdo do baú.
+0x8a3e74	0	Você conseguiu: %s!
+0x8a3e80	0	Somente para o operador do Game Play by Computer.
+0x8a3eac	0	Modo Autoplay
+0x8a3ebc	0	Fortune Summoners
+0x8a3ed0	0	Voltar em Segurança (-10% Dinheiro)
+0x8a3ef0	0	Tentar de Novo
+0x8a3efc	255	Todos os Jogadores e Você.
+0x8a3f10	14	Agradecimentos
+0x8a3f20	253	Coordenação de Som
+0x8a3f34	255	Sound Ideas
+0x8a3f40	252	Datacraft Co,Ltd
+0x8a3f54	252	Efeitos Sonoros
+0x8a3f64	255	Sound Juke
+0x8a3f70	255	BGM OnLine
+0x8a3f7c	253	Nash Studio inc.,
+0x8a3f90	253	Música
+0x8a3f98	255	BIHOU,Inc.
+0x8a3fa4	18	Cenários
+0x8a3fb8	252	Mynk
+0x8a3fc0	253	Testes
+0x8a3fcc	255	Ouka Kasuga
+0x8a3fd8	255	Chiffon,Selene
+0x8a3fe8	255	Ruou Ryouki
+0x8a3ffc	253	Souno Sachika
+0x8a4014	252	Aihara Kaori
+0x8a402c	252	Vozes
+0x8a403c	253	(Jungle,Inc.)
+0x8a404c	253	Takashi Saito
+0x8a405c	287	Design do Logotipo
+0x8a406c	255	Andrew Dice
+0x8a4078	255	Editor-Chefe
+0x8a4084	255	Light-Williams
+0x8a4094	253	Robin
+0x8a409c	255	Tradutor-Chefe
+0x8a40ac	252	Carpe Fulgur LLC
+0x8a40c0	287	Tradução
+0x8a40cc	255	Takeda Mika
+0x8a40d8	252	Ilustração
+0x8a40e8	252	  K.Kitahara
+0x8a40f8	252	Gráficos
+0x8a4108	287	Programação
+0x8a4120	255	K.Kitahara
+0x8a412c	287	Produção
+0x8a4140	287	Direção
+0x8a414c	255	- Equipe de Criação -
+0x8a4160	0	SC End
+0x8a4168	0	D End
+0x8a4170	0	D Start
+0x8a4178	0	The window was generated.
+0x8a41b8	0	The RV check was ended.
+0x8a41d4	0	Necessary resource (UPD) is not found.
+0x8a4214	0	Necessary resource (P1) is not found.
+0x8a427c	0	Necessary resource (B) is not found.
+0x8a42f0	0	RV is checked.
+0x8a4300	0	mutex was set.
+0x8a4310	0	Game is already running.
+0x8a432c	0	The class was generated.
+0x8a4380	0	The file preservation was tested.
+0x8a43c8	12	Product Ver.
+0x8a43dc	4	 Ver
+0x8a43e4	13	Carregando...
+0x8a4454	0	COM was initialized.
+0x8a4498	0	The environment was checked.
+0x8a44b8	0	DirectX8.0 or higher is not installed. Please reinstall DirectX.
+0x8a44fc	0	DirectX Version:%d.%d.%d.%d
+0x8a4548	0	This program will only work on Windows XP or later. Please upgrade your operating system.
+0x8a45a4	0	OS Version:%d.%d.%d Platform:%d
+0x8a45e0	20	Lib Version Error -
+0x8a45f8	18	VerQueryValue None
+0x8a4630	0	Memory Error
+0x8a4658	0	Você usou: %s.%%n%s
+0x8a466c	29	Mas não teve nenhum efeito.
+0x8a468c	0	%s: %s aumentou em %d.
+0x8a46a8	0	%s recuperou %d de HP.
+0x8a46bc	0	%s recuperou %d de MP.
+0x8a46d0	0	%s está fora do alcance da sua magia!
+0x8a46f8	0	Exp +%d
+0x8a47a4	16	[RAM Disk Error]
+0x8a4914	0	Warning,exists ZDD objects.\n
+0x8a494c	26	Warning,exists ZDD errors,
+0x8a4b84	0	Lock
+0x8a4bac	0	Warning,exists ZDI objects.\n
+0x8a4bcc	26	Warning,exists ZDI errors,
+0x8a4c54	0	Warning,exists ZDMM objects.\n
+0x8a4c74	27	Warning,exists ZDMM errors,
+0x8a4c90	0	ZDMMGraph
+0x8a4cbc	0	IGraphBuilder
+0x8a4cd0	511	RenderFile Error.
+0x8a4cf4	0	Unknown
+0x8a4d54	0	Warning,exists ZDS objects.\n
+0x8a4d74	26	Warning,exists ZDS errors,
+0x8a4d90	0	CreateSoundBuffer(PrimaryBuffer)
+0x8a4dd4	0	CreateSoundBuffer(Wave Buffer)
+0x8a4e1c	8	Message=
+0x8a4e3c	10	Procedure=
+0x8a4e48	36	Warning,exists ZMusicManager errors,

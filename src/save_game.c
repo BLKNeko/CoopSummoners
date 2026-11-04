@@ -1,5 +1,5 @@
 /* save_game.c — SAVING and LOADING: the save statue's dialog 0x41a430 ("Would you like to save?" / "Overwrite this
- * save?" / "Game saved"), the slot list 0x41bd20 / 0x41bf60 / 0x561560 (+ 0x561bf0 / 0x561cf0: "Save Point", "LV",
+ * save?" / "Game saved"), the slot list 0x41bd20 / 0x41bf60 / 0x561560 (+ 0x561bf0 / 0x561cf0: ((const char *)D(0x8a0b5c)), "LV",
  * the play time, the date), the WRITER 0x41a890 (the room snapshot into memory bank 0 / 1 at every room start, a
  * slot file savedataNN.sdt / .dat / .bak) and the READER 0x41b670, the snapshot prep 0x55f620, the APPLY 0x561d20 /
  * 0x560530 (a loaded snapshot back into the scene), the file name 0x41cfd0.  See save_game.h.
@@ -1383,7 +1383,7 @@ LABEL_45:
           {
             g_eng.h5bf3ee(
               Buffer,
-              "%s LV%d",
+              ((const char *)D(0x8a0b54)),
               &GAP((v43 + (1) * 0x9f4), 0x0, 28),
               *(_DWORD *)&GAP((v43 + (1) * 0x9f4), 0x0, 244) + *(_DWORD *)&GAP((v43 + (1) * 0x9f4), 0x0, 252));
             W_grid_cell_text((intptr_t)(a1), (intptr_t)((*v52__f)), (intptr_t)((*v53__f)++), (intptr_t)(Buffer));

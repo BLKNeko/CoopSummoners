@@ -59,6 +59,17 @@ def main():
             cur[va] = (cap, pt)
             good += 1
 
+    # every entry against today's caps: a string the port now copies into a fixed buffer gets its cap written,
+    # and a text too long for it is dropped (the game shows the English) and listed
+    for va in sorted(cur):
+        c = cap_of(va, rows, capped) if va in rows else 0
+        t = cur[va][1]
+        if c and len(t.encode("cp1252", errors="replace")) > c:
+            bad.append(f"0x{va:06x}: dropped, too long for its buffer now ({c} bytes): {t}")
+            del cur[va]
+        else:
+            cur[va] = (c, t)
+
     with open(lp, "w", encoding="utf-8", newline="\n") as f:
         f.write(f"# CoopSummoners translation: {a.lang}.  VA <TAB> MAX BYTES (0 = any) <TAB> TEXT\n")
         f.write("# Machine translated, reviewed by hand over time.  Keep the game's codes: %n line break, %s / %d\n")

@@ -2892,7 +2892,7 @@ LABEL_13:
   }
   v6 = 0;
 LABEL_19:
-  g_eng.h5bf3ee(Buffer, "%s's Level", (const char *)(v6 + 8));
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a1354)), (const char *)(v6 + 8));
   v2 = Buffer;
   return strcpy(a2, v2);
 }
@@ -3901,7 +3901,7 @@ LABEL_132:
     {
       if ( v7 > 1 )
       {
-        g_eng.h5bf3ee(Buffer, "%s Level %d", (uint8_t *)v13 + 58, v7);
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a1ee0)), (uint8_t *)v13 + 58, v7);
         return Buffer;
       }
       strcpy(Buffer, (uint8_t *)v13 + 58);
@@ -4094,7 +4094,7 @@ LABEL_6:
           v5 = 100000104;
 LABEL_18:
           v6 = W_dramatist_row((intptr_t)(v5));
-          g_eng.h5bf3ee(Buffer, "%s's Level", (const char *)(v6 + 8));
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a1354)), (const char *)(v6 + 8));
           v4 = Buffer;
           break;
         case 91:
@@ -5050,7 +5050,7 @@ void tm_56dc20(int32_t a1, int32_t a2, int32_t a3)
       v4 = 1;
       if ( a3 >= 1 )
         v4 = a3;
-      g_eng.h5bf3ee(String, "Now Loading % 3d%%", 100 * a2 / v4);
+      g_eng.h5bf3ee(String, ((const char *)D(0x8a27e4)), 100 * a2 / v4);
     }
     else
     {

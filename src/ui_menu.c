@@ -62,7 +62,7 @@ void menu_party_open(uint8_t *m)
     uint8_t st[0x24];
     sys_frame_style(g_eng.sys, st, 1);
     uint8_t *win = win_mgr_open(ldp(m, 0), 352, 8, 288, h + 104, 3, st);
-    win_title_add(win, "Party Member Status");
+    win_title_add(win, ((const char *)D(0x854a0c)));
     stp(m, 0x28, win);
     /* the members: name, LV, HP, / max, MP, / max */
     uint8_t *c = win_ctrl_take(win);
@@ -110,14 +110,14 @@ void menu_party_fill(uint8_t *m)
         grid_cell_text(c, row, 5, buf);
     }
     uint8_t *c2 = win_ctrl(ldp(m, 0x28), 2);
-    grid_cell_text(c2, 0, 0, "Money");
+    grid_cell_text(c2, 0, 0, ((const char *)D(0x854a3c)));
     int32_t gold = ld32(room, 0x4014);
     if (ld32(ldp(m, 0xc), 0x4064) == 10) g_eng.h5bf3ee(buf, "%dGP", gold / 100);
     else g_eng.h5bf3ee(buf, "%dCP", gold);
     grid_cell_text(c2, 0, 1, buf);
     int32_t cap = ld32(room, 0x4020);
     if (ld32(room, 0x4064) == 10) cap /= 100;
-    g_eng.h5bf3ee(buf, "(Max %d)", cap);
+    g_eng.h5bf3ee(buf, ((const char *)D(0x854a28)), cap);
     grid_cell_text(c2, 0, 2, buf);
 }
 
@@ -135,7 +135,7 @@ intptr_t menu_have_counts(uint8_t *m, uint8_t *c)
             if (rec[0xa] == 0 && ld32(rec, 0) == item) cnt++;
         }
         if (cnt != 0) {
-            g_eng.h5bf3ee(buf, "You have %d", cnt);
+            g_eng.h5bf3ee(buf, ((const char *)D(0x854b88)), cnt);
             grid_cell_text(c, r, 4, buf);
         } else {
             grid_cell_text(c, r, 4, D(0x8a9b6cu));
@@ -328,7 +328,7 @@ void equip_panel_fill(uint8_t *m, uint8_t *win, wl_room *room, int32_t id, int32
         for (int n = 0; n < nrows[i]; n++) grid_row_add(win_ctrl_at(win, i), 0, 0);
     }
     if (id == 0) {
-        g_eng.h5bf3ee(buf, "%s - %s", "Equip", "Don't Equip");
+        g_eng.h5bf3ee(buf, ((const char *)D(0x854c88)), ((const char *)D(0x854c90)), ((const char *)D(0x854c24)));
         grid_cell_text(win_ctrl_at(win, 0), 0, 0, buf);
         return;
     }
@@ -342,7 +342,7 @@ void equip_panel_fill(uint8_t *m, uint8_t *win, wl_room *room, int32_t id, int32
     const uint8_t *item = item_def(item_id);
     if (item == NULL) return;
     const uint8_t *st = s + 0xa10;   /* the member's stat block */
-    g_eng.h5bf3ee(buf, "%s - %s", "Equip", (const char *)st);
+    g_eng.h5bf3ee(buf, ((const char *)D(0x854c88)), ((const char *)D(0x854c90)), (const char *)st);
     grid_cell_text(win_ctrl_at(win, 0), 0, 0, buf);
     /* control 1: what the member wears in the item's equip slot  >>  the item (+ its price) */
     uint8_t *c1 = win_ctrl_at(win, 1);
@@ -377,19 +377,19 @@ void equip_panel_fill(uint8_t *m, uint8_t *win, wl_room *room, int32_t id, int32
     uint8_t *c2 = win_ctrl_at(win, 2);
     if (!menu_item_fits(m, id, item)) {
         cell_color_set(c2, 0, 0, 1, 0xff, 0xff);
-        grid_cell_text(c2, 0, 0, "Cannot Equip");
+        grid_cell_text(c2, 0, 0, ((const char *)D(0x854c68)));
         return;
     }
     uint8_t nx[0x4cc] = { 0 };   /* (retail: a stack block; 0x4066d0 sets +0x74..+0x88 for an active member) */
     stats_recompute(room, id, nx, item);
     if (ld32(s, 0x9f0) != 100000104) {
-        stat_row_set(c2, 0, "Attack", ld32(st, 0x64) + ld32(st, 0x8c), ld32(st, 0x74), ld32(nx, 0x74), 0x24);
-        stat_row_set(c2, 1, "Defense", ld32(st, 0x68) + ld32(st, 0x90), ld32(st, 0x78), ld32(nx, 0x78), 0x25);
-        stat_row_set(c2, 2, "Spirit", ld32(st, 0x6c) + ld32(st, 0x94), ld32(st, 0x7c), ld32(nx, 0x7c), 0x26);
-        stat_row_set(c2, 3, "Resist", ld32(st, 0x70) + ld32(st, 0x98), ld32(st, 0x80), ld32(nx, 0x80), 0x27);
+        stat_row_set(c2, 0, ((const char *)D(0x854c60)), ld32(st, 0x64) + ld32(st, 0x8c), ld32(st, 0x74), ld32(nx, 0x74), 0x24);
+        stat_row_set(c2, 1, ((const char *)D(0x854c58)), ld32(st, 0x68) + ld32(st, 0x90), ld32(st, 0x78), ld32(nx, 0x78), 0x25);
+        stat_row_set(c2, 2, ((const char *)D(0x854c50)), ld32(st, 0x6c) + ld32(st, 0x94), ld32(st, 0x7c), ld32(nx, 0x7c), 0x26);
+        stat_row_set(c2, 3, ((const char *)D(0x854c48)), ld32(st, 0x70) + ld32(st, 0x98), ld32(st, 0x80), ld32(nx, 0x80), 0x27);
         uint8_t *c3 = win_ctrl_at(win, 3);
-        stat_row_set(c3, 0, "Max HP", ld32(st, 0x58) + ld32(st, 0x9c), ld32(st, 0x84), ld32(nx, 0x84), 0x21);
-        stat_row_set(c3, 1, "Max MP", ld32(st, 0x60) + ld32(st, 0xa0), ld32(st, 0x88), ld32(nx, 0x88), 0x22);
+        stat_row_set(c3, 0, ((const char *)D(0x854c40)), ld32(st, 0x58) + ld32(st, 0x9c), ld32(st, 0x84), ld32(nx, 0x84), 0x21);
+        stat_row_set(c3, 1, ((const char *)D(0x854c38)), ld32(st, 0x60) + ld32(st, 0xa0), ld32(st, 0x88), ld32(nx, 0x88), 0x22);
     }
     uint8_t *c4 = win_ctrl_at(win, 4);
     uint16_t bank = 0, frame = 0;   /* (retail: stack words; a member without a character leaves them) */
@@ -435,14 +435,14 @@ int32_t shop_who(uint8_t *m, const uint8_t *item, uint16_t k, int32_t priced)
     /* "On who?": the members + "Don't Equip" */
     wl_room *room = ldp(m, 0xc);
     uint16_t n = (uint16_t)(room_party_count(room, 1, 0) + 1);
-    uint8_t *who = sys_win_open(sys, ldp(m, 0), 8, 64, 160, 28 * n + 64, 2, "On who?", 0);
+    uint8_t *who = sys_win_open(sys, ldp(m, 0), 8, 64, 160, 28 * n + 64, 2, ((const char *)D(0x854c30)), 0);
     uint8_t *c = win_grid_new(who, 40, 56, n, 1, n, 0);
     grid_col_place(c, 0, 0, 0, 0, 0);
     sys_cursor_style(sys, c, 1);
     member_rows_add(room, c, 1);
-    grid_cell_text(c, grid_row_add(c, 2, 0), 0, "Don't Equip");
+    grid_cell_text(c, grid_row_add(c, 2, 0), 0, ((const char *)D(0x854c24)));
     equip_panel_fill(m, win, ldp(m, 0xc), cur_id(c), ld32(item, 0), priced);
-    if (ldp(m, 0x24) != NULL) ctrl_text_set(ldp(m, 0x24), "Which character will equip this?");
+    if (ldp(m, 0x24) != NULL) ctrl_text_set(ldp(m, 0x24), ((const char *)D(0x854c00)));
     for (;;) {
         int32_t r = menu_run(m, c, NULL, 0, 0, 0, 0, 0, 0, 0);
         int32_t id = cur_id(c);
@@ -486,7 +486,7 @@ int32_t shop_buy(uint8_t *m, const int32_t *list)
 {
     void *sys = g_eng.sys;
     char buf[512], have[512];
-    g_eng.h5bf3ee(buf, "%s", "Buy this item");
+    g_eng.h5bf3ee(buf, "%s", ((const char *)D(0x854b98)));
     uint8_t *win = sys_win_open(sys, ldp(m, 0), 8, 24, 440, 320, 2, buf, 1);
     uint8_t *c = win_grid_new(win, 40, 48, 1000, 5, 8, 2);
     st32(c, 0x1ac, 32);
@@ -533,7 +533,7 @@ run:
     for (uint16_t k = 0; (int32_t)k < ld32(ldp(c, 0x174), 0x10); k++) {
         uint16_t cnt = (uint16_t)room_item_count(ldp(m, 0xc), ld32((uint8_t *)ldp(c, 0x17c) + 16u * k, 4), NULL, 0);
         if (cnt != 0) {
-            g_eng.h5bf3ee(have, "You have %d", cnt);
+            g_eng.h5bf3ee(have, ((const char *)D(0x854b88)), cnt);
             grid_cell_text(c, k, 4, have);
         } else {
             grid_cell_text(c, k, 4, D(0x8a9b6cu));
@@ -568,12 +568,12 @@ int32_t shop_run(wl_event *ev, const int32_t *list, int32_t a3, int32_t a4)
         st32(r, 0x20, 5);
         st32(r, 0x5f4, 1);
         st32(r, 0x5f0, 0);
-        strcpy((char *)r + 0x5a0, "Buy");
+        strcpy((char *)r + 0x5a0, ((const char *)D(0x854b84)));
         uint16_t n = (uint16_t)(ld16(r, 0x584) + 1);
         st16(r, 0x584, n);
         st32(r, 0x5f4 + 0x58u * n, 2);
         st32(r, 0x5f0 + 0x58u * n, 0);
-        strcpy((char *)r + 0x5a0 + 0x58u * n, "Sell");
+        strcpy((char *)r + 0x5a0 + 0x58u * n, ((const char *)D(0x854b7c)));
         st16(r, 0x584, (uint16_t)(ld16(r, 0x584) + 1));
         res = script_wait(ev);
         if (res == 6) goto out;

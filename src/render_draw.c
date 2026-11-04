@@ -510,7 +510,7 @@ LABEL_66:
     *(intptr_t *)&SYSB(864));
   if ( F32(CFG(), 176) == 1 && a4 != 0 )
   {
-    g_eng.h5bf3ee(Buffer, "FPS %d", F32(a4, 36));
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x8554ac)), F32(a4, 36));
     rd_491820(
       (intptr_t *)((intptr_t)g_eng.sys),
       F32(SYS32(10348), 364),
@@ -7898,7 +7898,7 @@ int32_t rd_495dc0(int32_t a1, uint16_t a2, char * Buffer)
 
   if ( a2 != 0 )
   {
-    g_eng.h5bf3ee(Format, "%% %dd", a2);
+    g_eng.h5bf3ee(Format, ((const char *)D(0x8554f0)), a2);
     g_eng.h5bf3ee(Buffer, Format, a1);
   }
   else
@@ -8300,7 +8300,7 @@ int32_t rd_496560(wl_char *self, int32_t a2, int32_t * a3, uint16_t a4, int32_t 
       v23 = a3[21];
     else
       v23 = *a13 * (v21 + v20) / 1000;
-    g_eng.h5bf3ee(Buffer, "%% %dd", 4);
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x8554f0)), 4);
     g_eng.h5bf3ee((char *const)String, Buffer, v23);
     (*c_l__f) = strlen((const char *)String);
     if ( W_rp_5b94e0((intptr_t)(v17), (intptr_t)((intptr_t *)&(*hdc__f))) != 0 )
@@ -9368,7 +9368,7 @@ LABEL_8:
   v21 = v7[21];
   if ( (*ca__f) != 1000 * v21 / v19 )
     v21 = (*ca__f) * v20 / 1000;
-  g_eng.h5bf3ee(Buffer, "%% %dd", 4);
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x8554f0)), 4);
   g_eng.h5bf3ee(v46, Buffer, v21);
   g_eng.h5bf3ee((char *const)String, "%s / %d", v46, v7[22] + v7[39] + v7[33]);
   v22 = (*v36__f) + 217;
@@ -9402,7 +9402,7 @@ LABEL_8:
     v25 = v7[23];
   else
     v25 = v24 * (v7[24] + v7[34] + v7[40]) / 1000;
-  g_eng.h5bf3ee(Buffer, "%% %dd", 4);
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x8554f0)), 4);
   g_eng.h5bf3ee(v46, Buffer, v25);
   g_eng.h5bf3ee((char *const)String, "%s / %d", v46, v7[24] + v7[34] + v7[40]);
   v26 = (*v40__f);

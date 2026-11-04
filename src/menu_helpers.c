@@ -1198,7 +1198,7 @@ int32_t mh_5b1f10(wl_char *self, int32_t a3, int32_t a4, char * Buffer, uint16_t
             W_sfx_play_at((intptr_t)(v16), (intptr_t)(0), (intptr_t)(85), (intptr_t)(0), (intptr_t)(0), (intptr_t)(0));
             if ( Buffer == 0 )
               goto LABEL_47;
-            g_eng.h5bf3ee(Buffer, "%s recovered %d HP.", *(const char **)(v16 + 1872), (*v33__f));
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a46a8)), *(const char **)(v16 + 1872), (*v33__f));
             (*v37__f) = 1;
             (*v38__f) = true;
             mh_5b35f0((*v40__f), a4);
@@ -1212,7 +1212,7 @@ int32_t mh_5b1f10(wl_char *self, int32_t a3, int32_t a4, char * Buffer, uint16_t
             v23 = rnd();
             W_char_add_hp((intptr_t)(v16), (intptr_t)(v15 + (*v36__f) * v23 / 0x8000), (intptr_t)(&(*v33__f)), (intptr_t)(0));
             if ( Buffer != 0 && (*v35__f) == 0 )
-              g_eng.h5bf3ee(Buffer, "%s recovered %d HP.", *(const char **)(v16 + 1872), (*v33__f));
+              g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a46a8)), *(const char **)(v16 + 1872), (*v33__f));
             if ( a7 != 0 )
             {
               (*v32__f) = v18[11];
@@ -1278,7 +1278,7 @@ LABEL_47:
             W_sfx_play_at((intptr_t)(v16), (intptr_t)(0), (intptr_t)(85), (intptr_t)(0), (intptr_t)(0), (intptr_t)(0));
             if ( Buffer == 0 )
               goto LABEL_47;
-            g_eng.h5bf3ee(Buffer, "%s recovered %d MP.", *(const char **)(v16 + 1872), (*v33__f));
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a46bc)), *(const char **)(v16 + 1872), (*v33__f));
             (*v37__f) = 1;
             (*v38__f) = true;
             mh_5b35f0((*v40__f), a4);
@@ -1317,7 +1317,7 @@ LABEL_47:
             }
             if ( Buffer == 0 )
               goto LABEL_47;
-            g_eng.h5bf3ee(Buffer, "%s's %s increased by %d.", *(const char **)(v16 + 1872), v41, (*v33__f));
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a468c)), *(const char **)(v16 + 1872), v41, (*v33__f));
             (*v37__f) = 1;
             (*v38__f) = true;
             mh_5b35f0((*v40__f), a4);
@@ -1336,7 +1336,7 @@ LABEL_67:
         {
           mh_5b35f0((*v40__f), a4);
 LABEL_72:
-          g_eng.h5bf3ee(v42, "You used %s.%%n%s", (const char *)(v8 + 4), Buffer);
+          g_eng.h5bf3ee(v42, ((const char *)D(0x8a4658)), (const char *)(v8 + 4), Buffer);
           v28 = (*v37__f);
           strcpy(Buffer, v42);
           result = (*v38__f);

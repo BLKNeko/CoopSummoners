@@ -10,7 +10,8 @@ LANG_DIR = os.path.join(ROOT, "data", "lang")               # committed: transla
 
 # the game's codes inside text, which a translation must keep (as a multiset):
 #   %s %d %3d ... printf fields, %mN% a glyph value, %w a wait; @@KEY the configured key's name; #N colours
-KEEP_RE = re.compile(r"%[-+ #0]*\d*(?:\.\d+)?[sdiuxXcf]|%m\d*%?|%w|@@[A-Za-z0-9]+|#[0-9]")
+#   @@ + an SJIS arrow (0x81 0xa8..0xab, here as the Latin-1 characters \x81 ¨©ª«) [+ K] = an arrow key icon
+KEEP_RE = re.compile(r"%[-+ #0]*\d*(?:\.\d+)?[sdiuxXcf]|%m\d*%?|%w|@@\x81[\xa8-\xab]K?|@@[A-Za-z0-9+\-]+|#[0-9]|\x81[\x40-\xfc]")
 # %n = a manual line break: a translation may move or drop it
 BREAK = "%n"
 
@@ -39,10 +40,33 @@ def port_refs():
     for m in re.finditer(r"(?:strcpy|strcat|sprintf|wsprintfA|lstrcpyA|strncpy)\w*\(\s*([^;]*?),[^;]*?\b[DS]\((0x[0-9a-fA-F]{6})u?\)", src):
         va = int(m.group(2), 16)
         c = next((n for r, n in DEST_CAP if r.search(m.group(1))), None)
+        if c is None and re.match(r"\w+\(\s*\(char \*\)&F32\(\s*c\s*,\s*0x5a0\s*\)", m.group(0)):
+            c = 0x50 - 1   # the first choice record (the comma inside F32() cut group 1 short)
         if va in cap and cap[va] is not None and c is not None:
             cap[va] = min(cap[va], c)
         else:
             cap[va] = None if (va in cap and cap[va] is None) or c is None else c
+    # strcpy(NAME, D(..)) into a stack buffer the decompile declares with its size ("char *NAME = ...; /* [N] at
+    # ebp-... */" or "char NAME[N]"): the cap is N - 1 when every copy of that string goes into such a buffer
+    sized = {}
+    for f in glob.glob(os.path.join(ROOT, "src", "*.c")):
+        lines = open(f, encoding="utf-8", errors="replace").read().split("\n")
+        for i, line in enumerate(lines):
+            for m in re.finditer(r"strcpy\(\s*(?:\(\s*char\s*\*\s*\)\s*)?([A-Za-z_]\w*)\s*,[^;]*?\b[DS]\((0x[0-9a-fA-F]{6})u?\)", line):
+                name, va = m.group(1), int(m.group(2), 16)
+                size = None
+                for j in range(i, max(-1, i - 800), -1):
+                    d = re.search(r"\b%s\s*=\s*\(char \*\)\(frame_[^;]*;\s*/\*\s*\[(\d+)\]" % re.escape(name), lines[j]) \
+                        or re.search(r"\bchar\s+%s\s*\[(\d+)\]" % re.escape(name), lines[j])
+                    if d:
+                        size = int(d.group(1))
+                        break
+                sized.setdefault(va, []).append(size)
+    for va, sizes in sized.items():
+        if va in cap and cap[va] is None and None not in sizes:
+            n_copies = len(re.findall(r"(?:strcpy|strcat|sprintf|wsprintfA|lstrcpyA|strncpy)\w*\([^;]*?\b[DS]\(0x%06xu?\)" % va, src))
+            if n_copies == len(sizes):   # no strcat / sprintf / other destination for this string
+                cap[va] = min(sizes) - 1
     # strcpy((char *)&F32(c, 0x5a0), D(..)): the first choice record (the comma inside F32() hides it from above)
     for m in re.finditer(r"strcpy\(\s*\(char \*\)&F32\(\s*c\s*,\s*0x5a0\s*\)\s*,[^;]*?\b[DS]\((0x[0-9a-fA-F]{6})u?\)", src):
         va = int(m.group(1), 16)
@@ -59,13 +83,18 @@ def cap_of(va, rows, caps):
 
 
 def esc(t):
-    return t.replace("\\", "\\\\").replace("\t", "\\t").replace("\n", "\\n").replace("\r", "\\r")
+    t = t.replace("\\", "\\\\").replace("\t", "\\t").replace("\n", "\\n").replace("\r", "\\r")
+    # C1 bytes (0x80..0x9f: an SJIS lead such as the arrows' 0x81) have no character of their own: write \xHH
+    return re.sub(r"[\x80-\x9f]", lambda m: "\\x%02x" % ord(m.group()), t)
 
 
 def unesc(t):
     out, i = [], 0
     while i < len(t):
-        if t[i] == "\\" and i + 1 < len(t):
+        if t[i] == "\\" and i + 3 < len(t) + 0 and t[i + 1] == "x" and re.fullmatch(r"[0-9a-fA-F]{2}", t[i + 2:i + 4]):
+            out.append(chr(int(t[i + 2:i + 4], 16)))
+            i += 4
+        elif t[i] == "\\" and i + 1 < len(t):
             out.append({"n": "\n", "r": "\r", "t": "\t"}.get(t[i + 1], t[i + 1]))
             i += 2
         else:

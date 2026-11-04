@@ -796,7 +796,7 @@ LABEL_25:
       }
       if ( a4 != 0 )
       {
-        g_eng.h5bf3ee(Buffer, "Would you like to buy the %s?", (const char *)(a2 + 4));
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x854ba8)), (const char *)(a2 + 4));
         result = W_mh_4190d0((intptr_t)(c), (intptr_t)(Buffer), (intptr_t)(0x28u), (intptr_t)((_DWORD *)2), (intptr_t)(0));
         if ( result != 14 )
         {
@@ -986,13 +986,13 @@ int32_t el_4192f0(wl_char *self, int32_t a2)
           g_eng.h5bf3ee(v35, "%dCP", (*v24__f));
         if ( F32((*v27__f), 684) < 200 )
         {
-          g_eng.h5bf3ee(Buffer, "Selling %s for %s. Are you sure?", (const char *)((*v27__f) + 4), v35);
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x854d24)), (const char *)((*v27__f) + 4), v35);
           v20 = W_mh_4190d0((intptr_t)(c), (intptr_t)(Buffer), (intptr_t)(0x28u), (intptr_t)((_DWORD *)2), (intptr_t)(0));
           goto LABEL_41;
         }
         g_eng.h5bf3ee(
           Buffer,
-          "Selling %s for %s. This is a rare item, really sell it?",
+          ((const char *)D(0x854d48)),
           (const char *)((*v27__f) + 4),
           v35);
         (*v28__f) = 0;
@@ -1237,7 +1237,7 @@ int32_t el_41c390(wl_char *self, int32_t a2, int32_t a3, int32_t a4, int32_t a5,
         g_eng.h5bf3ee(v49, "%dGP", (*v42__f));
       else
         g_eng.h5bf3ee(v49, "%dCP", (*v42__f));
-      g_eng.h5bf3ee(v50, "Healer - %s", v49);
+      g_eng.h5bf3ee(v50, ((const char *)D(0x855004)), v49);
       W_mh_419c70((intptr_t)(&(*v48__f)), (intptr_t)(32), (intptr_t)(64), (intptr_t)(176), (intptr_t)(160), (intptr_t)(2u), (intptr_t)(3u), (intptr_t)(&(*v46__f)), (intptr_t)((int *)&(*v44__f)), (intptr_t)(v50), (intptr_t)(1));
       W_grid_row_text_add((intptr_t)((*v44__f)), (intptr_t)(0), (intptr_t)(23), (intptr_t)(((char *)D(0x854ff8))));
       W_grid_row_text_add((intptr_t)((*v44__f)), (intptr_t)(0), (intptr_t)(24), (intptr_t)(((char *)D(0x854fec))));
@@ -1278,7 +1278,7 @@ LABEL_39:
       v17 = 0;
       W_menu_party_open((intptr_t)(&(*v48__f)));
       v18 = W_money_text((intptr_t)(v50), (intptr_t)(F32(F32(v48__f, 0xc), 16484)), (intptr_t)(a2), (intptr_t)(1));
-      g_eng.h5bf3ee(v49, "Inn - %s to stay", v18);
+      g_eng.h5bf3ee(v49, ((const char *)D(0x85502c)), v18);
       W_mh_419c70((intptr_t)(&(*v48__f)), (intptr_t)(32), (intptr_t)(64), (intptr_t)(176), (intptr_t)(160), (intptr_t)(2u), (intptr_t)(3u), (intptr_t)(&(*v46__f)), (intptr_t)((int *)&(*v44__f)), (intptr_t)(v49), (intptr_t)(1));
       v19 = (*v44__f);
       v20 = W_grid_row_add((intptr_t)((*v44__f)), (intptr_t)(0), (intptr_t)(23));
@@ -3959,7 +3959,7 @@ int32_t el_49eea0(wl_char *self, int32_t a2, int32_t a3)
       return v4;
     g_eng.h5bf3ee(
       Buffer,
-      "Let's see, it costs %s and the best prize is a %s...",
+      ((const char *)D(0x855be4)),
       (const char *)(a3 + 4),
       (uint8_t *)v13 + 4);
     v16 = W_actor_by_handle((intptr_t)(100000101));
@@ -4110,7 +4110,7 @@ LABEL_67:
             {
               g_eng.h5bf3ee(
                 Buffer,
-                "Yay! I won a %s, that's the best thing in here!",
+                ((const char *)D(0x855ba0)),
                 (uint8_t *)v19 + 4);
               (*v47__f) = 13;
             }
@@ -4118,7 +4118,7 @@ LABEL_67:
             {
               if ( v19[24] < F32(a3, 0) )
               {
-                g_eng.h5bf3ee(Buffer, "Aww, all I won was a %s...", (uint8_t *)v19 + 4);
+                g_eng.h5bf3ee(Buffer, ((const char *)D(0x855b70)), (uint8_t *)v19 + 4);
                 v43 = W_actor_by_handle((intptr_t)(100000101));
                 W_scene_msg((intptr_t)(c), (intptr_t)(0), (intptr_t)(v43), (intptr_t)(Buffer), (intptr_t)(0), (intptr_t)(1), (intptr_t)(1), (intptr_t)(0), (intptr_t)(11), (intptr_t)(0), (intptr_t)(0));
                 v4 = W_script_wait((intptr_t)(c));
@@ -4139,7 +4139,7 @@ LABEL_83:
                   return v4;
                 continue;
               }
-              g_eng.h5bf3ee(Buffer, "Yay, I won a %s!", (uint8_t *)v19 + 4);
+              g_eng.h5bf3ee(Buffer, ((const char *)D(0x855b8c)), (uint8_t *)v19 + 4);
               (*v47__f) = 3;
             }
             v42 = W_actor_by_handle((intptr_t)(100000101));
@@ -4483,14 +4483,14 @@ int32_t el_54ed80(void)
     if ( F16(v10, 2 * 4) != 0 )
     {
 LABEL_20:
-      g_eng.h5bf3ee(Buffer, "You used %s.", (const char *)(v4 + 4));
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a0a98)), (const char *)(v4 + 4));
     }
     else
     {
       W_mh_4199b0((intptr_t)(v1), (intptr_t)(v0), (intptr_t)(1), (intptr_t)(0));
       g_eng.h5bf3ee(
         Buffer,
-        "You used %s.%%nThe %s has broken.",
+        ((const char *)D(0x8a0aa8)),
         (const char *)(v4 + 4),
         (const char *)(v4 + 4));
     }
@@ -4603,7 +4603,7 @@ void el_55fdb0(wl_char *self)
 
   if ( F32(c, 0x9f4) != 0 )
   {
-    g_eng.h5bf3ee(Buffer, "%s leveled up!", (uint8_t *)c + 2576);
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a0b18)), (uint8_t *)c + 2576);
     v2 = W;
     v3 = 0;
     v4 = F32(W, 0x1024);

@@ -17925,7 +17925,7 @@ LABEL_617:
     v3 = W_script_wait(c);
     if ( v3 == 6 )
       return v3;
-    g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 2/12");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 2/12");
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v3 = W_script_wait(c);
@@ -18836,7 +18836,7 @@ LABEL_626:
     v3 = W_script_wait(c);
     if ( v3 == 6 )
       return v3;
-    g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Prank Magic Encyclopedia");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x828bd0)));
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v3 = W_script_wait(c);
@@ -19610,7 +19610,7 @@ LABEL_104:
     v3 = W_script_wait(c);
     if ( v3 == 6 )
       return v3;
-    g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", D(0x856164));
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), D(0x856164));
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v3 = W_script_wait(c);
@@ -19654,7 +19654,7 @@ LABEL_104:
 LABEL_30:
           g_eng.h5bf3ee(
             Buffer,
-            "The %s contained information on using the %s ability!",
+            ((const char *)D(0x8560e4)),
             D(0x85611c),
             (uint8_t *)v15 + 4);
           W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
@@ -19690,7 +19690,7 @@ LABEL_31:
 LABEL_43:
           g_eng.h5bf3ee(
             Buffer,
-            "The %s contained information on using the %s ability!",
+            ((const char *)D(0x8560e4)),
             D(0x85611c),
             (uint8_t *)v21 + 4);
           W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
@@ -19727,7 +19727,7 @@ LABEL_44:
 LABEL_56:
         g_eng.h5bf3ee(
           Buffer,
-          "The %s contained information on using the %s ability!",
+          ((const char *)D(0x8560e4)),
           D(0x85611c),
           (uint8_t *)v26 + 4);
         W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
@@ -19763,7 +19763,7 @@ LABEL_57:
 LABEL_69:
               g_eng.h5bf3ee(
                 Buffer,
-                "The %s contained information on using the %s ability!",
+                ((const char *)D(0x8560e4)),
                 D(0x85611c),
                 (uint8_t *)v31 + 4);
               W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
@@ -19822,7 +19822,7 @@ LABEL_196:
     v3 = W_script_wait(c);
     if ( v3 == 6 )
       return v3;
-    g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 1/12");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 1/12");
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v3 = W_script_wait(c);
@@ -19887,7 +19887,7 @@ LABEL_196:
       v3 = W_script_wait(c);
       if ( v3 != 6 )
       {
-        g_eng.h5bf3ee(Buffer, "The paper on the wall says '%s'.", D(0x855f00));
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x855edc)), D(0x855f00));
         W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
 LABEL_186:
         v3 = W_script_wait(c);
@@ -20313,186 +20313,186 @@ int32_t chs_4a6b80(wl_char *self)
     int16_t *const v402__f = (int16_t *)(frame_ + 0xae29);   /* ebp-0x3 */
     char *const v403__f = (char *)(frame_ + 0xae2b);   /* ebp-0x1 */
 
-  strcpy(v261, "The Soupy ");
+  strcpy(v261, ((const char *)D(0x85b444)));
   memset(&v261[11], 0, 0x1F4u);
   v261[511] = 0;
-  strcpy(v262, "The 'Well'-Off ");
+  strcpy(v262, ((const char *)D(0x85b434)));
   memset(&v262[16], 0, 0x1F0u);
-  strcpy(v263, "Wonderland's ");
+  strcpy(v263, ((const char *)D(0x85b424)));
   memset(&v263[14], 0, 0x1F0u);
   (*v264__f) = 0;
-  strcpy(v265, "The Morning's ");
+  strcpy(v265, ((const char *)D(0x85b414)));
   memset(&v265[15], 0, 497);
-  strcpy(v266, "The Southern ");
+  strcpy(v266, ((const char *)D(0x85b404)));
   memset(&v266[14], 0, 0x1F0u);
   (*v267__f) = 0;
-  strcpy(v268, "The Village's ");
+  strcpy(v268, ((const char *)D(0x85b3f4)));
   memset(&v268[15], 0, 497);
-  strcpy(v269, "The Fearsome ");
+  strcpy(v269, ((const char *)D(0x85b3e4)));
   memset(&v269[14], 0, 0x1F0u);
   (*v270__f) = 0;
-  strcpy(v271, "The Vivified ");
+  strcpy(v271, ((const char *)D(0x85b3b8)));
   memset(&v271[14], 0, 0x1F0u);
   (*v272__f) = 0;
-  strcpy(v273, "The Wet-Behind-The-Ears ");
+  strcpy(v273, ((const char *)D(0x85b3c8)));
   memset(&v273[25], 0, 0x1E4u);
   (*v274__f) = 0;
   (*v275__f) = 0;
-  strcpy(v276, "The Fresh-Baked ");
+  strcpy(v276, ((const char *)D(0x85b3a4)));
   memset(&v276[17], 0, 0x1ECu);
   (*v277__f) = 0;
   (*v278__f) = 0;
-  strcpy(v279, "The Flea-Bitten ");
+  strcpy(v279, ((const char *)D(0x85b390)));
   memset(&v279[17], 0, 0x1ECu);
   (*v280__f) = 0;
   (*v281__f) = 0;
-  strcpy(v282, "The Slippery ");
+  strcpy(v282, ((const char *)D(0x85b380)));
   memset(&v282[14], 0, 0x1F0u);
   (*v283__f) = 0;
-  strcpy(v284, "The Lively ");
+  strcpy(v284, ((const char *)D(0x85b374)));
   memset(&v284[12], 0, 0x1F4u);
-  strcpy(v285, "The Rocky ");
+  strcpy(v285, ((const char *)D(0x85b368)));
   memset(&v285[11], 0, 501);
-  strcpy(v286, "The Fresh ");
+  strcpy(v286, ((const char *)D(0x85b35c)));
   memset(&v286[11], 0, 501);
-  strcpy(v287, "The Traveling ");
+  strcpy(v287, ((const char *)D(0x85b34c)));
   memset(&v287[15], 0, 497);
-  strcpy(v288, "Look, It's The ");
+  strcpy(v288, ((const char *)D(0x85b324)));
   memset(&v288[16], 0, 0x1F0u);
-  strcpy(v289, "The (Slightly) Spicy ");
+  strcpy(v289, ((const char *)D(0x85b334)));
   memset(&v289[22], 0, 0x1E8u);
   (*v290__f) = 0;
-  strcpy(v291, "The Lonely ");
+  strcpy(v291, ((const char *)D(0x85b318)));
   memset(&v291[12], 0, 0x1F4u);
-  strcpy(v292, "The Creeping ");
+  strcpy(v292, ((const char *)D(0x85b308)));
   memset(&v292[14], 0, 0x1F0u);
   (*v293__f) = 0;
-  strcpy(v294, "The Flying ");
+  strcpy(v294, ((const char *)D(0x85b2e4)));
   memset(&v294[12], 0, 0x1F4u);
-  strcpy(v295, "The Thieving ");
+  strcpy(v295, ((const char *)D(0x85b2d4)));
   memset(&v295[14], 0, 0x1F0u);
   (*v296__f) = 0;
-  strcpy(v297, "The Energetic ");
+  strcpy(v297, ((const char *)D(0x85b2c4)));
   memset(&v297[15], 0, 497);
-  strcpy(v298, "The Fleeing ");
+  strcpy(v298, ((const char *)D(0x85b2b4)));
   memset(&v298[13], 0, 0x1F0u);
   (*v299__f) = 0;
   (*v300__f) = 0;
-  strcpy(v301, "The Gateball-Winning ");
+  strcpy(v301, ((const char *)D(0x85b2f0)));
   memset(&v301[22], 0, 0x1E8u);
   (*v302__f) = 0;
-  strcpy(v303, "The Armorclad ");
+  strcpy(v303, ((const char *)D(0x85b2a4)));
   memset(&v303[15], 0, 497);
-  strcpy(v304, "The Spinning ");
+  strcpy(v304, ((const char *)D(0x85b294)));
   memset(&v304[14], 0, 0x1F0u);
   (*v305__f) = 0;
-  strcpy(v306, "The Evil ");
+  strcpy(v306, ((const char *)D(0x85b288)));
   memset(&v306[10], 0, 0x1F4u);
   (*v307__f) = 0;
-  strcpy(v347, "Clam ");
+  strcpy(v347, ((const char *)D(0x85b280)));
   memset(&v347[6], 0, 0x1F8u);
   (*v348__f) = 0;
-  strcpy(v349, "Frog ");
+  strcpy(v349, ((const char *)D(0x85b278)));
   memset(&v349[6], 0, 0x1F8u);
   (*v350__f) = 0;
-  strcpy(v351, "Witch ");
+  strcpy(v351, ((const char *)D(0x85b270)));
   memset(&v351[7], 0, 505);
-  strcpy(v352, "Ham ");
+  strcpy(v352, ((const char *)D(0x85b268)));
   memset(&v352[5], 0, 0x1F8u);
   (*v353__f) = 0;
   (*v354__f) = 0;
-  strcpy(v355, "Penguin ");
+  strcpy(v355, ((const char *)D(0x85b25c)));
   memset(&v355[9], 0, 0x1F4u);
   (*v356__f) = 0;
   (*v357__f) = 0;
-  strcpy(v358, "King ");
+  strcpy(v358, ((const char *)D(0x85b254)));
   memset(&v358[6], 0, 0x1F8u);
   (*v359__f) = 0;
-  strcpy(v360, "Slime ");
+  strcpy(v360, ((const char *)D(0x85b24c)));
   memset(&v360[7], 0, 505);
-  strcpy(v361, "Skeleton ");
+  strcpy(v361, ((const char *)D(0x85b240)));
   memset(&v361[10], 0, 0x1F4u);
   (*v362__f) = 0;
-  strcpy(v363, "Bed ");
+  strcpy(v363, ((const char *)D(0x85b22c)));
   memset(&v363[5], 0, 0x1F8u);
   (*v364__f) = 0;
   (*v365__f) = 0;
-  strcpy(v366, "Taiyaki ");
+  strcpy(v366, ((const char *)D(0x85b234)));
   memset(&v366[9], 0, 0x1F4u);
   (*v367__f) = 0;
   (*v368__f) = 0;
-  strcpy(v369, "Cold ");
+  strcpy(v369, ((const char *)D(0x85b224)));
   memset(&v369[6], 0, 0x1F8u);
   (*v370__f) = 0;
-  strcpy(v371, "Mold ");
+  strcpy(v371, ((const char *)D(0x85b21c)));
   memset(&v371[6], 0, 0x1F8u);
   (*v372__f) = 0;
-  strcpy(v373, "Shrimp ");
+  strcpy(v373, ((const char *)D(0x85b214)));
   memset(&v373[8], 0, 0x1F8u);
-  strcpy(v374, "Iguanadon ");
+  strcpy(v374, ((const char *)D(0x85b208)));
   memset(&v374[11], 0, 501);
-  strcpy(v375, "Radish ");
+  strcpy(v375, ((const char *)D(0x85b200)));
   memset(&v375[8], 0, 0x1F8u);
-  strcpy(v376, "Jumper ");
+  strcpy(v376, ((const char *)D(0x85b1f8)));
   memset(&v376[8], 0, 0x1F8u);
-  strcpy(v377, "Shooter ");
+  strcpy(v377, ((const char *)D(0x85b1ec)));
   memset(&v377[9], 0, 0x1F4u);
   (*v378__f) = 0;
   (*v379__f) = 0;
-  strcpy(v380, "Noodle Bowl ");
+  strcpy(v380, ((const char *)D(0x85b1dc)));
   memset(&v380[13], 0, 0x1F0u);
   (*v381__f) = 0;
   (*v382__f) = 0;
-  strcpy(v383, "Pyramid ");
+  strcpy(v383, ((const char *)D(0x85b1d0)));
   memset(&v383[9], 0, 0x1F4u);
   (*v384__f) = 0;
   (*v385__f) = 0;
-  strcpy(v386, "Caterpillar ");
+  strcpy(v386, ((const char *)D(0x85b1c0)));
   memset(&v386[13], 0, 0x1F0u);
   (*v387__f) = 0;
   (*v388__f) = 0;
-  strcpy(v389, "Carpet ");
+  strcpy(v389, ((const char *)D(0x85b1b0)));
   memset(&v389[8], 0, 0x1F8u);
-  strcpy(v390, "Runner ");
+  strcpy(v390, ((const char *)D(0x85b1b8)));
   memset(&v390[8], 0, 0x1F8u);
-  strcpy(v391, "Magic Ball ");
+  strcpy(v391, ((const char *)D(0x85b1a4)));
   memset(&v391[12], 0, 0x1F4u);
-  strcpy(v392, "Scorpion ");
+  strcpy(v392, ((const char *)D(0x85b198)));
   memset(&v392[10], 0, 0x1F4u);
   (*v393__f) = 0;
-  strcpy(v394, "Mayor ");
+  strcpy(v394, ((const char *)D(0x85b190)));
   memset(&v394[7], 0, 505);
-  strcpy(v395, "Warrior ");
+  strcpy(v395, ((const char *)D(0x85b184)));
   memset(&v395[9], 0, 0x1F4u);
   (*v396__f) = 0;
   (*v397__f) = 0;
-  strcpy(v398, "Weathervane ");
+  strcpy(v398, ((const char *)D(0x85b174)));
   memset(&v398[13], 0, 0x1F0u);
   (*v399__f) = 0;
   (*v400__f) = 0;
-  strcpy(v401, "Cyclops ");
+  strcpy(v401, ((const char *)D(0x85b168)));
   memset(&v401[9], 0, 0x1F4u);
-  strcpy(v308, "And Beans");
+  strcpy(v308, ((const char *)D(0x85b15c)));
   (*v402__f) = 0;
   (*v403__f) = 0;
   memset(&v308[10], 0, 0x1F4u);
   (*v309__f) = 0;
-  strcpy(v310, "And The Adventure");
+  strcpy(v310, ((const char *)D(0x85b148)));
   memset(&v310[18], 0, 0x1ECu);
   (*v311__f) = 0;
-  strcpy(v312, "Solves The Mystery");
+  strcpy(v312, ((const char *)D(0x85b134)));
   memset(&v312[19], 0, 493);
-  strcpy(v313, "Boogies For Three Hours");
+  strcpy(v313, ((const char *)D(0x85b11c)));
   memset(&v313[24], 0, 0x1E8u);
-  strcpy(v314, "Has A Good Life");
+  strcpy(v314, ((const char *)D(0x85b10c)));
   memset(&v314[16], 0, 0x1F0u);
-  strcpy(v315, "Jazzercises");
+  strcpy(v315, ((const char *)D(0x85b100)));
   memset(&v315[12], 0, 0x1F4u);
-  strcpy(v316, "Isn't Like Those Small Fry");
+  strcpy(v316, ((const char *)D(0x85b0e4)));
   memset(&v316[27], 0, 485);
-  strcpy(v317, "And Their Funny Friends");
+  strcpy(v317, ((const char *)D(0x85b0cc)));
   memset(&v317[24], 0, 0x1E8u);
-  strcpy(v318, "And The Secret Plan");
+  strcpy(v318, ((const char *)D(0x85b0b8)));
   memset(&v318[20], 0, 0x1ECu);
   v318[512] = F8(D(0x8a9b6c), 0);
   memset(&v318[513], 0, 0x1FCu);
@@ -20500,33 +20500,33 @@ int32_t chs_4a6b80(wl_char *self)
   (*v320__f) = 0;
   (*v321__f) = F8(D(0x8a9b6c), 0);
   memset(v322, 0, (511 * sizeof(uint8_t)));
-  strcpy(v323, "Army Squad");
+  strcpy(v323, ((const char *)D(0x85b0ac)));
   memset(&v323[11], 0, 501);
   v323[512] = F8(D(0x8a9b6c), 0);
   memset(&v323[513], 0, 0x1FCu);
   (*v324__f) = 0;
   (*v325__f) = 0;
-  strcpy(v326, "Is So Cute ");
+  strcpy(v326, ((const char *)D(0x85b0a0)));
   memset(&v326[12], 0, 0x1F4u);
-  strcpy(v327, "Is Tres Bien");
+  strcpy(v327, ((const char *)D(0x85b090)));
   memset(&v327[13], 0, 0x1F0u);
   (*v328__f) = 0;
   (*v329__f) = 0;
-  strcpy(v330, "Goes For It");
+  strcpy(v330, ((const char *)D(0x85b084)));
   memset(&v330[12], 0, 0x1F4u);
-  strcpy(v331, "Catches It");
+  strcpy(v331, ((const char *)D(0x85b05c)));
   memset(&v331[11], 0, 501);
-  strcpy(v332, "Is Perfect");
+  strcpy(v332, ((const char *)D(0x85b050)));
   memset(&v332[11], 0, 501);
-  strcpy(v333, "Has THE POWER");
+  strcpy(v333, ((const char *)D(0x85b040)));
   memset(&v333[14], 0, 0x1F0u);
   (*v334__f) = 0;
-  strcpy(v335, "Goes WOOSH");
+  strcpy(v335, ((const char *)D(0x85b034)));
   memset(&v335[11], 0, 501);
-  strcpy(v336, "And The Bippity Boppity Boo");
+  strcpy(v336, ((const char *)D(0x85b068)));
   memset(&v336[28], 0, 0x1E4u);
   v244[0] = 1;
-  strcpy(v337, "Is Looking Pret-ty Goooood");
+  strcpy(v337, ((const char *)D(0x85b018)));
   memset(&v337[27], 0, 485);
   v337[512] = F8(D(0x8a9b6c), 0);
   memset(&v337[513], 0, 0x1FCu);
@@ -20534,15 +20534,15 @@ int32_t chs_4a6b80(wl_char *self)
   (*v339__f) = 0;
   (*v340__f) = F8(D(0x8a9b6c), 0);
   memset(v341, 0, (511 * sizeof(uint8_t)));
-  strcpy(v342, "Needs To Hustle");
+  strcpy(v342, ((const char *)D(0x85b008)));
   memset(&v342[16], 0, 0x1F0u);
-  strcpy(v343, "And The Great Plan");
+  strcpy(v343, ((const char *)D(0x85aff4)));
   memset(&v343[19], 0, 493);
   v343[512] = F8(D(0x8a9b6c), 0);
   memset(&v343[513], 0, 0x1FCu);
   (*v344__f) = 0;
   (*v345__f) = 0;
-  strcpy(v346, "vs. The Red Dragon");
+  strcpy(v346, ((const char *)D(0x85afe0)));
   memset(&v346[19], 0, 493);
   v244[1] = 0;
   v244[2] = 3;
@@ -20598,7 +20598,7 @@ int32_t chs_4a6b80(wl_char *self)
                 v7 = rnd();
                 g_eng.h5bf3ee(
                   Buffer,
-                  "Hey, once we get to Korat, let's play %s%s%s!",
+                  ((const char *)D(0x85afb0)),
                   &v261[512 * (28 * v7 / 0x8000)],
                   (*v225__f),
                   (*v233__f));
@@ -20655,7 +20655,7 @@ int32_t chs_4a6b80(wl_char *self)
                 v91 = rnd();
                 g_eng.h5bf3ee(
                   Buffer,
-                  "Hey, now let's play %s%s%s!",
+                  ((const char *)D(0x85a8e4)),
                   &v261[512 * (28 * v91 / 0x8000)],
                   (*v230__f),
                   (*v238__f));
@@ -21817,7 +21817,7 @@ LABEL_198:
                   v3 = W_script_wait(c);
                   if ( v3 != 6 )
                   {
-                    g_eng.h5bf3ee(Buffer, "The paper on the wall says '%s'.", D(0x85a504));
+                    g_eng.h5bf3ee(Buffer, ((const char *)D(0x855edc)), D(0x85a504));
                     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
                     goto LABEL_575;
                   }
@@ -21853,7 +21853,7 @@ LABEL_198:
                 v3 = W_script_wait(c);
                 if ( v3 != 6 )
                 {
-                  g_eng.h5bf3ee(Buffer, "The paper on the wall says '%s'.", D(0x85a4f0));
+                  g_eng.h5bf3ee(Buffer, ((const char *)D(0x855edc)), D(0x85a4f0));
                   goto LABEL_304;
                 }
               }
@@ -22288,7 +22288,7 @@ LABEL_384:
               v3 = W_script_wait(c);
               if ( v3 == 6 )
                 return v3;
-              g_eng.h5bf3ee(Buffer, "The paper on the wall says '%s'.", D(0x859c24));
+              g_eng.h5bf3ee(Buffer, ((const char *)D(0x855edc)), D(0x859c24));
               goto LABEL_304;
             case 0xDB7D167u:
               W_script_begin(c);
@@ -22313,7 +22313,7 @@ LABEL_384:
               v3 = W_script_wait(c);
               if ( v3 == 6 )
                 return v3;
-              g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "The Elm: Myth & Mystery");
+              g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x7d88b0)));
               if ( W_sc_402f40(c) == 100000101 )
                 goto LABEL_419;
               strcat(Buffer, D(0x856124));
@@ -22363,8 +22363,8 @@ LABEL_384:
                 return v3;
               g_eng.h5bf3ee(
                 Buffer,
-                "You found a book titled '%s'.",
-                "Ancient Renoria, the Vanished Kingdom");
+                ((const char *)D(0x856144)),
+                ((const char *)D(0x7ec978)));
               if ( W_sc_402f40(c) == 100000101 )
                 goto LABEL_419;
               strcat(Buffer, D(0x856124));
@@ -22412,7 +22412,7 @@ LABEL_384:
               v3 = W_script_wait(c);
               if ( v3 == 6 )
                 return v3;
-              g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Elemental Stones & Magic");
+              g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x800a40)));
               if ( W_sc_402f40(c) == 100000101 )
                 goto LABEL_419;
               strcat(Buffer, D(0x856124));
@@ -22460,7 +22460,7 @@ LABEL_384:
               v3 = W_script_wait(c);
               if ( v3 == 6 )
                 return v3;
-              g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "The Achievements of Minasa-Ratis");
+              g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x814b08)));
               if ( W_sc_402f40(c) == 100000101 )
               {
 LABEL_419:
@@ -22519,7 +22519,7 @@ LABEL_419:
         v3 = W_script_wait(c);
         if ( v3 == 6 )
           return v3;
-        g_eng.h5bf3ee(Buffer, "The paper on the wall says '%s'.", D(0x859bac));
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x855edc)), D(0x859bac));
 LABEL_304:
         W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
         goto LABEL_575;
@@ -22795,7 +22795,7 @@ LABEL_137:
             v3 = W_script_wait(c);
             if ( v3 == 6 )
               return v3;
-            g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 4/12");
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 4/12");
             strcat(Buffer, D(0x856124));
             W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
             v3 = W_script_wait(c);
@@ -23958,7 +23958,7 @@ LABEL_166:
         v3 = W_script_wait(c);
         if ( v3 == 6 )
           return v3;
-        g_eng.h5bf3ee(Buffer, "The paper on the wall says '%s'.", D(0x85bff4));
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x855edc)), D(0x85bff4));
         W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       }
       goto LABEL_197;
@@ -24102,7 +24102,7 @@ LABEL_209:
   v3 = W_script_wait(c);
   if ( v3 == 6 )
     return v3;
-  g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 3/12");
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 3/12");
   strcat(Buffer, D(0x856124));
   W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
   v3 = W_script_wait(c);
@@ -25001,7 +25001,7 @@ int32_t chs_4ae420(wl_char *self)
             v3 = W_script_wait(c);
             if ( v3 == 6 )
               return v3;
-            g_eng.h5bf3ee(Buffer, "The sign says '%s'.", D(0x85c040));
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x85c02c)), D(0x85c040));
             W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
             v3 = W_script_wait(c);
             if ( v3 == 6 )
@@ -25126,7 +25126,7 @@ int32_t chs_4ae420(wl_char *self)
             v3 = W_script_wait(c);
             if ( v3 == 6 )
               return v3;
-            g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 8/12");
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 8/12");
             strcat(Buffer, D(0x856124));
             W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
             v3 = W_script_wait(c);
@@ -27497,7 +27497,7 @@ LABEL_260:
           v3 = W_script_wait(c);
           if ( v3 == 6 )
             return v3;
-          g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", D(0x85cf5c));
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), D(0x85cf5c));
           W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
           goto LABEL_23;
         }
@@ -28005,7 +28005,7 @@ LABEL_24:
       v3 = W_script_wait(c);
       if ( v3 == 6 )
         return v3;
-      g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 5/12");
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 5/12");
       strcat(Buffer, D(0x856124));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       v3 = W_script_wait(c);
@@ -28159,7 +28159,7 @@ LABEL_25:
       v3 = W_script_wait(c);
       if ( v3 == 6 )
         return v3;
-      g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", D(0x85c9dc));
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), D(0x85c9dc));
       strcat(Buffer, D(0x856124));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       v3 = W_script_wait(c);
@@ -28185,7 +28185,7 @@ LABEL_25:
         v154 = W_skill_row_find(20124);
         g_eng.h5bf3ee(
           Buffer,
-          "The %s contained information on using the %s ability!",
+          ((const char *)D(0x8560e4)),
           D(0x85c9d4),
           (uint8_t *)v154 + 4);
         W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
@@ -28201,7 +28201,7 @@ LABEL_25:
         v155 = W_skill_row_find(20110);
         g_eng.h5bf3ee(
           Buffer,
-          "The %s contained information on using the %s ability!",
+          ((const char *)D(0x8560e4)),
           D(0x85c9d4),
           (uint8_t *)v155 + 4);
         W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
@@ -28249,7 +28249,7 @@ LABEL_25:
           v3 = W_script_wait(c);
           if ( v3 == 6 )
             return v3;
-          g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", D(0x85ca98));
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), D(0x85ca98));
           W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
           goto LABEL_23;
         }
@@ -30259,7 +30259,7 @@ LABEL_14:
             v2 = W_script_wait(c);
             if ( v2 == 6 )
               return v2;
-            g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", D(0x85e988));
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), D(0x85e988));
             break;
           case 0x11E61036u:
             if ( !W_sc_4a5ea0(c) )
@@ -30355,7 +30355,7 @@ LABEL_14:
             v2 = W_script_wait(c);
             if ( v2 == 6 )
               return v2;
-            g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", D(0x85eb34));
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), D(0x85eb34));
             break;
           default:
             return v2;
@@ -30711,7 +30711,7 @@ LABEL_14:
         v2 = W_script_wait(c);
         if ( v2 == 6 )
           return v2;
-        g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", D(0x85ed00));
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), D(0x85ed00));
       }
       goto LABEL_902;
     }
@@ -31447,7 +31447,7 @@ LABEL_14:
     v2 = W_script_wait(c);
     if ( v2 == 6 )
       return v2;
-    g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 6/12");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 6/12");
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v2 = W_script_wait(c);
@@ -31567,7 +31567,7 @@ LABEL_16:
       v2 = W_script_wait(c);
       if ( v2 == 6 )
         return v2;
-      g_eng.h5bf3ee(Buffer, "The paper on the wall says '%s'.", D(0x8606d4));
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x855edc)), D(0x8606d4));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       goto LABEL_14;
     }
@@ -31716,7 +31716,7 @@ LABEL_16:
           v2 = W_script_wait(c);
           if ( v2 == 6 )
             return v2;
-          g_eng.h5bf3ee(Buffer, "The sign says '%s'.", D(0x860b74));
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x85c02c)), D(0x860b74));
           W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
           goto LABEL_14;
         }
@@ -31742,7 +31742,7 @@ LABEL_16:
         v2 = W_script_wait(c);
         if ( v2 == 6 )
           return v2;
-        g_eng.h5bf3ee(Buffer, "The sign says '%s'.", D(0x860b54));
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x85c02c)), D(0x860b54));
 LABEL_902:
         W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
         goto LABEL_14;
@@ -32653,7 +32653,7 @@ LABEL_453:
     v2 = W_script_wait(c);
     if ( v2 == 6 )
       return v2;
-    g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Sexy Adventurer Monthly");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x83cc98)));
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v2 = W_script_wait(c);
@@ -33187,7 +33187,7 @@ LABEL_63:
           v2 = W_script_wait(c);
           if ( v2 == 6 )
             return v2;
-          g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 7/12");
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 7/12");
           strcat(Buffer, D(0x856124));
           W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
           v2 = W_script_wait(c);
@@ -35036,7 +35036,7 @@ LABEL_472:
         v2 = W_script_wait(c);
         if ( v2 == 6 )
           return v2;
-        g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", D(0x862550));
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), D(0x862550));
         strcat(Buffer, D(0x856124));
         W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
         v2 = W_script_wait(c);
@@ -35083,7 +35083,7 @@ LABEL_472:
 LABEL_498:
           g_eng.h5bf3ee(
             Buffer,
-            "The %s contained information on using the %s ability!",
+            ((const char *)D(0x8560e4)),
             D(0x85c9d4),
             (uint8_t *)v151 + 4);
           W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
@@ -35286,7 +35286,7 @@ LABEL_499:
       v2 = W_script_wait(c);
       if ( v2 == 6 )
         return v2;
-      g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 10/12");
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 10/12");
       strcat(Buffer, D(0x856124));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       v2 = W_script_wait(c);
@@ -35746,7 +35746,7 @@ LABEL_511:
             v2 = W_script_wait(c);
             if ( v2 != 6 )
             {
-              g_eng.h5bf3ee(Buffer, "The paper on the wall says '%s'.", D(0x862aa8));
+              g_eng.h5bf3ee(Buffer, ((const char *)D(0x855edc)), D(0x862aa8));
               W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
               goto LABEL_12;
             }
@@ -35788,7 +35788,7 @@ LABEL_511:
       v2 = W_script_wait(c);
       if ( v2 == 6 )
         return v2;
-      g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 9/12");
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 9/12");
       strcat(Buffer, D(0x856124));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       v2 = W_script_wait(c);
@@ -36018,7 +36018,7 @@ LABEL_13:
               v2 = W_script_wait(c);
               if ( v2 != 6 )
               {
-                g_eng.h5bf3ee(Buffer, "The sign says '%s'.", D(0x863284));
+                g_eng.h5bf3ee(Buffer, ((const char *)D(0x85c02c)), D(0x863284));
                 W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
                 goto LABEL_12;
               }
@@ -36052,7 +36052,7 @@ LABEL_13:
               v2 = W_script_wait(c);
               if ( v2 != 6 )
               {
-                g_eng.h5bf3ee(Buffer, "The sign says '%s'.", D(0x8632b0));
+                g_eng.h5bf3ee(Buffer, ((const char *)D(0x85c02c)), D(0x8632b0));
                 W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
                 goto LABEL_12;
               }
@@ -36599,7 +36599,7 @@ LABEL_13:
         v2 = W_script_wait(c);
         if ( v2 != 6 )
         {
-          g_eng.h5bf3ee(Buffer, "The paper on the wall says '%s'.", D(0x862df4));
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x855edc)), D(0x862df4));
           W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
           goto LABEL_12;
         }
@@ -36850,7 +36850,7 @@ int32_t chs_4c1a30(wl_char *self)
           v2 = W_script_wait(c);
           if ( v2 != 6 )
           {
-            g_eng.h5bf3ee(Buffer, "The sign says '%s'.", D(0x8638f0));
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x85c02c)), D(0x8638f0));
             W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
             v2 = W_script_wait(c);
             if ( v2 != 6 )
@@ -37825,7 +37825,7 @@ int32_t chs_4c2dc0(wl_char *self)
       v2 = W_script_wait(c);
       if ( v2 == 6 )
         return v2;
-      g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 11/12");
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 11/12");
       strcat(Buffer, D(0x856124));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       v2 = W_script_wait(c);
@@ -38580,7 +38580,7 @@ int32_t chs_4c3ee0(wl_char *self)
             v3 = W_script_wait(c);
             if ( v3 != 6 )
             {
-              g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", D(0x8640f4));
+              g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), D(0x8640f4));
               strcat(Buffer, D(0x856124));
               W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
               v3 = W_script_wait(c);
@@ -38652,7 +38652,7 @@ int32_t chs_4c3ee0(wl_char *self)
     v3 = W_script_wait(c);
     if ( v3 == 6 )
       return v3;
-    g_eng.h5bf3ee(Buffer, "You found a book titled '%s'.", "Magical Girl Merrin Part 12/12");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 12/12");
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v3 = W_script_wait(c);
@@ -38949,7 +38949,7 @@ int32_t chs_4c45a0(wl_char *self)
       do
       {
         (*v73__f) = v26 + 1;
-        g_eng.h5bf3ee(Buffer, "What will you set dial %d to?", v26 + 1);
+        g_eng.h5bf3ee(Buffer, ((const char *)D(0x864208)), v26 + 1);
         v27 = 0;
         W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
         v3 = W_script_wait(c);
@@ -38965,7 +38965,7 @@ int32_t chs_4c45a0(wl_char *self)
         F32(c, 0x20) = 5;
         do
         {
-          g_eng.h5bf3ee(Buffer, "Set to %d", v27);
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x8641fc)), v27);
           v28 = (uint8_t *)c + 88 * F16(c, 0x584);
           F32(v28, 4 * 381) = v27;
           F32(v28, 4 * 380) = 0;
@@ -38983,7 +38983,7 @@ int32_t chs_4c45a0(wl_char *self)
         *(*v66__f)++ = v29;
       }
       while ( v26 < 4 );
-      g_eng.h5bf3ee(v75, "%d%d%d%d", (*v69__f), (*v70__f), (*v71__f), (*v72__f));
+      g_eng.h5bf3ee(v75, ((const char *)D(0x8641f0)), (*v69__f), (*v70__f), (*v71__f), (*v72__f));
       if ( F32(CFG(), 2696) == 0 )
       {
         for ( k = 0; k < 4u; ++k )

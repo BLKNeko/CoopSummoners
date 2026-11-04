@@ -295,7 +295,7 @@ int32_t mm_5915c0(wl_char *self, int32_t a2, int32_t a3, int32_t a4)
   (*v63__f) = c;
   (*v67__f) = 0;
   (*v64__f) = 0;
-  g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a2f34)), (const char *)a3);
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a2f34)), (const char *)a3);
   v5 = F32(c, 0x0);
   v6 = 0;
   v7 = 5;
@@ -1036,7 +1036,7 @@ int32_t mm_592850(wl_char *self, int32_t a2, int32_t * a3, int32_t * a4, int32_t
   if ( v6 == 0 )
     return 0;
   v8 = v6 + 2576;
-  g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a3060)), (const char *)(v6 + 2576));
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a3060)), (const char *)(v6 + 2576));
   v9 = F32(c, 0x0);
   v10 = 0;
   v11 = 6;
@@ -1295,7 +1295,7 @@ LABEL_64:
   {
     W_grid_cell_text((intptr_t)(v16), (intptr_t)(3), (intptr_t)(3), (intptr_t)(D(0x854c7c)));
   }
-  g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a2ee4)), (const char *)v8);
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a2ee4)), (const char *)v8);
   v45 = 0;
   v46 = F32((*i__f), 0x0);
   v47 = 6;
@@ -1387,7 +1387,7 @@ LABEL_64:
   W_grid_cell_text((intptr_t)(v53), (intptr_t)(0), (intptr_t)(0), (intptr_t)(((char *)D(0x8a2f2c))));
   g_eng.h5bf3ee(v115, "%d", F32(v8, 224) + F32(v8, 216));
   W_grid_cell_text((intptr_t)(v53), (intptr_t)(0), (intptr_t)(1), (intptr_t)(v115));
-  g_eng.h5bf3ee(v115, "(MAX:%d)", F32(v8, 224) + F32(v8, 220));
+  g_eng.h5bf3ee(v115, ((const char *)D(0x8a3028)), F32(v8, 224) + F32(v8, 220));
   W_grid_cell_text((intptr_t)(v53), (intptr_t)(0), (intptr_t)(2), (intptr_t)(v115));
   F32(F32((F32(v53, 0x17c) + 28), 0), 36) = 1;
   F32(F32((F32(v53, 0x17c) + 28), 0), 40) = 0xFFFFFF;
@@ -1859,7 +1859,7 @@ LABEL_34:
     }
     break;
   }
-  g_eng.h5bf3ee(Buffer, "You do not have any %s.", v28);
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a306c)), v28);
   strcpy(v29, Buffer);
   (*v26__f) = 0;
   for ( i = W_msg_window_open((intptr_t)(c), (intptr_t)(v29), (intptr_t)(0), (intptr_t)(0), (intptr_t)(1), (intptr_t)(0x28u), (intptr_t)(3u), (intptr_t)(0), (intptr_t)(0), (intptr_t)(1));
@@ -2071,13 +2071,13 @@ LABEL_45:
           v39 = (const char *)(*v44__f);
           if ( F32(a2, 684) < 200 )
           {
-            g_eng.h5bf3ee(Buffer, "Are you sure you wish to discard the %s?", (const char *)(*v44__f));
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a3098)), (const char *)(*v44__f));
             v20 = W_mh_4190d0((intptr_t)(c), (intptr_t)(Buffer), (intptr_t)(0x28u), (intptr_t)((_DWORD *)2), (intptr_t)(0));
             goto LABEL_70;
           }
           g_eng.h5bf3ee(
             Buffer,
-            "%s is a rare item. Are you sure you wish to discard it?",
+            ((const char *)D(0x8a30c4)),
             (const char *)(*v44__f));
           (*v44__f) = 0;
           (*v43__f) = 0;
@@ -2117,7 +2117,7 @@ LABEL_70:
           if ( v20 == 14 )
           {
             W_mh_4199b0((intptr_t)(F32(c, 0xc)), (intptr_t)(a3), (intptr_t)(1), (intptr_t)(1));
-            g_eng.h5bf3ee(Buffer, "You discard the %s.", v39);
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a3084)), v39);
             v20 = W_msg_pages((intptr_t)(c), (intptr_t)(Buffer), (intptr_t)(0), (intptr_t)(0), (intptr_t)(0), (intptr_t)(0), (intptr_t)(1), (intptr_t)(0x28u), (intptr_t)(3u), (intptr_t)(0), (intptr_t)(0));
             if ( v20 == 0 )
               goto LABEL_75;
@@ -2761,7 +2761,7 @@ int32_t mm_5956c0(wl_char *self, int32_t a2, int32_t a3, int32_t a4, int32_t a5)
     v6 = 200;
   v7 = F16(a2, 2900);
   if ( a3 != 0 )
-    g_eng.h5bf3ee(Buffer, "%s (%s)", ((char *)D(0x8a2ed8)), (const char *)(a2 + 2576));
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a3250)), ((char *)D(0x8a2ed8)), (const char *)(a2 + 2576));
   else
     strcpy(Buffer, ((char *)D(0x8a2ed8)));
   (*v43__f) = W_sys_win_open((intptr_t)(((intptr_t)g_eng.sys)), (intptr_t)(F32(c, 0x0)), (intptr_t)(a4), (intptr_t)(a5), (intptr_t)(v6), (intptr_t)(336), (intptr_t)(2u), (intptr_t)(Buffer), (intptr_t)(1));
@@ -2878,7 +2878,7 @@ LABEL_35:
       strcpy(v47, (const char *)v24 + 0xc4);
       if ( v25 > 0 )
       {
-        g_eng.h5bf3ee(v49, "(MP Cost:%d)", v25);
+        g_eng.h5bf3ee(v49, ((const char *)D(0x8a31ac)), v25);
         strcat(v47, v49);
       }
       v26 = F32(c, 0x24);
@@ -3601,7 +3601,7 @@ int32_t mm_596ac0(int32_t a1, char * a2)
   strcpy(a2, (const char *)(a1 + 196));
   if ( F32(a1, 724) > 0 )
   {
-    g_eng.h5bf3ee(Buffer, "(MP Cost:%d)", F32(a1, 724));
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x8a31ac)), F32(a1, 724));
     strcat(a2, Buffer);
   }
   return a2;
@@ -3750,7 +3750,7 @@ int32_t mm_5974b0(wl_char *self, int32_t a2)
     intptr_t *const v20__f = (intptr_t *)(frame_ + 0x8);   /* ebp-0x208 */
     intptr_t *const v21__f = (intptr_t *)(frame_ + 0xc);   /* ebp-0x204 */
 
-  g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a2eb4)), ((char *)D(0x8a3600)));
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a2eb4)), ((char *)D(0x8a3600)));
   W_sys_list_open((intptr_t)((int **)((intptr_t)g_eng.sys)), (intptr_t)(F32(c, 0x0)), (intptr_t)(200), (intptr_t)(80), (intptr_t)(240), (intptr_t)(0), (intptr_t)(2u), (intptr_t)(2u), (intptr_t)(1u), (intptr_t)(&(*v19__f)), (intptr_t)((int *)&(*v18__f)), (intptr_t)(Buffer), (intptr_t)(0));
   v3 = (*v18__f);
   v4 = W_grid_row_add((intptr_t)((*v18__f)), (intptr_t)(0), (intptr_t)(0));
@@ -3852,7 +3852,7 @@ int32_t mm_597670(wl_char *self, int32_t a2)
     intptr_t *const v34__f = (intptr_t *)(frame_ + 0x1c);   /* ebp-0x428 */
 
   (*v34__f) = c;
-  g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a2eb4)), ((char *)D(0x85551c)));
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a2eb4)), ((char *)D(0x85551c)));
   v3 = 0;
   v4 = 0;
   v5 = 2;
@@ -4115,7 +4115,7 @@ LABEL_12:
       v20 = F32(c, 0xc);
       (*v33__f) = 0;
       v21 = 1;
-      g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a2ec8)), ((char *)D(0x8a39c4)));
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a2ec8)), ((char *)D(0x8a39c4)));
       (*v36__f) = mm_594a20(c, (int)v20, 160, 96, 1, 2, 320, 0, Buffer, (int *)&(*v30__f), 0, 0, 0);
       v22 = W_grid_row_add((intptr_t)((*v30__f)), (intptr_t)(0), (intptr_t)(0));
       W_grid_cell_text((intptr_t)((*v30__f)), (intptr_t)(v22), (intptr_t)(0), (intptr_t)(((char *)D(0x8a38a4))));
@@ -4253,11 +4253,11 @@ int32_t mm_599140(wl_char *self, int32_t * a2, int32_t a3)
   if ( v5 != 0 )
   {
     v4 = 6;
-    g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a39c4)), v5 + 2576);
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a39c4)), v5 + 2576);
   }
   else
   {
-    g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a39c4)), ((char *)D(0x8a38a4)));
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a39c4)), ((char *)D(0x8a38a4)));
   }
   W_sys_list_open((intptr_t)((int **)((intptr_t)g_eng.sys)), (intptr_t)(F32(c, 0x0)), (intptr_t)(288), (intptr_t)(64), (intptr_t)(240), (intptr_t)(0), (intptr_t)(2u), (intptr_t)(v4), (intptr_t)(1u), (intptr_t)(&(*v23__f)), (intptr_t)((int *)&(*v22__f)), (intptr_t)(Buffer), (intptr_t)(0));
   if ( v6 != 0 )
@@ -4520,7 +4520,7 @@ int32_t mm_5994e0(wl_char *self, char * a2)
   }
   *(_DWORD *)((uint8_t *)(v17 + (1) * 0x180) + 0x0) = D(0x5d6d5d);
   *(_DWORD *)&GAP((v17 + (1) * 0x180), 0x0, 4) = 2838315;
-  g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a2ec8)), ((char *)D(0x8a39ac)));
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a2ec8)), ((char *)D(0x8a39ac)));
   v18 = 24;
   if ( Buffer != 0 )
     v18 = 56;
@@ -4676,7 +4676,7 @@ int32_t mm_599ac0(wl_char *self, int32_t a2)
 
   v2 = c;
   (*v26__f) = c;
-  g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a2ec8)), ((char *)D(0x8a39b8)));
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a2ec8)), ((char *)D(0x8a39b8)));
   v3 = 24;
   if ( Buffer != 0 )
     v3 = 56;
@@ -4841,11 +4841,11 @@ int32_t mm_599e60(wl_char *self, int32_t * a2, int32_t a3)
   if ( v5 != 0 )
   {
     v4 = 4;
-    g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a39b8)), v5 + 2576);
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a39b8)), v5 + 2576);
   }
   else
   {
-    g_eng.h5bf3ee(Buffer, "%s - %s", ((char *)D(0x8a39b8)), ((char *)D(0x8a38a4)));
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x854c88)), ((char *)D(0x8a39b8)), ((char *)D(0x8a38a4)));
   }
   W_sys_list_open((intptr_t)((int **)((intptr_t)g_eng.sys)), (intptr_t)(F32(c, 0x0)), (intptr_t)(288), (intptr_t)(128), (intptr_t)(240), (intptr_t)(0), (intptr_t)(2u), (intptr_t)(v4), (intptr_t)(1u), (intptr_t)(&(*v24__f)), (intptr_t)((int *)&(*v23__f)), (intptr_t)(Buffer), (intptr_t)(0));
   if ( v6 != 0 )

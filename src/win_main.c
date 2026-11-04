@@ -334,7 +334,7 @@ int32_t wn_5a4770(wl_char *self, int32_t hInstance)
   {
     g_eng.h5bf3ee(
       msg,
-      "OS Version:%d.%d.%d Platform:%d",
+      ((const char *)D(0x8a45a4)),
       (*VersionInformation__f).dwMajorVersion,
       (*VersionInformation__f).dwMinorVersion,
       (*VersionInformation__f).dwBuildNumber,
@@ -355,7 +355,7 @@ int32_t wn_5a4770(wl_char *self, int32_t hInstance)
     strcat(tstrFilename, ((char *)D(0x8a4518)));
     if ( W_wm_5b0450((intptr_t)(v88), (intptr_t)(tstrFilename), (intptr_t)(v67)) != 0 )
     {
-      g_eng.h5bf3ee(msg, "DirectX Version:%d.%d.%d.%d", v67[0], v67[1], v67[2], v67[3]);
+      g_eng.h5bf3ee(msg, ((const char *)D(0x8a44fc)), v67[0], v67[1], v67[2], v67[3]);
       g_eng.h408b90(D(0x8a6620), msg, 0, D(0x8a9b6c));
       if ( !W_wm_5b03e0((intptr_t)(((uint16_t *)D(0x628668))), (intptr_t)(v67)) )
       {
