@@ -17925,7 +17925,7 @@ LABEL_617:
     v3 = W_script_wait(c);
     if ( v3 == 6 )
       return v3;
-    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 2/12");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x6fc018)));
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v3 = W_script_wait(c);
@@ -19822,7 +19822,7 @@ LABEL_196:
     v3 = W_script_wait(c);
     if ( v3 == 6 )
       return v3;
-    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 1/12");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x6e7f50)));
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v3 = W_script_wait(c);
@@ -22795,7 +22795,7 @@ LABEL_137:
             v3 = W_script_wait(c);
             if ( v3 == 6 )
               return v3;
-            g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 4/12");
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x7241a8)));
             strcat(Buffer, D(0x856124));
             W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
             v3 = W_script_wait(c);
@@ -24102,7 +24102,7 @@ LABEL_209:
   v3 = W_script_wait(c);
   if ( v3 == 6 )
     return v3;
-  g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 3/12");
+  g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x7100e0)));
   strcat(Buffer, D(0x856124));
   W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
   v3 = W_script_wait(c);
@@ -25126,7 +25126,7 @@ int32_t chs_4ae420(wl_char *self)
             v3 = W_script_wait(c);
             if ( v3 == 6 )
               return v3;
-            g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 8/12");
+            g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x7744c8)));
             strcat(Buffer, D(0x856124));
             W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
             v3 = W_script_wait(c);
@@ -28005,7 +28005,7 @@ LABEL_24:
       v3 = W_script_wait(c);
       if ( v3 == 6 )
         return v3;
-      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 5/12");
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x738270)));
       strcat(Buffer, D(0x856124));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       v3 = W_script_wait(c);
@@ -31447,7 +31447,7 @@ LABEL_14:
     v2 = W_script_wait(c);
     if ( v2 == 6 )
       return v2;
-    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 6/12");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x74c338)));
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v2 = W_script_wait(c);
@@ -33187,7 +33187,7 @@ LABEL_63:
           v2 = W_script_wait(c);
           if ( v2 == 6 )
             return v2;
-          g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 7/12");
+          g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x760400)));
           strcat(Buffer, D(0x856124));
           W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
           v2 = W_script_wait(c);
@@ -35286,7 +35286,7 @@ LABEL_499:
       v2 = W_script_wait(c);
       if ( v2 == 6 )
         return v2;
-      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 10/12");
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x79c658)));
       strcat(Buffer, D(0x856124));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       v2 = W_script_wait(c);
@@ -35788,7 +35788,7 @@ LABEL_511:
       v2 = W_script_wait(c);
       if ( v2 == 6 )
         return v2;
-      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 9/12");
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x788590)));
       strcat(Buffer, D(0x856124));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       v2 = W_script_wait(c);
@@ -37825,7 +37825,7 @@ int32_t chs_4c2dc0(wl_char *self)
       v2 = W_script_wait(c);
       if ( v2 == 6 )
         return v2;
-      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 11/12");
+      g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x7b0720)));
       strcat(Buffer, D(0x856124));
       W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
       v2 = W_script_wait(c);
@@ -38652,7 +38652,7 @@ int32_t chs_4c3ee0(wl_char *self)
     v3 = W_script_wait(c);
     if ( v3 == 6 )
       return v3;
-    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), "Magical Girl Merrin Part 12/12");
+    g_eng.h5bf3ee(Buffer, ((const char *)D(0x856144)), ((const char *)D(0x7c47e8)));
     strcat(Buffer, D(0x856124));
     W_scene_msg(c, 3u, 0, Buffer, 0, 1, 0, 0, 0, 0, 0);
     v3 = W_script_wait(c);

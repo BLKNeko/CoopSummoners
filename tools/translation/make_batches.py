@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """make_batches.py — split the translatable strings into batches for translating.
 
-Phase 1 = the strings the port reaches through D(0x...) (see src/lang.h): the dialogue and many menu words.
+Phase 1 = the strings the port reaches through D(0x...) (see src/lang.h): the dialogue and many menu words;
+phase 2 = the table strings (tables.py: names, descriptions, letters, books), once build/translation/tables.csv exists.
 Strings copied into fixed buffers get a byte cap = their English length (the buffer is at least that big).
 Batches keep the game's order (VA order = scene order), so each batch carries its own context.
 
@@ -12,7 +13,7 @@ translated in data/lang/<lang>.tsv.
 import argparse
 import os
 
-from common import LANG_DIR, WORK, cap_of, esc, load_strings, port_refs, read_tsv
+from common import WORK, entry_cap, esc, load_strings, load_tables, port_refs, read_lang
 
 
 def main():
@@ -23,11 +24,11 @@ def main():
 
     rows = load_strings()
     dlit, cap = port_refs()
-    done = {}
-    lp = os.path.join(LANG_DIR, a.lang + ".tsv")
-    if os.path.exists(lp):
-        done = read_tsv(lp)
-    todo = [va for va in sorted(rows) if rows[va]["category"] in ("dialogue", "label") and va in dlit and va not in done]
+    tables = load_tables()   # phase 2: the table strings (tables.py), written in place
+    done = read_lang(a.lang)
+    want = dlit | {va for va, t in tables.items() if t["upper_of"] is None}   # (shouted names follow their name)
+    todo = [va for va in sorted(rows) if va not in done and va in want
+            and (rows[va]["category"] in ("dialogue", "label") or va in tables)]
 
     out = os.path.join(WORK, "batches")
     os.makedirs(out, exist_ok=True)
@@ -38,14 +39,16 @@ def main():
     for i in range(0, len(todo), a.size):
         n += 1
         with open(os.path.join(out, f"{n:03d}.tsv"), "w", encoding="utf-8", newline="\n") as f:
-            f.write("# VA\tCAP\tKIND\tEN   (CAP = max bytes, 0 = any length; KIND = dialogue / label)\n")
+            f.write("# VA\tCAP\tKIND\tEN   (CAP = max bytes, 0 = any length; KIND = dialogue / label / a table"
+                    " column: item name, spell desc, ...)\n")
             for va in todo[i:i + a.size]:
                 r = rows[va]
-                c = cap_of(va, rows, cap)
-                f.write(f"0x{va:06x}\t{c}\t{r['category']}\t{esc(r['text'])}\n")
+                c = entry_cap(va, rows, cap, tables)[1]
+                kind = tables[va]["kind"] if va in tables else r["category"]
+                f.write(f"0x{va:06x}\t{c}\t{kind}\t{esc(r['text'])}\n")
     words = sum(int(rows[va]["words"]) for va in todo)
     print(f"{len(todo)} strings ({words} words) in {n} batches of <= {a.size} -> {out}"
-          f"  ({len(done)} already in {lp if done else 'no translation file yet'})")
+          f"  ({len(done)} already translated)")
 
 
 if __name__ == "__main__":

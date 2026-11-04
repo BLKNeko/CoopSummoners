@@ -47,8 +47,9 @@
 
 rh_opts_t O;
 /* co-op mod translations: --lang NAME loads <gamedir>\lang\NAME.tsv, --lang-file PATH a given file
- * (env OPENSUMMONERS_LANG = NAME); see src/lang.h */
-static const char *g_lang_name, *g_lang_file;
+ * (env OPENSUMMONERS_LANG = NAME); then the table names: NAME.names.tsv, or with --lang-names original (env
+ * OPENSUMMONERS_LANG_NAMES) NAME.en-names.tsv, the names put back in English; see src/lang.h */
+static const char *g_lang_name, *g_lang_file, *g_lang_names;
 volatile uint32_t g_frame, g_ticks;
 FILE *g_log;
 static FILE *g_logf;
@@ -1322,6 +1323,7 @@ static void parse(int argc, char **argv)
         else if (!strcmp(a, "--no-launcher")) O.no_launcher = 1;
         else if (!strcmp(a, "--lang")) g_lang_name = ARG();
         else if (!strcmp(a, "--lang-file")) g_lang_file = ARG();
+        else if (!strcmp(a, "--lang-names")) g_lang_names = ARG();   /* translated (default) / original */
         else if (!strcmp(a, "--coop")) g_coop = 1;
         else if (!strcmp(a, "--coop-test-hp") && g_n_test_hp < 8) {   /* FRAME:WHO:HP, WHO 0 leader / 1 P2 */
             const char *v = ARG();
@@ -1547,7 +1549,19 @@ int main(int argc, char **argv)
         if (lp[0]) {
             int n = lang_load(lp, why, sizeof why);
             FILE *lf = fopen("lang.log", "w");   /* beside the game, like coop.log */
-            if (lf) { fprintf(lf, "%s: %s%s\n", lp, n ? "loaded, " : "NOT loaded: ", why); fclose(lf); }
+            if (lf) fprintf(lf, "%s: %s%s\n", lp, n ? "loaded, " : "NOT loaded: ", why);
+            if (n) {   /* the names of the tables: translated, or the overlay putting them back in English */
+                if (!g_lang_names) g_lang_names = getenv("OPENSUMMONERS_LANG_NAMES");
+                int orig = g_lang_names && !strcmp(g_lang_names, "original");
+                size_t l = strlen(lp);
+                if (l > 4 && !_stricmp(lp + l - 4, ".tsv")) lp[l - 4] = 0;
+                strncat(lp, orig ? ".en-names.tsv" : ".names.tsv", sizeof lp - strlen(lp) - 1);
+                if (GetFileAttributesA(lp) != INVALID_FILE_ATTRIBUTES) {
+                    int m = lang_load(lp, why, sizeof why);
+                    if (lf) fprintf(lf, "%s: %s%s\n", lp, m ? "loaded, " : "NOT loaded: ", why);
+                } else if (lf) fprintf(lf, "%s: not found (names %s)\n", lp, orig ? "original" : "translated");
+            }
+            if (lf) fclose(lf);
         }
     }
     if (O.perturb_dlls) {
@@ -1658,6 +1672,23 @@ platform_done:
         rh_scrub_iat();                              /* last: wraps every IAT slot incl. our overrides */
     }
     if (O.standalone) sa_seal(exe_abs, &img);
+    {   /* translations: the table strings (src/lang.h "@N"), over the image's own text */
+        uint32_t va; const char *t; int cap, n = 0;
+        for (int i = 0; lang_inplace(i, &va, &t, &cap); i++) {
+            if (va < RT_TEXT_LO + RT_TEXT_SZ || va + (uint32_t)cap + 1 > RT_DATA_HI) continue;   /* .rdata / .data */
+            char *d = (char *)(uintptr_t)va;
+            DWORD old;
+            if (!VirtualProtect(d, (SIZE_T)cap + 1, PAGE_READWRITE, &old)) continue;
+            size_t len = strlen(t), was = strnlen(d, (size_t)cap + 1);
+            if (len <= (size_t)cap && was <= (size_t)cap) {
+                memcpy(d, t, len);
+                memset(d + len, 0, (len > was ? len : was) + 1 - len);   /* the text's NUL + what's left of the old */
+                n++;
+            }
+            VirtualProtect(d, (SIZE_T)cap + 1, old, &old);
+        }
+        if (n) rh_log("lang: %d table strings written in place\n", n);
+    }
     if (O.trace && !O.frames) O.frames = rh_trace_last_frame() + O.tail;
     rh_log("rhost: seed=%s%08x frames<=%u step=%ums creep_after=%u realtime=%d quiet=%d audible=%d arena=%d overlay=%d standalone=%d live=%d\n",
            O.has_seed ? "" : "none/", O.seed, O.frames, O.step_ms, O.creep_after, O.realtime, O.quiet, O.audible,

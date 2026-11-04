@@ -7,9 +7,9 @@
 
 int g_text_sbcs;
 
-typedef struct { uint32_t va; char *text; } lang_ent;
+typedef struct { uint32_t va; int seq; int inplace; int cap; char *text; } lang_ent;
 static lang_ent *g_ent;
-static int g_n;
+static int g_n, g_cap, g_seq;
 
 int lang_count(void) { return g_n; }
 
@@ -78,18 +78,30 @@ static size_t unescape(char *s)
 
 static int by_va(const void *a, const void *b)
 {
-    uint32_t x = ((const lang_ent *)a)->va, y = ((const lang_ent *)b)->va;
-    return x < y ? -1 : x > y;
+    const lang_ent *x = a, *y = b;
+    if (x->va != y->va) return x->va < y->va ? -1 : 1;
+    return x->seq < y->seq ? -1 : x->seq > y->seq;
+}
+
+/* sort by VA; a VA listed twice (in one file or across files): the later line wins */
+static void lang_sort(void)
+{
+    qsort(g_ent, (size_t)g_n, sizeof *g_ent, by_va);
+    int w = 0;
+    for (int k = 0; k < g_n; k++) {
+        if (w > 0 && g_ent[w - 1].va == g_ent[k].va) { free(g_ent[w - 1].text); g_ent[w - 1] = g_ent[k]; }
+        else g_ent[w++] = g_ent[k];
+    }
+    g_n = w;
 }
 
 int lang_load(const char *path, char *err, size_t errn)
 {
     FILE *f = fopen(path, "rb");
     if (f == NULL) { snprintf(err, errn, "cannot open %s", path); return 0; }
-    int cap = 1024, n = 0, line_no = 0, skipped = 0;
-    lang_ent *e = malloc(sizeof *e * (size_t)cap);
+    int n = 0, line_no = 0, skipped = 0;
     static char line[16384];
-    while (e != NULL && fgets(line, sizeof line, f) != NULL) {
+    while (fgets(line, sizeof line, f) != NULL) {
         line_no++;
         size_t len = strlen(line);
         while (len > 0 && (line[len - 1] == '\n' || line[len - 1] == '\r')) line[--len] = 0;
@@ -100,41 +112,48 @@ int lang_load(const char *path, char *err, size_t errn)
         if (t2 == NULL) { skipped++; continue; }
         *t1 = *t2 = 0;
         uint32_t va = (uint32_t)strtoul(s, NULL, 16);
-        long max = strtol(t1 + 1, NULL, 10);
+        int inplace = t1[1] == '@';
+        long max = strtol(t1 + 1 + inplace, NULL, 10);
         char *text = t2 + 1;
         if (va == 0 || text[0] == 0) { skipped++; continue; }   /* an untranslated row keeps the original */
+        if (inplace && max <= 0) { skipped++; continue; }       /* in place needs its field's size */
         lang_utf8_to_cp1252(text, text);
         size_t out = unescape(text);
-        if (max > 0 && out > (size_t)max) { skipped++; continue; }   /* too long for the buffer it's copied into */
-        if (n == cap) {
-            cap *= 2;
-            lang_ent *ne = realloc(e, sizeof *e * (size_t)cap);
+        if (max > 0 && out > (size_t)max) { skipped++; continue; }   /* too long for its buffer / field */
+        if (g_n == g_cap) {
+            int nc = g_cap ? g_cap * 2 : 1024;
+            lang_ent *ne = realloc(g_ent, sizeof *ne * (size_t)nc);
             if (ne == NULL) break;
-            e = ne;
+            g_ent = ne;
+            g_cap = nc;
         }
-        e[n].va = va;
-        e[n].text = malloc(out + 1);
-        if (e[n].text == NULL) break;
-        memcpy(e[n].text, text, out + 1);
+        char *copy = malloc(out + 1);
+        if (copy == NULL) break;
+        memcpy(copy, text, out + 1);
+        g_ent[g_n++] = (lang_ent){ va, g_seq++, inplace, (int)max, copy };
         n++;
     }
     fclose(f);
-    if (e == NULL || n == 0) {
-        free(e);
+    if (n == 0) {
         snprintf(err, errn, "%s: no translated strings (%d lines skipped)", path, skipped);
         return 0;
     }
-    qsort(e, (size_t)n, sizeof *e, by_va);
-    int w = 0;   /* a VA listed twice: the later line wins */
-    for (int k = 0; k < n; k++) {
-        if (w > 0 && e[w - 1].va == e[k].va) { free(e[w - 1].text); e[w - 1] = e[k]; }
-        else e[w++] = e[k];
-    }
-    g_ent = e;
-    g_n = w;
+    lang_sort();
     g_text_sbcs = 1;
-    snprintf(err, errn, "%d strings, %d lines skipped", w, skipped);
-    return w;
+    snprintf(err, errn, "%d strings, %d lines skipped", n, skipped);
+    return n;
+}
+
+int lang_inplace(int i, uint32_t *va, const char **text, int *cap)
+{
+    for (int k = 0; k < g_n; k++)
+        if (g_ent[k].inplace && i-- == 0) {
+            *va = g_ent[k].va;
+            *text = g_ent[k].text;
+            *cap = g_ent[k].cap;
+            return 1;
+        }
+    return 0;
 }
 
 const char *lang_lookup(uint32_t va)
@@ -142,7 +161,7 @@ const char *lang_lookup(uint32_t va)
     int lo = 0, hi = g_n - 1;
     while (lo <= hi) {
         int m = (lo + hi) / 2;
-        if (g_ent[m].va == va) return g_ent[m].text;
+        if (g_ent[m].va == va) return g_ent[m].inplace ? NULL : g_ent[m].text;   /* in place: the image holds it */
         if (g_ent[m].va < va) lo = m + 1;
         else hi = m - 1;
     }

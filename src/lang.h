@@ -17,6 +17,12 @@
  *     VA <TAB> MAX <TAB> TEXT
  * VA in hex (0x855ad4), MAX = the byte cap (0 = none), TEXT with \n \r \t \\ escapes and the game's own codes
  * (%n line break, %s / %d fields, @@KEY key names) kept as they are.  Characters outside Windows-1252 become '?'.
+ * MAX "@N" = written IN PLACE: a table string the code reads at base + row * stride, never by its own VA (item /
+ * spell / monster / place names, descriptions, books).  rhost copies the text over the image's string before the game
+ * starts (lang_inplace), N = the bytes its field holds; lang_data leaves such a VA alone (the image has the text).
+ *
+ * Several files may be loaded (lang_load again): a VA in a later file replaces the earlier one (the "keep original
+ * names" option = the main file + an overlay with the names put back in English).
  */
 #ifndef OSS_LANG_H
 #define OSS_LANG_H
@@ -36,8 +42,11 @@ static inline int text_hi_letter(char c)
     return g_text_sbcs && u >= 0xC0 && u != 0xD7 && u != 0xF7;
 }
 
-/* load a translation file; returns the number of strings mapped (0 on failure, with a reason in err) */
+/* load a translation file, added to those loaded before; returns the number of strings read (0 on failure, with a
+ * reason in err) */
 int lang_load(const char *path, char *err, size_t errn);
+/* the i-th in-place string (0..): its VA, text and field cap; 0 past the last */
+int lang_inplace(int i, uint32_t *va, const char **text, int *cap);
 /* the number of strings mapped (0 = no translation) */
 int lang_count(void);
 /* g_eng.data with a translation: the translated copy for a mapped VA, else the VA itself */
