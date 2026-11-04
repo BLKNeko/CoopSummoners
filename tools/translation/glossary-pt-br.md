@@ -13,6 +13,8 @@ Usado por quem traduz ou revisa `data/lang/pt-br.tsv`. Termos em inglês aqui s�
   caracteres** (letra acentuada conta 1). Se não couber, abrevie.
 - Só caracteres do Windows-1252 (todo o português cabe). Use aspas retas `"` e `'`, e `...` em vez de `…`.
 - Rótulos (KIND = label: menus, nomes) devem ficar curtos — perto do tamanho do inglês.
+- Se nenhuma palavra natural em português couber no CAP, **deixe o inglês** (nada de abreviações como "Cpr").
+- Mensagens técnicas do motor (erros, debug, nomes de arquivo) ficam em inglês.
 
 ## Estilo
 
@@ -21,6 +23,10 @@ Usado por quem traduz ou revisa `data/lang/pt-br.tsv`. Termos em inglês aqui s�
 - **Sana**: tímida e gentil, educada, frases mais suaves.
 - **Stella**: menina rica e esnobe, fala com ar de superioridade ("Ora essa!", "Hmpf!"), mas é engraçada.
 - Adultos: tom normal; o pai e a mãe da Arche são carinhosos.
+- **Chiffon** (criança pequena, fala errado): troca r por l ("lemblar", "podel", "mestle"), "vochê".
+- Fala arcaica ("thee / thy / thou"): use "tu" / "teu" / "vós" com ar solene.
+- Crianças que trocam letras em outras falas: troque r por l, como a Chiffon.
+- "magic rock paper scissors" = "jokenpô mágico".
 - Interjeições: Yay → Eba!/Oba!; Awww → Aaah...; Hmm → Hmm; Huh? → Hã?; Ow → Ai!; Ugh → Argh/Ugh.
 - Palavras em MAIÚSCULAS para ênfase continuam em maiúsculas.
 - `%s` com nomes de itens: evite artigo com gênero ("um %s"/"uma %s"); reescreva:
@@ -69,7 +75,7 @@ Minasa-Ratis. Siglas: HP, MP, CP.
 | Mister Guard / Guard | Seu Guarda / Guarda |
 | Sergeant | Sargento |
 | Headmaster | Diretor(a) |
-| Class President / President | Representante da Turma / Representante |
+| Class President / President | a Representante da Turma / a Representante (é uma menina) |
 | Topah Herb / Herb | Erva Topah / Erva |
 | Mentama Candy / Candy | Bala Mentama / Bala |
 | Capsule Machine | Máquina de Cápsulas |
@@ -89,6 +95,15 @@ Minasa-Ratis. Siglas: HP, MP, CP.
 | Kobold / Org / Munchkin | Kobold / Org / Munchkin |
 | Slash / Thrust | Corte / Estocada |
 | Unison | Unísono |
+| Woosh, sploosh, thunk, SIZZ! (feitiço da Arche) | Fuuu, splash, tum, TSSS! |
+| %d copper (moeda) | %d de cobre |
+| Warm Breeze Inn | Pousada Brisa Morna |
+| Merkid(s) / merfolk | merkid(s) / povo do mar |
+| Ribbit (som dos merkids) | Croac |
+| Underloch (lugar) | Underloch |
+| Mothbee | Mariposabelha |
+| Preserver | Preservador(a) |
+| Wind Hill | Colina do Vento |
 | Settings | Configurações |
 | Level | Nível |
 | Mode | Modo |
@@ -98,3 +113,49 @@ Minasa-Ratis. Siglas: HP, MP, CP.
 | Save / Load | Salvar / Carregar |
 | Item(s) | Item / Itens |
 | Equip / Equipment | Equipar / Equipamento |
+
+## Magias e golpes
+
+Em falas gritadas ficam em MAIÚSCULAS como no inglês; em menus, com iniciais maiúsculas ("Água Curativa II").
+Os números romanos (II, III) continuam.
+
+| Inglês | Português |
+|---|---|
+| Violet Bloom | Flor Violeta |
+| Rock Fall | Queda de Rochas |
+| Thunderbolt | Raio |
+| Wind Gust | Rajada de Vento |
+| Water Shoot | Jato d'Água |
+| Water Blow | Golpe d'Água |
+| Fire Handling | Domínio do Fogo |
+| Fire Wall | Muralha de Fogo |
+| Heal Water | Água Curativa |
+| Heal Mist | Névoa Curativa |
+| Sleep Mist | Névoa do Sono |
+| Buster Tornado | Tornado Devastador |
+| Turbid Squall | Tempestade Turva |
+| Diamond Dust / Diamonddust | Pó de Diamante |
+| Phoenix | Fênix |
+| Inferno | Inferno |
+| Explosion | Explosão |
+| Shield | Escudo |
+| Force Field | Campo de Força |
+| Mirror Image | Imagem Espelhada |
+| Illusion / Disillusion | Ilusão / Desilusão |
+| Life Force | Força Vital |
+| Revival | Reviver |
+| Antidote | Antídoto |
+| Teleportation | Teletransporte |
+| Chaser | Perseguidor |
+| Interceptor | Interceptador |
+| Disintegrate | Desintegrar |
+| Cerberus | Cérbero |
+| Saber / Blade | Sabre / Lâmina |
+| Splash / Wave | Respingo / Onda |
+| Unison | Unísono |
+| Dark Graviton | Gráviton Sombrio |
+| Dark Hold | Prisão Sombria |
+| Dark Stalker | Perseguidor Sombrio |
+| Conjure Servant | Invocar Servo |
+| Wind Thrust | Estocada de Vento |
+| Ghost Blaster | Rajada Fantasma |

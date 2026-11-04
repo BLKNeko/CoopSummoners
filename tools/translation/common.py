@@ -25,13 +25,37 @@ def load_strings():
     return {int(r["va"], 16): r for r in csv.DictReader(open(path, encoding="utf-8"))}
 
 
+# where a copied string lands -> the bytes that destination holds (text included NUL); others: the English length
+#   the scene runner's choice records: +0x5a0 + 0x58 * i {text, ..., +0x5f0 / +0x5f4 ints} -> 0x50 bytes
+DEST_CAP = [(re.compile(r"\+\s*(?:1440|0x5a0)\b|F32\(\s*c\s*,\s*0x5a0\s*\)"), 0x50 - 1)]
+
+
 def port_refs():
-    """(VAs used as D(0x...) in src/, VAs copied into fixed buffers by strcpy / sprintf / ...)"""
+    """(VAs the port reads through g_eng.data: D(0x...) / S(0x...) in src/,
+        {VA: byte cap or None} for those copied into fixed buffers by strcpy / sprintf / ... (None = English length))"""
     src = "".join(open(f, encoding="utf-8", errors="replace").read() for f in glob.glob(os.path.join(ROOT, "src", "*.c")))
-    dlit = {int(x, 16) for x in re.findall(r"D\((0x[0-9a-fA-F]{6})\)", src)}
-    cap = {int(x, 16) for x in re.findall(
-        r"(?:strcpy|strcat|sprintf|wsprintfA|lstrcpyA|strncpy)\w*\([^;]*?D\((0x[0-9a-fA-F]{6})\)", src)}
+    dlit = {int(x, 16) for x in re.findall(r"\b[DS]\((0x[0-9a-fA-F]{6})u?\)", src)}
+    cap = {}
+    for m in re.finditer(r"(?:strcpy|strcat|sprintf|wsprintfA|lstrcpyA|strncpy)\w*\(\s*([^;]*?),[^;]*?\b[DS]\((0x[0-9a-fA-F]{6})u?\)", src):
+        va = int(m.group(2), 16)
+        c = next((n for r, n in DEST_CAP if r.search(m.group(1))), None)
+        if va in cap and cap[va] is not None and c is not None:
+            cap[va] = min(cap[va], c)
+        else:
+            cap[va] = None if (va in cap and cap[va] is None) or c is None else c
+    # strcpy((char *)&F32(c, 0x5a0), D(..)): the first choice record (the comma inside F32() hides it from above)
+    for m in re.finditer(r"strcpy\(\s*\(char \*\)&F32\(\s*c\s*,\s*0x5a0\s*\)\s*,[^;]*?\b[DS]\((0x[0-9a-fA-F]{6})u?\)", src):
+        va = int(m.group(1), 16)
+        if cap.get(va, 0) is None and sum(1 for _ in re.finditer(r"\(\s*[^;]*?,[^;]*?\b[DS]\(0x%06x" % va, src)) == 1:
+            cap[va] = 0x50 - 1
     return dlit, cap
+
+
+def cap_of(va, rows, caps):
+    """the byte cap of a string (0 = any length)"""
+    if va not in caps:
+        return 0
+    return caps[va] if caps[va] is not None else int(rows[va]["bytes"])
 
 
 def esc(t):

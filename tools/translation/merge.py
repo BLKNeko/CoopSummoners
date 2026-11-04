@@ -13,7 +13,7 @@ import argparse
 import glob
 import os
 
-from common import LANG_DIR, WORK, esc, load_strings, port_refs, problems, read_tsv, unesc
+from common import LANG_DIR, WORK, cap_of, esc, load_strings, port_refs, problems, read_tsv, unesc
 
 # typographic marks the original text never uses -> its plain style
 PLAIN = {"“": '"', "”": '"', "‘": "'", "’": "'", "…": "...", "—": "-", "–": "-", " ": " "}
@@ -51,7 +51,7 @@ def main():
                 bad.append(f"{os.path.basename(fn)}:{n}: 0x{va:06x} is not a string of the game")
                 continue
             en = rows[va]["text"]
-            cap = int(rows[va]["bytes"]) if va in capped else 0
+            cap = cap_of(va, rows, capped)
             p = problems(en, pt, cap)
             if p:
                 bad.append(f"{os.path.basename(fn)}:{n}: 0x{va:06x}: " + "; ".join(p) + f"\n    EN: {en}\n    PT: {pt}")

@@ -23,5 +23,10 @@ rm -rf "$PKG" "$OUT/CoopSummoners.zip"
 mkdir -p "$PKG"
 cp "$OUT/CoopSummoners.exe" "$MOD" "$PKG/"
 cp "$SRC/README-package.txt" "$PKG/README.txt"
-(cd "$PKG" && zip -q -9 "$OUT/CoopSummoners.zip" CoopSummoners.exe opensummoners-standalone.exe README.txt)
+FILES="CoopSummoners.exe opensummoners-standalone.exe README.txt"
+if [ -f "$ROOT/data/lang/pt-br.tsv" ]; then   # the translation (Portuguese text only), installed by the launcher
+    mkdir -p "$PKG/lang" && cp "$ROOT/data/lang/pt-br.tsv" "$PKG/lang/"
+    FILES="$FILES lang/pt-br.tsv"
+fi
+(cd "$PKG" && zip -q -9 "$OUT/CoopSummoners.zip" $FILES)
 echo "packaged $OUT/CoopSummoners.zip"

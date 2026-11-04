@@ -12,7 +12,7 @@ translated in data/lang/<lang>.tsv.
 import argparse
 import os
 
-from common import LANG_DIR, WORK, esc, load_strings, port_refs, read_tsv
+from common import LANG_DIR, WORK, cap_of, esc, load_strings, port_refs, read_tsv
 
 
 def main():
@@ -41,7 +41,7 @@ def main():
             f.write("# VA\tCAP\tKIND\tEN   (CAP = max bytes, 0 = any length; KIND = dialogue / label)\n")
             for va in todo[i:i + a.size]:
                 r = rows[va]
-                c = int(r["bytes"]) if va in cap else 0
+                c = cap_of(va, rows, cap)
                 f.write(f"0x{va:06x}\t{c}\t{r['category']}\t{esc(r['text'])}\n")
     words = sum(int(rows[va]["words"]) for va in todo)
     print(f"{len(todo)} strings ({words} words) in {n} batches of <= {a.size} -> {out}"

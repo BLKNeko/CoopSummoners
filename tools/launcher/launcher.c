@@ -43,7 +43,8 @@ enum {
     S_INSTALL, S_UPDATE, S_UNINSTALL, S_SOLO, S_COOP,
     S_PADS, S_PADS_NOTE, S_PAD_NONE, S_PAD_UNUSED, S_CONTROLS, S_FOOTER,
     S_ASK_OTHER, S_ASK_INSTALL, S_ASK_UNINSTALL, S_DONE_INSTALL, S_DONE_BACKUP, S_DONE_UNINSTALL,
-    S_ERR_COPY, S_ERR_DENIED, S_ERR_START, S_ERR_NOT_GAME, S_NOT_FOUND, S_CONTROLS_TEXT, S_N
+    S_ERR_COPY, S_ERR_DENIED, S_ERR_START, S_ERR_NOT_GAME, S_NOT_FOUND, S_CONTROLS_TEXT,
+    S_GAMELANG, S_LANG_EN, S_LANG_PT, S_N
 };
 
 static const wchar_t *const STR_EN[S_N] = {
@@ -98,6 +99,7 @@ static const wchar_t *const STR_EN[S_N] = {
     L"Player 1 is always the leader (camera, talking, menus).\r\n"
     L"A fallen player can walk but not attack until healed.\r\n"
     L"Game over only when the whole party is down.\r\n",
+    L"Game language:", L"English (original)", L"Português (Brasil)",
 };
 
 static const wchar_t *const STR_PT[S_N] = {
@@ -152,6 +154,7 @@ static const wchar_t *const STR_PT[S_N] = {
     L"O jogador 1 é sempre o líder (câmera, conversas, menus).\r\n"
     L"Um jogador caído pode andar, mas não atacar, até ser curado.\r\n"
     L"Game over só quando o grupo inteiro cai.\r\n",
+    L"Idioma do jogo:", L"Inglês (original)", L"Português (Brasil)",
 };
 
 static const wchar_t *const *T = STR_EN;
@@ -273,8 +276,22 @@ static void settings_init(void)
     }
 }
 
-static void settings_load(void) { GetPrivateProfileStringW(L"launcher", L"GameDir", L"", g_game_dir, MAX_PATH, g_ini); }
-static void settings_save(void) { WritePrivateProfileStringW(L"launcher", L"GameDir", g_game_dir, g_ini); }
+/* the game's language: 0 English (the game's own text), 1 Portuguese (the translation file, --lang pt-br);
+ * -1 = never chosen: Portuguese on a Portuguese Windows when the translation ships, else English */
+static int g_lang_pt = -1;
+
+static void settings_load(void)
+{
+    GetPrivateProfileStringW(L"launcher", L"GameDir", L"", g_game_dir, MAX_PATH, g_ini);
+    wchar_t l[16];
+    GetPrivateProfileStringW(L"launcher", L"GameLang", L"", l, 16, g_ini);
+    if (l[0]) g_lang_pt = wcscmp(l, L"pt-br") == 0;
+}
+static void settings_save(void)
+{
+    WritePrivateProfileStringW(L"launcher", L"GameDir", g_game_dir, g_ini);
+    if (g_lang_pt >= 0) WritePrivateProfileStringW(L"launcher", L"GameLang", g_lang_pt ? L"pt-br" : L"en", g_ini);
+}
 
 /* ---------------------------------------------------------------- finding the game in Steam */
 
@@ -352,6 +369,16 @@ static char g_game_hash[65];
 
 static void installed_path(wchar_t *out) { join(out, g_game_dir, MOD_EXE); }
 static void bundled_path(wchar_t *out) { join(out, g_self_dir, MOD_EXE); }
+/* the translation file: lang\pt-br.tsv next to the launcher (shipped in the zip) and in the game folder */
+#define LANG_FILE L"lang\\pt-br.tsv"
+static void lang_installed(wchar_t *out) { join(out, g_game_dir, LANG_FILE); }
+static void lang_bundled(wchar_t *out) { join(out, g_self_dir, LANG_FILE); }
+
+static int same_file(const wchar_t *a, const wchar_t *b)
+{
+    char x[65], y[65];
+    return file_sha256(a, x) && file_sha256(b, y) && strcmp(x, y) == 0;
+}
 
 static void check_state(void)
 {
@@ -381,18 +408,32 @@ static void check_state(void)
     if (!have_inst) g_mod = have_bundle ? M_NONE : M_NOTHING;
     else if (!have_bundle) g_mod = M_NOBUNDLE;
     else {
-        char a[65], b[65];
-        g_mod = (file_sha256(inst, a) && file_sha256(bund, b) && strcmp(a, b) == 0) ? M_OK : M_UPDATE;
+        g_mod = same_file(inst, bund) ? M_OK : M_UPDATE;
+        wchar_t li[MAX_PATH], lb[MAX_PATH];   /* a newer translation file is an update too */
+        lang_installed(li);
+        lang_bundled(lb);
+        if (g_mod == M_OK && exists(lb) && _wcsicmp(li, lb) != 0 && !(exists(li) && same_file(li, lb))) g_mod = M_UPDATE;
     }
+}
+
+/* a translation is available: shipped next to the launcher or already in the game folder */
+static int lang_available(void)
+{
+    wchar_t li[MAX_PATH], lb[MAX_PATH];
+    lang_bundled(lb);
+    if (exists(lb)) return 1;
+    if (!g_game_dir[0]) return 0;
+    lang_installed(li);
+    return exists(li);
 }
 
 /* ---------------------------------------------------------------- the window */
 
 enum { ID_PATH = 100, ID_BROWSE, ID_FIND, ID_GAME, ID_MOD, ID_INSTALL, ID_UNINSTALL, ID_SOLO, ID_COOP, ID_PADS_L,
-       ID_PADS, ID_PADS_NOTE, ID_CONTROLS, ID_FOOTER, ID_DIRLABEL };
+       ID_PADS, ID_PADS_NOTE, ID_CONTROLS, ID_FOOTER, ID_DIRLABEL, ID_LANG_L, ID_LANG };
 #define TIMER_PADS 1
 
-static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_pads;
+static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_pads, g_lang;
 static HFONT g_font, g_font_big, g_font_mono;
 static int g_dpi = 96;
 static int S(int v) { return MulDiv(v, g_dpi, 96); }
@@ -420,6 +461,10 @@ static void refresh(void)
     int can_play = game_ok && g_mod != M_NOTHING;
     EnableWindow(g_solo, can_play);
     EnableWindow(g_coop, can_play);
+    int have_lang = lang_available();
+    if (g_lang_pt < 0) g_lang_pt = have_lang && T == STR_PT;   /* first run: follow the Windows language */
+    SendMessageW(g_lang, CB_SETCURSEL, have_lang && g_lang_pt == 1 ? 1 : 0, 0);
+    EnableWindow(g_lang, have_lang);
 }
 
 /* the joysticks, in the order the game's EnumDevices sees them */
@@ -524,6 +569,18 @@ static int do_install(int quiet)
         refresh();
         return 0;
     }
+    wchar_t li[MAX_PATH], lb[MAX_PATH], ld[MAX_PATH];   /* the translation file, when it ships */
+    lang_installed(li);
+    lang_bundled(lb);
+    if (exists(lb) && _wcsicmp(li, lb) != 0) {
+        join(ld, g_game_dir, L"lang");
+        CreateDirectoryW(ld, NULL);
+        if (!CopyFileW(lb, li, FALSE)) {
+            err(S_ERR_COPY, GetLastError());
+            refresh();
+            return 0;
+        }
+    }
     if (!quiet || backup[0]) {
         wchar_t msg[1024];
         swprintf(msg, 1024, L"%ls%ls%ls", TR(S_DONE_INSTALL), backup[0] ? TR(S_DONE_BACKUP) : L"", backup);
@@ -546,6 +603,16 @@ static void do_uninstall(void)
     }
     join(p, g_game_dir, L"coop.log");
     DeleteFileW(p);
+    join(p, g_game_dir, L"lang.log");
+    DeleteFileW(p);
+    wchar_t li[MAX_PATH], lb[MAX_PATH];
+    lang_installed(li);
+    lang_bundled(lb);
+    if (_wcsicmp(li, lb) != 0) {
+        DeleteFileW(li);
+        join(p, g_game_dir, L"lang");
+        RemoveDirectoryW(p);   /* only when empty */
+    }
     join(p, g_game_dir, L"opensummoners-standalone");   /* the mod exe's log + audit folder */
     if (is_dir(p)) shell_op(FO_DELETE, p, NULL);
     info(TR(S_DONE_UNINSTALL));
@@ -560,9 +627,10 @@ static void play(int coop)
     } else if (!confirm_version()) {
         return;
     }
-    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 32];
+    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 64];
     installed_path(exe);
-    swprintf(cmd, MAX_PATH + 32, L"\"%ls\"%ls", exe, coop ? L" --coop" : L"");
+    swprintf(cmd, MAX_PATH + 64, L"\"%ls\"%ls%ls", exe, coop ? L" --coop" : L"",
+             g_lang_pt == 1 && lang_available() ? L" --lang pt-br" : L"");
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;
     memset(&si, 0, sizeof si);
@@ -666,6 +734,10 @@ static void build_ui(void)
     y += 40;
     g_install = mk(L"BUTTON", TR(S_INSTALL), BS_PUSHBUTTON, X, y, 150, 28, ID_INSTALL, g_font);
     g_uninstall = mk(L"BUTTON", TR(S_UNINSTALL), BS_PUSHBUTTON, X + 160, y, 130, 28, ID_UNINSTALL, g_font);
+    mk(L"STATIC", TR(S_GAMELANG), SS_RIGHT, X + 296, y + 5, 100, 20, ID_LANG_L, g_font);
+    g_lang = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, X + 402, y + 1, 146, 200, ID_LANG, g_font);
+    SendMessageW(g_lang, CB_ADDSTRING, 0, (LPARAM)TR(S_LANG_EN));
+    SendMessageW(g_lang, CB_ADDSTRING, 0, (LPARAM)TR(S_LANG_PT));
     y += 44;
     g_solo = mk(L"BUTTON", TR(S_SOLO), BS_PUSHBUTTON, X, y, (W - 12) / 2, 52, ID_SOLO, g_font_big);
     g_coop = mk(L"BUTTON", TR(S_COOP), BS_DEFPUSHBUTTON, X + (W - 12) / 2 + 12, y, (W - 12) / 2, 52, ID_COOP, g_font_big);
@@ -693,6 +765,12 @@ static LRESULT CALLBACK wnd_proc(HWND w, UINT m, WPARAM wp, LPARAM lp)
         case ID_SOLO: play(0); break;
         case ID_COOP: play(1); break;
         case ID_CONTROLS: show_controls(); break;
+        case ID_LANG:
+            if (HIWORD(wp) == CBN_SELCHANGE) {
+                g_lang_pt = (int)SendMessageW(g_lang, CB_GETCURSEL, 0, 0) == 1;
+                settings_save();
+            }
+            break;
         }
         return 0;
     case WM_TIMER:
