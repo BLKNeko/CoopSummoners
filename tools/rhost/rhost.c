@@ -37,6 +37,7 @@
  *                     of the deterministic stand-ins: play, not replay (with --standalone: the playable port);
  *                     --no-launcher skips the launcher dialog (Windowed + Launch, as every rhost run)
  *   --screen N        the emulated launcher's Screen Mode: 3 Windowed (default), 4 Fullscreen, 5 Zoom 1280x960
+ *   --window-scale N|auto  (--live) Windowed with a 640N x 480N client, the frame stretched (auto: the largest fit)
  *   --no-compat-layer (product) no self-relaunch under DWM8And16BitMitigation (then fullscreen fails as retail's does)
  * Output: <rundir>\rhost.log; last line "RESULT ..." (key=value, parsed by rhost.py). */
 #include "rhost.h"
@@ -658,6 +659,67 @@ static HRESULT WINAPI dl_DirectDrawCreateEx(GUID *g, void **out, REFIID iid, IUn
 static void WINAPI live_OutputDebugStringA(LPCSTR s) { rh_log("ods: %s\n", s ? s : ""); OutputDebugStringA(s); }
 static int WINAPI live_MessageBoxA(HWND h, LPCSTR text, LPCSTR cap, UINT t)
 { rh_log("MessageBoxA [%s] %s (frame %u)\n", cap ? cap : "", text ? text : "", g_frame); return MessageBoxA(h, text, cap, t); }
+
+/* --live, co-op mod: the enlarged window (--window-scale N | auto; env OPENSUMMONERS_WINDOW_SCALE).  Retail's
+ * Windowed mode (window mode 2, 0x5a4770) sizes the window to a 640x480 client and presents with GDI: GetDC(hwnd) +
+ * BitBlt(0, 0, 640, 480) from the back buffer's DC (flip 0x5b8fc0 case 2; WM_PAINT 0x5b9130).  Here the sizing
+ * SetWindowPos calls on the game window get a 640*S x 480*S client (centred in the work area), and those BitBlts
+ * stretch to the client rect (nearest pixel).  The game itself still renders 640x480; exclusive modes untouched.
+ * auto = the largest integer scale whose window fits the monitor's work area. */
+static int g_wscale = 1;   /* 1 = retail's size, 0 = auto */
+static HWND g_game_hwnd;
+static int is_game_window(HWND h)
+{
+    char c[32];
+    if (!h) return 0;
+    if (h == g_game_hwnd) return 1;
+    if (GetClassNameA(h, c, sizeof c) && !strcmp(c, "CLASS_LIZSOFT_SOTES")) { g_game_hwnd = h; return 1; }
+    return 0;
+}
+static void work_area(HWND hw, RECT *wa)
+{
+    MONITORINFO mi = { .cbSize = sizeof mi };
+    if (GetMonitorInfoA(MonitorFromWindow(hw, MONITOR_DEFAULTTOPRIMARY), &mi)) *wa = mi.rcWork;
+    else SystemParametersInfoA(SPI_GETWORKAREA, 0, wa, 0);
+}
+static BOOL WINAPI lv_SetWindowPos(HWND hw, HWND after, int x, int y, int cx, int cy, UINT fl)
+{
+    DWORD st = (DWORD)GetWindowLongA(hw, GWL_STYLE), ex = (DWORD)GetWindowLongA(hw, GWL_EXSTYLE);
+    if (!(fl & SWP_NOSIZE) && (st & WS_CAPTION) == WS_CAPTION && is_game_window(hw)) {
+        RECT wa; work_area(hw, &wa);
+        int s = g_wscale;
+        if (!s) {   /* auto */
+            s = 1;
+            for (int k = 2; k <= 8; k++) {
+                RECT r = { 0, 0, 640 * k, 480 * k }; AdjustWindowRectEx(&r, st, FALSE, ex);
+                if (r.right - r.left > wa.right - wa.left || r.bottom - r.top > wa.bottom - wa.top) break;
+                s = k;
+            }
+        }
+        if (s > 1) {
+            RECT r = { 0, 0, 640 * s, 480 * s }; AdjustWindowRectEx(&r, st, FALSE, ex);
+            cx = r.right - r.left; cy = r.bottom - r.top;
+            x = wa.left + ((wa.right - wa.left) - cx) / 2; if (x < wa.left) x = wa.left;
+            y = wa.top + ((wa.bottom - wa.top) - cy) / 2; if (y < wa.top) y = wa.top;
+            fl &= ~SWP_NOMOVE;
+            rh_log("window: scale %d -> client %dx%d, window %dx%d at %d,%d\n", s, 640 * s, 480 * s, cx, cy, x, y);
+        }
+    }
+    return SetWindowPos(hw, after, x, y, cx, cy, fl);
+}
+static BOOL WINAPI lv_BitBlt(HDC d, int x, int y, int cx, int cy, HDC s, int sx, int sy, DWORD rop)
+{
+    if (x == 0 && y == 0 && cx == 640 && cy == 480 && sx == 0 && sy == 0 && rop == SRCCOPY) {
+        HWND h = WindowFromDC(d);
+        RECT rc;
+        if (is_game_window(h) && GetClientRect(h, &rc) && rc.right > 0 && rc.bottom > 0 &&
+            (rc.right != 640 || rc.bottom != 480)) {
+            SetStretchBltMode(d, COLORONCOLOR);
+            return StretchBlt(d, 0, 0, rc.right, rc.bottom, s, 0, 0, 640, 480, SRCCOPY);
+        }
+    }
+    return BitBlt(d, x, y, cx, cy, s, sx, sy, rop);
+}
 
 /* ---- window + message hermeticity ----
  * The WndProc (0x5b12e0) reacts to WM_ACTIVATEAPP (active flag, input re-acquire, music
@@ -1305,6 +1367,7 @@ static void parse(int argc, char **argv)
     O.seed = 0x4f5347; O.has_seed = 1; O.tail = 120; O.log_every = 600; O.frames = 0; O.quiet = 1;
     O.step_ms = 16; O.creep_after = 2000; O.stall_wall_ms = 60000; O.scrub_kb = 32; O.trap_max = 50; O.screen = 3;
     int seed_given = 0;
+    const char *wscale_arg = getenv("OPENSUMMONERS_WINDOW_SCALE");
     coop_init_from_env();
 #ifdef RH_PRODUCT
     O.standalone = O.live = 1;   /* the product: the port alone, on the real platform */
@@ -1324,6 +1387,7 @@ static void parse(int argc, char **argv)
         else if (!strcmp(a, "--lang")) g_lang_name = ARG();
         else if (!strcmp(a, "--lang-file")) g_lang_file = ARG();
         else if (!strcmp(a, "--lang-names")) g_lang_names = ARG();   /* translated (default) / original */
+        else if (!strcmp(a, "--window-scale")) wscale_arg = ARG();   /* --live: N or auto (enlarged window) */
         else if (!strcmp(a, "--coop")) g_coop = 1;
         else if (!strcmp(a, "--coop-test-hp") && g_n_test_hp < 8) {   /* FRAME:WHO:HP, WHO 0 leader / 1 P2 */
             const char *v = ARG();
@@ -1407,6 +1471,10 @@ static void parse(int argc, char **argv)
         }
         else { fprintf(stderr, "unknown option %s\n", a); usage(); }
         #undef ARG
+    }
+    if (wscale_arg && wscale_arg[0]) {
+        g_wscale = !_stricmp(wscale_arg, "auto") ? 0 : (int)strtoul(wscale_arg, 0, 0);
+        if (g_wscale < 0 || g_wscale > 8) g_wscale = 1;
     }
 #ifdef RH_PRODUCT
     /* defaults: the game is the folder this exe sits in; the retail exe the unpacked one if present */
@@ -1523,6 +1591,7 @@ int main(int argc, char **argv)
     parse(argc, argv);
 #ifdef RH_PRODUCT
     if (!O.no_compat_layer) compat_relaunch();
+    if (O.live && g_wscale != 1) SetProcessDPIAware();   /* the enlarged window in real pixels (no blurry DPI stretch) */
 #endif
     QueryPerformanceFrequency(&g_qf); QueryPerformanceCounter(&g_t0);
     CreateDirectoryA(O.rundir, NULL);
@@ -1611,6 +1680,11 @@ int main(int argc, char **argv)
         iat_try("OutputDebugStringA", live_OutputDebugStringA);
         iat_override("MessageBoxA", live_MessageBoxA);
         dl_ddce = (ddce_t)iat_lookup("DirectDrawCreateEx"); iat_override("DirectDrawCreateEx", dl_DirectDrawCreateEx);
+        if (g_wscale != 1) {   /* the enlarged window */
+            iat_override("SetWindowPos", lv_SetWindowPos);
+            iat_override("BitBlt", lv_BitBlt);
+            rh_log("window: scale %s\n", g_wscale ? "set" : "auto");
+        }
         goto platform_done;
     }
     iat_try("GetEnvironmentStrings", my_GetEnvironmentStrings);

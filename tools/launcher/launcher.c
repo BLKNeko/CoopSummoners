@@ -44,7 +44,8 @@ enum {
     S_PADS, S_PADS_NOTE, S_PAD_NONE, S_PAD_UNUSED, S_CONTROLS, S_FOOTER,
     S_ASK_OTHER, S_ASK_INSTALL, S_ASK_UNINSTALL, S_DONE_INSTALL, S_DONE_BACKUP, S_DONE_UNINSTALL,
     S_ERR_COPY, S_ERR_DENIED, S_ERR_START, S_ERR_NOT_GAME, S_NOT_FOUND, S_CONTROLS_TEXT,
-    S_GAMELANG, S_LANG_EN, S_LANG_PT, S_LANG_PT_NAMES, S_N
+    S_GAMELANG, S_LANG_EN, S_LANG_PT, S_LANG_PT_NAMES,
+    S_WSCALE, S_WS_1, S_WS_AUTO, S_WS_2, S_WS_3, S_N
 };
 
 static const wchar_t *const STR_EN[S_N] = {
@@ -100,6 +101,7 @@ static const wchar_t *const STR_EN[S_N] = {
     L"A fallen player can walk but not attack until healed.\r\n"
     L"Game over only when the whole party is down.\r\n",
     L"Game language:", L"English (original)", L"Português (Brasil)", L"Português, original names",
+    L"Window size:", L"Original (640×480)", L"Largest that fits", L"2× (1280×960)", L"3× (1920×1440)",
 };
 
 static const wchar_t *const STR_PT[S_N] = {
@@ -155,6 +157,7 @@ static const wchar_t *const STR_PT[S_N] = {
     L"Um jogador caído pode andar, mas não atacar, até ser curado.\r\n"
     L"Game over só quando o grupo inteiro cai.\r\n",
     L"Idioma do jogo:", L"Inglês (original)", L"Português (Brasil)", L"Português, nomes originais",
+    L"Tamanho da janela:", L"Original (640×480)", L"O maior que couber", L"2× (1280×960)", L"3× (1920×1440)",
 };
 
 static const wchar_t *const *T = STR_EN;
@@ -281,6 +284,9 @@ static void settings_init(void)
  * -1 = never chosen: Portuguese on a Portuguese Windows when the translation ships, else English */
 static int g_lang_pt = -1;
 static const wchar_t *const LANG_INI[3] = { L"en", L"pt-br", L"pt-br-original-names" };
+/* the game window's size when "Windowed" is picked in the game's own launcher (--window-scale): the combo's order */
+static int g_wscale = 1;
+static const wchar_t *const WSCALE_INI[4] = { L"1", L"auto", L"2", L"3" };
 
 static void settings_load(void)
 {
@@ -289,11 +295,15 @@ static void settings_load(void)
     GetPrivateProfileStringW(L"launcher", L"GameLang", L"", l, 32, g_ini);
     for (int i = 0; l[0] && i < 3; i++)
         if (wcscmp(l, LANG_INI[i]) == 0) g_lang_pt = i;
+    GetPrivateProfileStringW(L"launcher", L"WindowScale", L"auto", l, 32, g_ini);
+    for (int i = 0; i < 4; i++)
+        if (wcscmp(l, WSCALE_INI[i]) == 0) g_wscale = i;
 }
 static void settings_save(void)
 {
     WritePrivateProfileStringW(L"launcher", L"GameDir", g_game_dir, g_ini);
     if (g_lang_pt >= 0) WritePrivateProfileStringW(L"launcher", L"GameLang", LANG_INI[g_lang_pt], g_ini);
+    WritePrivateProfileStringW(L"launcher", L"WindowScale", WSCALE_INI[g_wscale], g_ini);
 }
 
 /* ---------------------------------------------------------------- finding the game in Steam */
@@ -441,10 +451,10 @@ static int lang_available(void)
 /* ---------------------------------------------------------------- the window */
 
 enum { ID_PATH = 100, ID_BROWSE, ID_FIND, ID_GAME, ID_MOD, ID_INSTALL, ID_UNINSTALL, ID_SOLO, ID_COOP, ID_PADS_L,
-       ID_PADS, ID_PADS_NOTE, ID_CONTROLS, ID_FOOTER, ID_DIRLABEL, ID_LANG_L, ID_LANG };
+       ID_PADS, ID_PADS_NOTE, ID_CONTROLS, ID_FOOTER, ID_DIRLABEL, ID_LANG_L, ID_LANG, ID_WSCALE_L, ID_WSCALE };
 #define TIMER_PADS 1
 
-static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_pads, g_lang;
+static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_pads, g_lang, g_wscale_c;
 static HFONT g_font, g_font_big, g_font_mono;
 static int g_dpi = 96;
 static int S(int v) { return MulDiv(v, g_dpi, 96); }
@@ -643,11 +653,12 @@ static void play(int coop)
     } else if (!confirm_version()) {
         return;
     }
-    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 64];
+    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 96], ws[32] = L"";
     installed_path(exe);
     int pt = g_lang_pt > 0 && lang_available();
-    swprintf(cmd, MAX_PATH + 64, L"\"%ls\"%ls%ls%ls", exe, coop ? L" --coop" : L"", pt ? L" --lang pt-br" : L"",
-             pt && g_lang_pt == 2 ? L" --lang-names original" : L"");
+    if (g_wscale > 0) swprintf(ws, 32, L" --window-scale %ls", WSCALE_INI[g_wscale]);
+    swprintf(cmd, MAX_PATH + 96, L"\"%ls\"%ls%ls%ls%ls", exe, coop ? L" --coop" : L"", pt ? L" --lang pt-br" : L"",
+             pt && g_lang_pt == 2 ? L" --lang-names original" : L"", ws);
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;
     memset(&si, 0, sizeof si);
@@ -767,6 +778,10 @@ static void build_ui(void)
     mk(L"STATIC", TR(S_PADS_NOTE), 0, X, y, W, 36, ID_PADS_NOTE, g_font);
     y += 42;
     mk(L"BUTTON", TR(S_CONTROLS), BS_PUSHBUTTON, X, y, 130, 28, ID_CONTROLS, g_font);
+    mk(L"STATIC", TR(S_WSCALE), SS_RIGHT, X + 236, y + 5, 160, 20, ID_WSCALE_L, g_font);
+    g_wscale_c = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, X + 402, y + 1, 146, 200, ID_WSCALE, g_font);
+    for (int i = S_WS_1; i <= S_WS_3; i++) SendMessageW(g_wscale_c, CB_ADDSTRING, 0, (LPARAM)TR(i));
+    SendMessageW(g_wscale_c, CB_SETCURSEL, g_wscale, 0);
     y += 40;
     mk(L"STATIC", TR(S_FOOTER), SS_CENTER, X, y, W, 40, ID_FOOTER, g_font);
 }
@@ -786,6 +801,13 @@ static LRESULT CALLBACK wnd_proc(HWND w, UINT m, WPARAM wp, LPARAM lp)
         case ID_LANG:
             if (HIWORD(wp) == CBN_SELCHANGE) {
                 g_lang_pt = (int)SendMessageW(g_lang, CB_GETCURSEL, 0, 0);
+                settings_save();
+            }
+            break;
+        case ID_WSCALE:
+            if (HIWORD(wp) == CBN_SELCHANGE) {
+                g_wscale = (int)SendMessageW(g_wscale_c, CB_GETCURSEL, 0, 0);
+                if (g_wscale < 0 || g_wscale > 3) g_wscale = 1;
                 settings_save();
             }
             break;

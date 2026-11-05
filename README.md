@@ -57,6 +57,10 @@ one screen.
   "Português (Brasil)" in the launcher (or "Português, nomes originais" to keep the item, spell,
   monster and place names in English), or start the game with `--lang pt-br`. See
   [Portuguese translation](#portuguese-translation).
+- **Bigger window**: in *Windowed* mode the window can be 2× or 3× the original 640×480, or
+  the largest size that fits the screen (launcher: *Window size*; command line:
+  `--window-scale 2|3|auto`). Handy because full screen is slow on Windows 8 and later (it
+  emulates a 16-bit display mode), while windowed is not.
 - **Off by default**: without `--coop` the game runs exactly like the base game.
 
 ---
@@ -107,6 +111,9 @@ The launcher also:
 - lists the **connected gamepads** in the same order the game sees them, so you know which
   one is player 1 and which is player 2;
 - shows the full **controls** (button **Controls...**);
+- sets the **window size** used when you pick *Windowed* in the game's options window
+  (*Original*, *Largest that fits* — the default — or 2× / 3×), with the picture scaled
+  pixel for pixel;
 - **updates** the mod when you extract a newer zip over the old one (button **Update mod**);
 - **uninstalls** it (button **Uninstall**): it removes only the mod's files, and your saves
   and backups stay;
