@@ -785,11 +785,15 @@ int room_loop_run(wl_roomloop *rl)
         if (g_world->room != NULL && rl->ui_lock == 0) {
             room_pickups(g_world->room);
             const wl_pslot *ld = g_world->room->leader;
-            if (ld != NULL) {
+            /* co-op only: a leader slot with no character (no member left to take the lead) skips the
+             * passes that read it, instead of crashing; never happens with co-op off */
+            int no_lead = g_coop && (ld == NULL || ld->ch == NULL);
+            if (ld != NULL && !no_lead) {
                 int r = gimmick_pass(rl, ld->ch);
                 if (r > 0 && (r <= 2 || r == 6)) return r;
             }
-            if (g_world->f2764 != 0) {
+            if (no_lead) {
+            } else if (g_world->f2764 != 0) {
                 int r = g_eng.h59ad60(rl, IP(g_world->room->leader->ch));
                 if (r > 0 && (r <= 2 || r == 6)) return r;
             } else if (rl->enc_ctr < 5) rl->enc_ctr++;

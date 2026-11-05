@@ -46,6 +46,14 @@ void coop_p2_produce(input_mgr *m, const void *kb);
 void coop_tick(wl_room *r);
 /* the slot P2 holds, or NULL */
 wl_pslot *coop_p2_slot(const wl_room *r);
+/* room_leader_next found no new leader (it skips members holding an input manager, and in co-op
+ * P2's member holds one; a story script may also leave the only free member busy): when the
+ * current leader `cur` can no longer lead (gone from the party / no character), return a member
+ * to take the lead anyway: P2's, else any member present.  The base game always has a member with
+ * no manager (only the leader holds one), so a leader slot never stays empty there; in co-op it
+ * could, and the room loop's gimmick pass then read the empty slot's character (a crash after a
+ * cutscene that removed the leader from the party).  NULL with co-op off.  Logged to coop.log. */
+wl_pslot *coop_leader_fallback(const wl_room *r, const wl_pslot *cur);
 /* P2 is in the game (co-op on and P2 has not left with a switch hold) */
 int coop_p2_joined(void);
 /* After char_ai built a player-driven character's command (room_char_step): while that
@@ -72,6 +80,9 @@ void coop_status(char *buf, size_t n);
 void coop_test_hp(int32_t who, int32_t hp);
 /* test only (rhost --coop-test-drop F:WHO): drop that character below the map (a pit fall) */
 void coop_test_drop(int32_t who);
+/* test only (rhost --coop-test-leave F): at F (on = 1) the leader leaves the party while every other
+ * member is not targetable (body inactive: no normal new leader); at F+60 (on = 0) their bodies return */
+void coop_test_leave(int32_t on);
 
 /* The P2 marker, drawn by the host onto the finished back buffer right before each Flip
  * (an overlay: no game state is read back or changed).  A blue "P2" badge with a pointer

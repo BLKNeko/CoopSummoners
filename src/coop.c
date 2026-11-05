@@ -124,6 +124,33 @@ wl_pslot *coop_p2_slot(const wl_room *r)
     return NULL;
 }
 
+wl_pslot *coop_leader_fallback(const wl_room *r, const wl_pslot *cur)
+{
+    if (!g_coop || r == NULL) return NULL;
+    if (cur != NULL && cur->active == 1 && cur->ch != NULL) return NULL;   /* the leader can still lead */
+    wl_pslot *pick = coop_p2_slot(r);
+    if (pick == NULL || pick == cur || pick->active != 1 || pick->id == 100000104 || pick->ch == NULL) {
+        pick = NULL;
+        for (int k = 0; k < 8 && pick == NULL; k++) {
+            wl_pslot *s = r->slot[k];
+            if (s != NULL && s != cur && s->active == 1 && s->id != 100000104 && s->ch != NULL) pick = s;
+        }
+    }
+    static int logged;
+    if (logged < 8) {   /* a few lines into coop.log beside the game: which member took the lead and why */
+        FILE *f = fopen("coop.log", "a");
+        if (f != NULL) {
+            fprintf(f, "leader fallback at tick %u: leader %d (active %d, ch %s) -> %d (%s)\n",
+                    (unsigned)g_eng.tick(), cur != NULL ? (int)cur->code : 0, cur != NULL ? (int)cur->active : 0,
+                    cur != NULL && cur->ch != NULL ? "yes" : "no", pick != NULL ? (int)pick->code : 0,
+                    pick == NULL ? "nobody" : pick == coop_p2_slot(r) ? "P2's member" : "a member present");
+            fclose(f);
+        }
+        logged++;
+    }
+    return pick;
+}
+
 /* player 1 is in control: the leader's character runs on manager 0 (scripts clear the
  * character's +0x158a4 / set +0x200 directly, so look at the character, not the slot) */
 static int p1_in_control(const wl_room *r)
@@ -367,6 +394,20 @@ void coop_test_drop(int32_t who)
     const wl_room *r = (*g_eng.world)->room;
     const wl_pslot *s = who == 0 ? r->leader : coop_p2_slot(r);
     if (s != NULL && s->ch != NULL && s->ch->base.body != NULL) s->ch->base.body->y = 50000000;
+}
+
+void coop_test_leave(int32_t on)
+{
+    static int32_t saved[8];
+    if (!g_coop || g_eng.world == NULL || *g_eng.world == NULL || (*g_eng.world)->room == NULL) return;
+    wl_room *r = (*g_eng.world)->room;
+    for (int k = 0; k < 8; k++) {   /* the others not targetable (body inactive) while the leader goes, then back */
+        wl_pslot *s = r->slot[k];
+        if (s == NULL || s == r->leader || s->active != 1 || s->ch == NULL || s->ch->base.body == NULL) continue;
+        if (on) { saved[k] = s->ch->base.body->active; s->ch->base.body->active = 2; }
+        else s->ch->base.body->active = saved[k];
+    }
+    if (on && r->leader != NULL && r->leader->active == 1) room_member_leave(r, r->leader, 0);
 }
 
 /* ---- the P2 marker overlay ---- */

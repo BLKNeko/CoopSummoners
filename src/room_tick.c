@@ -10,6 +10,7 @@
 #include "actor_update.h"
 #include "char_state.h"
 #include "char_status.h"
+#include "coop.h"
 #include "behave_helpers.h"
 #include "engine_calls.h"
 #include "gimmick.h"
@@ -110,6 +111,7 @@ int room_leader_next(wl_roomloop *rl, wl_room *room, int32_t forced, wl_pslot *c
             break;
         }
     }
+    if (next == NULL && g_coop) next = coop_leader_fallback(room, cur);   /* co-op only: see coop.h */
     if (forced != 0) {
         if (next == NULL || cur == next) return 0;
     } else {

@@ -28,6 +28,15 @@ Before the fix: `AV f28601 ... (write 00000000)` (char_add_hp writing through ch
 After: no crash, Sana respawns on the ground at f28610 with 0 HP; healthy Arche dropped at f28800
 respawns and loses 5% HP (77 → 72) as in the base game — PASS.
 
+Leader gone, no free member (owner's crash, 2026-11-04: `AV ... part_right` from `gimmick_step`, the
+room loop's gimmick pass reading an empty leader slot after a cutscene): `T2-p1-lone` with
+`--frames 5000 --log-every 10 --coop-test-leave 4400` (test only: Arche, the leader, leaves the party
+while Sana's body is inactive for 60 frames, so the game's own leader change finds nobody).
+Before the fix: `lead=-` from f4400 to the end (no leader, P1 has no control; any pressure plate
+crashes). After: `coop.log` "leader fallback ... 50010 (active 2, ch no) -> 50011 (a member present)",
+Sana leads at f4410, P1 drives her, no crash — PASS. T1–T5 equal the pre-fix build in frame / tick /
+rng / pixels.
+
 Spell panel: `T4-drop` with `--shot-at 4450,4700,4900,5300` — f4450 leader portrait Arche (P1) with
 Sana's spells top right (P2 drives Sana); f4700 P2 out → no spells; f4900 / f5300 Sana is P1's →
 her panel as in the base game — PASS (checked on the screenshots).
