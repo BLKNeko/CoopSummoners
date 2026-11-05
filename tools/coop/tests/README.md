@@ -12,6 +12,8 @@ and read the `coop[...]` status lines.
 | T3-p2-lone | P2 tap f4500 | no change — PASS |
 | T4-drop | P2 hold f4500-4620, P1 tap f4800, P2 hold f5000-5120 | p2out=1 at f4600; P1 to Sana at f4825; P2 back on Arche at f5100 — PASS |
 | T5-late | P1 tap f4500, P2 tap f4545 (720 ms) | no swap — PASS |
+| T6-p1-kick | P1 holds Enter f4500-4900 (> 5 s game time) | p2out=1 at f4825, P2's Sana back to the AI, coop.log "player 1 dropped player 2 out" — PASS (2026-11-05) |
+| T7-p1-hold3s | P1 holds Enter f4500-4700 (~3 s) | just a tap: no free member, no change, P2 stays — PASS (2026-11-05) |
 
 Falls: `F1-fall` = `rh-combat` with numpad stripped (`trace_p2.py`), no keys after f28500; run
 with `--coop-test-hp 27050:0:1` (test only), no save folder:

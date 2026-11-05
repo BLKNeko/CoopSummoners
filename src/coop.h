@@ -17,7 +17,7 @@
  * The switch key is co-op's (coop.c, "the switch key"): both players tap within 0.5 s →
  * they swap characters (P1 keeps the lead); a lone tap → the game's own switch to a free
  * member once the window has passed; P2 holds it 1.5 s → leaves (the AI takes over) or
- * rejoins.  A fallen member keeps its player; game over stays the game's own (all down).
+ * rejoins; P1 holds it 5 s → P2 is dropped out (P2's own hold rejoins).  A fallen member keeps its player; game over stays the game's own (all down).
  *
  * P2 keyboard (numpad): 8/5/4/6 up/down/left/right, 1 attack, 2 jump, 3 use,
  * 0 sheathe / skill modifier, + switch character.

@@ -179,11 +179,14 @@ static int p2_can_take(const wl_room *r, const wl_pslot *s)
  *     press is posted back into that player's ring, so room_keys does the game's own switch to
  *     a free member (its 40-tick retry included);
  *   - P2 holds: leave (the AI takes the character back) / rejoin (the first free member);
- *     P1's hold is just a tap. */
+ *   - P1 holds COOP_KICK_MS: P2 is dropped out as if P2 had held (for a P2 with no controller,
+ *     whose character would otherwise stand still under nobody's control); only P2's own hold
+ *     brings P2 back.  A shorter P1 hold is just a tap. */
 
 #define SWITCH_ID     20
 #define COOP_SWAP_MS  500
 #define COOP_HOLD_MS  1500
+#define COOP_KICK_MS  5000
 
 typedef struct sw_state {
     int          down;        /* the switch is held (a press seen, its release not yet)  */
@@ -246,8 +249,20 @@ static void sw_tap(wl_room *r, int p, uint32_t t, uint32_t now)
 
 static void sw_hold(wl_room *r, int p)
 {
-    if (p != 1) return;
     wl_pslot *held = coop_p2_slot(r);
+    if (p == 0) {   /* P1 drops P2 out (never back in) */
+        if (g_p2_out) return;
+        if (held != NULL) pslot_input_set(held, NULL);
+        g_p2_out = 1;
+        g_sw[1].tap = 0;
+        g_sw[1].down = 0;
+        FILE *f = fopen("coop.log", "a");
+        if (f != NULL) {
+            fprintf(f, "player 1 dropped player 2 out at tick %u\n", (unsigned)g_eng.tick());
+            fclose(f);
+        }
+        return;
+    }
     if (!g_p2_out) {
         if (held != NULL) pslot_input_set(held, NULL);
         g_p2_out = 1;
@@ -282,7 +297,7 @@ static void sw_update(wl_room *r)
                 if (!s->hold_fired) sw_tap(r, p, ts, now);
             }
         }
-        if (s->down && !s->hold_fired && p == 1 && (uint32_t)(now - s->down_at) >= COOP_HOLD_MS) {
+        if (s->down && !s->hold_fired && (uint32_t)(now - s->down_at) >= (p == 1 ? COOP_HOLD_MS : COOP_KICK_MS)) {
             s->hold_fired = 1;
             sw_hold(r, p);
         }

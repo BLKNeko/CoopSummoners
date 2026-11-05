@@ -43,7 +43,8 @@ one screen.
 - **Swap characters LEGO-style**: both players press *switch* within half a second and
   trade characters.
 - **Drop out / drop in**: player 2 holds *switch* for 1.5 s to leave (the AI takes the
-  character back) and again to rejoin.
+  character back) and again to rejoin. Player 1 can also drop player 2 out by holding
+  *switch* for 5 s (e.g. co-op started without the second controller).
 - **Fallen characters stay with their player**: a player at 0 HP can still walk, jump and
   investigate, but cannot attack or cast until healed. Game over only when the whole party
   is down, as in the base game.
@@ -257,6 +258,7 @@ file go to `opensummoners-standalone\`, and gamepad messages go to `coop.log`.
 | **Both players tap switch within 0.5 s** | The two players **swap characters**, even if one of them is down. Player 1 still leads. |
 | **One player taps switch alone** | After the 0.5 s window, the base game's normal switch to a free AI member (nothing happens if there is none). |
 | **Player 2 holds switch for 1.5 s** | **Player 2 leaves**: the AI takes the character back. Hold again to **rejoin** with the first free member. |
+| **Player 1 holds switch for 5 s** | **Player 2 is dropped out**, as if player 2 had left: the AI takes the character back. For when player 2 can't do it (no second controller). Player 2 rejoins by holding switch for 1.5 s. |
 
 ### Falling in battle
 
@@ -352,6 +354,7 @@ Found a bug? Open an issue with what happened, the save if you can, and the
 | "Install mod" says access is denied | Close the game if it's running and try again. If the game is under `C:\Program Files`, right-click `CoopSummoners.exe` → **Run as administrator**. |
 | Players 1 and 2 have the wrong pads in the launcher's list | Same fix as below: the list shows the order the game will use. |
 | Player 2 can't do anything | Is there a second party member yet? In a new game Arche starts alone. Has player 2 left by holding switch? Hold numpad **+** for 1.5 s to rejoin. |
+| Started co-op without the second controller: player 2's character stands still | Player 1 holds **switch** for 5 s: player 2 is dropped out and the AI drives the character again. |
 | A gamepad does nothing | Plug both pads in **before** starting the game. A pad unplugged mid-game reconnects within a moment; check `coop.log` if it doesn't. |
 | Players 1 and 2 have the wrong pads | Windows decides the order. Unplug both, plug player 1's pad in first, then player 2's, and start the game again. |
 | The game starts without co-op | Check that `--coop` is in the `.bat` / shortcut / Steam launch options. |
