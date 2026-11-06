@@ -15,8 +15,8 @@ You need: Fortune Summoners: Secret of the Elemental Stone on Steam
 Player 1: keyboard + 1st controller. Player 2: numpad + 2nd controller.
 Click "Controls..." in the launcher for the full list.
 
-Full screen slow? Pick "Windowed" in the game's options window: the launcher's
-"Window size" makes that window bigger (default: the largest that fits).
+Screen: the launcher's "Screen mode" (default: borderless full screen, without
+the lag of the game's original full screen). "Window size" applies to "Window".
 
 Uninstall: "Uninstall" in the launcher. Your saves are kept and the game
 files are never changed.
@@ -43,9 +43,8 @@ Requisito: Fortune Summoners: Secret of the Elemental Stone na Steam
 Jogador 1: teclado + 1º controle. Jogador 2: teclado numérico + 2º controle.
 Clique em "Comandos..." no launcher para ver a lista completa.
 
-Tela cheia lenta? Escolha "Windowed" na janela de opções do jogo: o
-"Tamanho da janela" do launcher deixa essa janela maior (padrão: o maior
-tamanho que couber na tela).
+Tela: o "Modo de tela" do launcher (padrão: tela cheia sem bordas, sem o
+lag da tela cheia original do jogo). "Tamanho da janela" vale para "Janela".
 
 Desinstalar: botão "Desinstalar" no launcher. Os saves são mantidos e os
 arquivos do jogo nunca são alterados.

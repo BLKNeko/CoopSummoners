@@ -45,7 +45,8 @@ enum {
     S_ASK_OTHER, S_ASK_INSTALL, S_ASK_UNINSTALL, S_DONE_INSTALL, S_DONE_BACKUP, S_DONE_UNINSTALL,
     S_ERR_COPY, S_ERR_DENIED, S_ERR_START, S_ERR_NOT_GAME, S_NOT_FOUND, S_CONTROLS_TEXT,
     S_GAMELANG, S_LANG_EN, S_LANG_PT, S_LANG_PT_NAMES,
-    S_WSCALE, S_WS_1, S_WS_AUTO, S_WS_2, S_WS_3, S_ASK_NO_BACKUP, S_N
+    S_WSCALE, S_WS_1, S_WS_AUTO, S_WS_2, S_WS_3, S_ASK_NO_BACKUP, S_WS_NOFIT,
+    S_SCREEN, S_SM_BORDERLESS, S_SM_WINDOW, S_SM_FULL, S_SM_ASK, S_N
 };
 
 static const wchar_t *const STR_EN[S_N] = {
@@ -107,6 +108,9 @@ static const wchar_t *const STR_EN[S_N] = {
     L"Game language:", L"English (original)", L"Português (Brasil)", L"Português, original names",
     L"Window size:", L"Original (640×480)", L"Largest that fits", L"2× (1280×960)", L"3× (1920×1440)",
     L"Could not back up the saves (user\\ to user-backups\\).\n\nPlay anyway?",
+    L"too big for this screen",
+    L"Screen mode:", L"Borderless full screen (recommended)", L"Window", L"Original full screen (may lag)",
+    L"Ask each time (the game's options window)",
 };
 
 static const wchar_t *const STR_PT[S_N] = {
@@ -169,6 +173,9 @@ static const wchar_t *const STR_PT[S_N] = {
     L"Idioma do jogo:", L"Inglês (original)", L"Português (Brasil)", L"Português, nomes originais",
     L"Tamanho da janela:", L"Original (640×480)", L"O maior que couber", L"2× (1280×960)", L"3× (1920×1440)",
     L"Não foi possível fazer o backup dos saves (user\\ para user-backups\\).\n\nJogar mesmo assim?",
+    L"não cabe nesta tela",
+    L"Modo de tela:", L"Tela cheia sem bordas (recomendado)", L"Janela", L"Tela cheia original (pode travar)",
+    L"Perguntar ao abrir (janela de opções do jogo)",
 };
 
 static const wchar_t *const *T = STR_EN;
@@ -298,6 +305,11 @@ static const wchar_t *const LANG_INI[3] = { L"en", L"pt-br", L"pt-br-original-na
 /* the game window's size when "Windowed" is picked in the game's own launcher (--window-scale): the combo's order */
 static int g_wscale = 1;
 static const wchar_t *const WSCALE_INI[4] = { L"1", L"auto", L"2", L"3" };
+/* how the game shows: the launcher passes it (--no-launcher --screen N [--borderless]) so the game's own options
+ * window is skipped; "ask" shows that window as before.  The combo's order. */
+enum { SCREEN_BORDERLESS, SCREEN_WINDOW, SCREEN_FULL, SCREEN_ASK };
+static int g_screen = SCREEN_BORDERLESS;
+static const wchar_t *const SCREEN_INI[4] = { L"borderless", L"window", L"fullscreen", L"ask" };
 
 static void settings_load(void)
 {
@@ -306,6 +318,9 @@ static void settings_load(void)
     GetPrivateProfileStringW(L"launcher", L"GameLang", L"", l, 32, g_ini);
     for (int i = 0; l[0] && i < 3; i++)
         if (wcscmp(l, LANG_INI[i]) == 0) g_lang_pt = i;
+    GetPrivateProfileStringW(L"launcher", L"ScreenMode", L"borderless", l, 32, g_ini);
+    for (int i = 0; i < 4; i++)
+        if (wcscmp(l, SCREEN_INI[i]) == 0) g_screen = i;
     GetPrivateProfileStringW(L"launcher", L"WindowScale", L"auto", l, 32, g_ini);
     for (int i = 0; i < 4; i++)
         if (wcscmp(l, WSCALE_INI[i]) == 0) g_wscale = i;
@@ -315,6 +330,7 @@ static void settings_save(void)
     WritePrivateProfileStringW(L"launcher", L"GameDir", g_game_dir, g_ini);
     if (g_lang_pt >= 0) WritePrivateProfileStringW(L"launcher", L"GameLang", LANG_INI[g_lang_pt], g_ini);
     WritePrivateProfileStringW(L"launcher", L"WindowScale", WSCALE_INI[g_wscale], g_ini);
+    WritePrivateProfileStringW(L"launcher", L"ScreenMode", SCREEN_INI[g_screen], g_ini);
 }
 
 /* ---------------------------------------------------------------- finding the game in Steam */
@@ -462,10 +478,11 @@ static int lang_available(void)
 /* ---------------------------------------------------------------- the window */
 
 enum { ID_PATH = 100, ID_BROWSE, ID_FIND, ID_GAME, ID_MOD, ID_INSTALL, ID_UNINSTALL, ID_SOLO, ID_COOP, ID_PADS_L,
-       ID_PADS, ID_PADS_NOTE, ID_CONTROLS, ID_FOOTER, ID_DIRLABEL, ID_LANG_L, ID_LANG, ID_WSCALE_L, ID_WSCALE };
+       ID_PADS, ID_PADS_NOTE, ID_CONTROLS, ID_FOOTER, ID_DIRLABEL, ID_LANG_L, ID_LANG, ID_WSCALE_L, ID_WSCALE,
+       ID_SCREEN_L, ID_SCREEN };
 #define TIMER_PADS 1
 
-static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_pads, g_lang, g_wscale_c;
+static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_pads, g_lang, g_wscale_c, g_screen_c;
 static HFONT g_font, g_font_big, g_font_mono;
 static int g_dpi = 96;
 static int S(int v) { return MulDiv(v, g_dpi, 96); }
@@ -736,11 +753,15 @@ static void play(int coop)
         return;
     }
     if (!auto_backup() && !ask(TR(S_ASK_NO_BACKUP))) return;
-    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 128], ws[32] = L"";
+    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 192], ws[80] = L"";
     installed_path(exe);
     int pt = g_lang_pt > 0 && lang_available();
-    if (g_wscale > 0) swprintf(ws, 32, L" --window-scale %ls", WSCALE_INI[g_wscale]);
-    swprintf(cmd, MAX_PATH + 128, L"\"%ls\"%ls%ls%ls%ls", exe, coop ? L" --coop --coop-p2-wait" : L"", pt ? L" --lang pt-br" : L"",
+    static const wchar_t *const SCREEN_ARGS[4] = {
+        L" --no-launcher --screen 3 --borderless", L" --no-launcher --screen 3", L" --no-launcher --screen 4", L"" };
+    wcscpy(ws, SCREEN_ARGS[g_screen]);
+    if ((g_screen == SCREEN_WINDOW || g_screen == SCREEN_ASK) && g_wscale > 0)
+        swprintf(ws + wcslen(ws), 80 - wcslen(ws), L" --window-scale %ls", WSCALE_INI[g_wscale]);
+    swprintf(cmd, MAX_PATH + 192, L"\"%ls\"%ls%ls%ls%ls", exe, coop ? L" --coop --coop-p2-wait" : L"", pt ? L" --lang pt-br" : L"",
              pt && g_lang_pt == 2 ? L" --lang-names original" : L"", ws);
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;
@@ -861,10 +882,36 @@ static void build_ui(void)
     mk(L"STATIC", TR(S_PADS_NOTE), 0, X, y, W, 36, ID_PADS_NOTE, g_font);
     y += 42;
     mk(L"BUTTON", TR(S_CONTROLS), BS_PUSHBUTTON, X, y, 130, 28, ID_CONTROLS, g_font);
-    mk(L"STATIC", TR(S_WSCALE), SS_RIGHT, X + 236, y + 5, 160, 20, ID_WSCALE_L, g_font);
-    g_wscale_c = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, X + 402, y + 1, 146, 200, ID_WSCALE, g_font);
-    for (int i = S_WS_1; i <= S_WS_3; i++) SendMessageW(g_wscale_c, CB_ADDSTRING, 0, (LPARAM)TR(i));
+    mk(L"STATIC", TR(S_SCREEN), SS_RIGHT, X + 136, y + 5, 116, 20, ID_SCREEN_L, g_font);
+    g_screen_c = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, X + 258, y + 1, 290, 200, ID_SCREEN, g_font);
+    for (int i = S_SM_BORDERLESS; i <= S_SM_ASK; i++) SendMessageW(g_screen_c, CB_ADDSTRING, 0, (LPARAM)TR(i));
+    SendMessageW(g_screen_c, CB_SETCURSEL, g_screen, 0);
+    y += 34;
+    mk(L"STATIC", TR(S_WSCALE), SS_RIGHT, X + 96, y + 5, 156, 20, ID_WSCALE_L, g_font);
+    g_wscale_c = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, X + 258, y + 1, 290, 200, ID_WSCALE, g_font);
+    {   /* the largest scale whose game window (retail's windowed style) fits the main screen's work area: what
+         * "Largest that fits" picks, and the sizes that won't fit say so (the game then uses the largest fit) */
+        RECT wa;
+        if (!SystemParametersInfoW(SPI_GETWORKAREA, 0, &wa, 0)) SetRect(&wa, 0, 0, 1280, 1000);
+        int fit = 1;
+        for (int k = 2; k <= 8; k++) {
+            RECT r = { 0, 0, 640 * k, 480 * k };
+            AdjustWindowRectEx(&r, 0x80CA0000u, FALSE, 0);
+            if (r.right - r.left > wa.right - wa.left || r.bottom - r.top > wa.bottom - wa.top) break;
+            fit = k;
+        }
+        for (int i = S_WS_1; i <= S_WS_3; i++) {
+            wchar_t item[128];
+            int k = i == S_WS_2 ? 2 : i == S_WS_3 ? 3 : 0;
+            if (i == S_WS_AUTO) swprintf(item, 128, L"%ls (%d×)", TR(i), fit);
+            else if (k > fit) swprintf(item, 128, L"%ls — %ls", TR(i), TR(S_WS_NOFIT));
+            else swprintf(item, 128, L"%ls", TR(i));
+            SendMessageW(g_wscale_c, CB_ADDSTRING, 0, (LPARAM)item);
+        }
+        SendMessageW(g_wscale_c, CB_SETDROPPEDWIDTH, S(300), 0);
+    }
     SendMessageW(g_wscale_c, CB_SETCURSEL, g_wscale, 0);
+    EnableWindow(g_wscale_c, g_screen == SCREEN_WINDOW || g_screen == SCREEN_ASK);   /* only a window has a size */
     y += 40;
     mk(L"STATIC", TR(S_FOOTER), SS_CENTER, X, y, W, 40, ID_FOOTER, g_font);
 }
@@ -884,6 +931,14 @@ static LRESULT CALLBACK wnd_proc(HWND w, UINT m, WPARAM wp, LPARAM lp)
         case ID_LANG:
             if (HIWORD(wp) == CBN_SELCHANGE) {
                 g_lang_pt = (int)SendMessageW(g_lang, CB_GETCURSEL, 0, 0);
+                settings_save();
+            }
+            break;
+        case ID_SCREEN:
+            if (HIWORD(wp) == CBN_SELCHANGE) {
+                g_screen = (int)SendMessageW(g_screen_c, CB_GETCURSEL, 0, 0);
+                if (g_screen < 0 || g_screen > 3) g_screen = SCREEN_BORDERLESS;
+                EnableWindow(g_wscale_c, g_screen == SCREEN_WINDOW || g_screen == SCREEN_ASK);
                 settings_save();
             }
             break;
@@ -958,7 +1013,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR cmdline, int show)
     wc.hbrBackground = GetSysColorBrush(COLOR_WINDOW);
     RegisterClassW(&wc);
 
-    RECT r = { 0, 0, S(580), S(540) };
+    RECT r = { 0, 0, S(580), S(574) };
     DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
     AdjustWindowRect(&r, style, FALSE);
     g_wnd = CreateWindowExW(0, L"CoopSummonersLauncher", TR(S_TITLE), style,

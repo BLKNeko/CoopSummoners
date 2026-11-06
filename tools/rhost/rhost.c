@@ -38,6 +38,7 @@
  *                     --no-launcher skips the launcher dialog (Windowed + Launch, as every rhost run)
  *   --screen N        the emulated launcher's Screen Mode: 3 Windowed (default), 4 Fullscreen, 5 Zoom 1280x960
  *   --window-scale N|auto  (--live) Windowed with a 640N x 480N client, the frame stretched (auto: the largest fit)
+ *   --borderless      (--live) Windowed as a borderless popup over the whole monitor, 4:3 picture with black bars
  *   --no-compat-layer (product) no self-relaunch under DWM8And16BitMitigation (then fullscreen fails as retail's does)
  * Output: <rundir>\rhost.log; last line "RESULT ..." (key=value, parsed by rhost.py). */
 #include "rhost.h"
@@ -685,19 +686,46 @@ static void work_area(HWND hw, RECT *wa)
     if (GetMonitorInfoA(MonitorFromWindow(hw, MONITOR_DEFAULTTOPRIMARY), &mi)) *wa = mi.rcWork;
     else SystemParametersInfoA(SPI_GETWORKAREA, 0, wa, 0);
 }
+/* --borderless (with Windowed): the game window becomes a borderless popup covering its whole monitor, the frame
+ * stretched to fill the height (aspect 4:3 kept, nearest pixel) with black bars at the sides, the cursor hidden.
+ * Looks like full screen but stays windowed GDI: none of the exclusive modes' emulated 16-bit display (the lag). */
+static int g_borderless;
+static HWND g_bl_hwnd;
 static BOOL WINAPI lv_SetWindowPos(HWND hw, HWND after, int x, int y, int cx, int cy, UINT fl)
 {
     DWORD st = (DWORD)GetWindowLongA(hw, GWL_STYLE), ex = (DWORD)GetWindowLongA(hw, GWL_EXSTYLE);
+    if (g_borderless && !(fl & SWP_NOSIZE) && ((st & WS_CAPTION) == WS_CAPTION || hw == g_bl_hwnd) &&
+        is_game_window(hw)) {
+        MONITORINFO mi = { .cbSize = sizeof mi };
+        if (!GetMonitorInfoA(MonitorFromWindow(hw, MONITOR_DEFAULTTOPRIMARY), &mi))
+            SetRect(&mi.rcMonitor, 0, 0, GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN));
+        SetWindowLongA(hw, GWL_STYLE, (LONG)((st & ~(DWORD)(WS_CAPTION | WS_THICKFRAME | WS_SYSMENU | WS_MINIMIZEBOX |
+                                                         WS_MAXIMIZEBOX)) | WS_POPUP));
+        SetWindowLongA(hw, GWL_EXSTYLE, (LONG)(ex & ~(DWORD)(WS_EX_DLGMODALFRAME | WS_EX_WINDOWEDGE | WS_EX_CLIENTEDGE |
+                                                             WS_EX_STATICEDGE)));
+        x = mi.rcMonitor.left; y = mi.rcMonitor.top;
+        cx = mi.rcMonitor.right - mi.rcMonitor.left; cy = mi.rcMonitor.bottom - mi.rcMonitor.top;
+        fl = (fl & ~(UINT)SWP_NOMOVE) | SWP_FRAMECHANGED;
+        if (!g_bl_hwnd) {
+            g_bl_hwnd = hw;
+            SetClassLongPtrA(hw, GCLP_HCURSOR, 0);   /* no arrow over the picture */
+            ShowCursor(FALSE);
+            rh_log("window: borderless %dx%d at %d,%d\n", cx, cy, x, y);
+        }
+        return SetWindowPos(hw, after, x, y, cx, cy, fl);
+    }
     if (!(fl & SWP_NOSIZE) && (st & WS_CAPTION) == WS_CAPTION && is_game_window(hw)) {
         RECT wa; work_area(hw, &wa);
-        int s = g_wscale;
-        if (!s) {   /* auto */
-            s = 1;
-            for (int k = 2; k <= 8; k++) {
-                RECT r = { 0, 0, 640 * k, 480 * k }; AdjustWindowRectEx(&r, st, FALSE, ex);
-                if (r.right - r.left > wa.right - wa.left || r.bottom - r.top > wa.bottom - wa.top) break;
-                s = k;
-            }
+        int fit = 1;   /* the largest scale whose window fits the work area */
+        for (int k = 2; k <= 8; k++) {
+            RECT r = { 0, 0, 640 * k, 480 * k }; AdjustWindowRectEx(&r, st, FALSE, ex);
+            if (r.right - r.left > wa.right - wa.left || r.bottom - r.top > wa.bottom - wa.top) break;
+            fit = k;
+        }
+        int s = g_wscale;   /* auto = the largest fit; a fixed scale too big for this screen shrinks to it */
+        if (!s || s > fit) {
+            if (s > fit) rh_log("window: scale %d does not fit the screen, using %d\n", s, fit);
+            s = fit;
         }
         if (s > 1) {
             RECT r = { 0, 0, 640 * s, 480 * s }; AdjustWindowRectEx(&r, st, FALSE, ex);
@@ -717,8 +745,16 @@ static BOOL WINAPI lv_BitBlt(HDC d, int x, int y, int cx, int cy, HDC s, int sx,
         RECT rc;
         if (is_game_window(h) && GetClientRect(h, &rc) && rc.right > 0 && rc.bottom > 0 &&
             (rc.right != 640 || rc.bottom != 480)) {
+            int dw = rc.right, dh = rc.bottom, dx = 0, dy = 0;
+            if (h == g_bl_hwnd) {   /* 4:3 inside the monitor, black bars around */
+                if ((long long)dw * 480 > (long long)dh * 640) dw = dh * 640 / 480;
+                else dh = dw * 480 / 640;
+                dx = (rc.right - dw) / 2; dy = (rc.bottom - dh) / 2;
+                if (dx > 0) { PatBlt(d, 0, 0, dx, rc.bottom, BLACKNESS); PatBlt(d, dx + dw, 0, rc.right - dx - dw, rc.bottom, BLACKNESS); }
+                if (dy > 0) { PatBlt(d, 0, 0, rc.right, dy, BLACKNESS); PatBlt(d, 0, dy + dh, rc.right, rc.bottom - dy - dh, BLACKNESS); }
+            }
             SetStretchBltMode(d, COLORONCOLOR);
-            return StretchBlt(d, 0, 0, rc.right, rc.bottom, s, 0, 0, 640, 480, SRCCOPY);
+            return StretchBlt(d, dx, dy, dw, dh, s, 0, 0, 640, 480, SRCCOPY);
         }
     }
     return BitBlt(d, x, y, cx, cy, s, sx, sy, rop);
@@ -1484,6 +1520,7 @@ static void parse(int argc, char **argv)
         else if (!strcmp(a, "--lang-file")) g_lang_file = ARG();
         else if (!strcmp(a, "--lang-names")) g_lang_names = ARG();   /* translated (default) / original */
         else if (!strcmp(a, "--window-scale")) wscale_arg = ARG();   /* --live: N or auto (enlarged window) */
+        else if (!strcmp(a, "--borderless")) g_borderless = 1;              /* --live: Windowed as a borderless full screen */
         else if (!strcmp(a, "--coop")) g_coop = 1;
         else if (!strcmp(a, "--coop-test-hp") && g_n_test_hp < 8) {   /* FRAME:WHO:HP, WHO 0 leader / 1 P2 */
             const char *v = ARG();
@@ -1690,7 +1727,7 @@ int main(int argc, char **argv)
     parse(argc, argv);
 #ifdef RH_PRODUCT
     if (!O.no_compat_layer) compat_relaunch();
-    if (O.live && g_wscale != 1) SetProcessDPIAware();   /* the enlarged window in real pixels (no blurry DPI stretch) */
+    if (O.live && (g_wscale != 1 || g_borderless)) SetProcessDPIAware();   /* the enlarged window in real pixels (no blurry DPI stretch) */
 #endif
     QueryPerformanceFrequency(&g_qf); QueryPerformanceCounter(&g_t0);
     CreateDirectoryA(O.rundir, NULL);
@@ -1714,6 +1751,7 @@ int main(int argc, char **argv)
     if (!SetCurrentDirectoryA(g_gamedir_abs)) rh_fatal("cannot cd to %s", g_gamedir_abs);
     {   /* co-op mod translations: before rh_hooks_install binds g_eng.data */
         if (!g_lang_name && !g_lang_file) g_lang_name = getenv("OPENSUMMONERS_LANG");
+        coop_set_lang_pt(g_lang_name && !_strnicmp(g_lang_name, "pt", 2));   /* the co-op notices' language */
         char lp[MAX_PATH], why[256];
         if (g_lang_file) snprintf(lp, sizeof lp, "%s", g_lang_file);
         else if (g_lang_name && g_lang_name[0]) snprintf(lp, sizeof lp, "%s\\lang\\%s.tsv", g_gamedir_abs, g_lang_name);
@@ -1783,7 +1821,7 @@ int main(int argc, char **argv)
         iat_try("OutputDebugStringA", live_OutputDebugStringA);
         iat_override("MessageBoxA", live_MessageBoxA);
         dl_ddce = (ddce_t)iat_lookup("DirectDrawCreateEx"); iat_override("DirectDrawCreateEx", dl_DirectDrawCreateEx);
-        if (g_wscale != 1) {   /* the enlarged window */
+        if (g_wscale != 1 || g_borderless) {   /* the enlarged window / borderless */
             iat_override("SetWindowPos", lv_SetWindowPos);
             iat_override("BitBlt", lv_BitBlt);
             rh_log("window: scale %s\n", g_wscale ? "set" : "auto");
