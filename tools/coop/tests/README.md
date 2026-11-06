@@ -14,6 +14,13 @@ and read the `coop[...]` status lines.
 | T5-late | P1 tap f4500, P2 tap f4545 (720 ms) | no swap — PASS |
 | T6-p1-kick | P1 holds Enter f4500-4900 (> 5 s game time) | p2out=1 at f4825, P2's Sana back to the AI, coop.log "player 1 dropped player 2 out" — PASS (2026-11-05) |
 | T7-p1-hold3s | P1 holds Enter f4500-4700 (~3 s) | just a tap: no free member, no change, P2 stays — PASS (2026-11-05) |
+| T8-p2-join-btn | P2 numpad 2 (jump) f4500 | with `--coop-p2-wait`: p2out=1 until f4500, then P2 on Sana — PASS (2026-11-06) |
+
+Since 2026-11-06 a P2 who is out joins with a press (switch, jump, attack, use) instead of a 1.5 s
+hold: T4-drop's P2 is back on Arche at f5000 (the press) instead of f5100. With `--coop-p2-wait`
+(the launcher's Play Co-op): T2 P2 stays out the whole run (P1's lone tap at f4500 takes the free
+Sana), T3's numpad + at f4500 joins, T8's jump at f4500 joins. Without it, T1 / T2 / T3 / T5 equal
+the previous build (frame / tick / rng / pixels).
 
 Falls: `F1-fall` = `rh-combat` with numpad stripped (`trace_p2.py`), no keys after f28500; run
 with `--coop-test-hp 27050:0:1` (test only), no save folder:

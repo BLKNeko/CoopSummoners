@@ -178,10 +178,12 @@ static int p2_can_take(const wl_room *r, const wl_pslot *s)
  *   - a lone tap, once the window has passed (at once when no swap is possible): a fresh id 20
  *     press is posted back into that player's ring, so room_keys does the game's own switch to
  *     a free member (its 40-tick retry included);
- *   - P2 holds: leave (the AI takes the character back) / rejoin (the first free member);
+ *   - P2 holds: leave (the AI takes the character back);
  *   - P1 holds COOP_KICK_MS: P2 is dropped out as if P2 had held (for a P2 with no controller,
- *     whose character would otherwise stand still under nobody's control); only P2's own hold
- *     brings P2 back.  A shorter P1 hold is just a tap. */
+ *     whose character would otherwise stand still under nobody's control).  A shorter P1 hold is
+ *     just a tap;
+ *   - while P2 is out (also from the start with --coop-p2-wait), P2's next press of switch, jump,
+ *     attack or use joins (the first free member). */
 
 #define SWITCH_ID     20
 #define COOP_SWAP_MS  500
@@ -199,8 +201,45 @@ typedef struct sw_state {
 
 static sw_state g_sw[COOP_NIN];
 static int g_p2_out;          /* 1 = P2 left; the AI drives the character               */
+static uint32_t g_out_at;     /* the tick P2 went out: only later presses join          */
 
 int coop_p2_joined(void) { return g_coop && !g_p2_out; }
+
+static int g_wait_pending;    /* --coop-p2-wait: g_out_at is set at the first room tick */
+
+void coop_p2_wait(void)
+{
+    g_p2_out = 1;
+    g_wait_pending = 1;
+}
+
+static void p2_set_out(uint32_t now)
+{
+    g_p2_out = 1;
+    g_out_at = now;
+}
+
+static void coop_log(const char *what)
+{
+    FILE *f = fopen("coop.log", "a");
+    if (f != NULL) {
+        fprintf(f, "%s at tick %u\n", what, (unsigned)g_eng.tick());
+        fclose(f);
+    }
+}
+
+/* P2 is out: a fresh press of jump / attack / use on P2's manager (pad 2 or the numpad) joins (the switch key is
+ * handled in sw_update) */
+static int p2_join_press(const input_mgr *m, uint32_t now)
+{
+    for (int i = 0; i < INPUT_RING_LEN; i++) {
+        const input_event *e = m->ring[i];
+        if (e->flag == 1 && (e->id == 7 || e->id == 8 || e->id == 38) && (int32_t)(e->ts - g_out_at) > 0 &&
+            (uint32_t)(now - e->ts) <= 300)
+            return 1;
+    }
+    return 0;
+}
 
 static void sw_reset(void)
 {
@@ -250,26 +289,21 @@ static void sw_tap(wl_room *r, int p, uint32_t t, uint32_t now)
 static void sw_hold(wl_room *r, int p)
 {
     wl_pslot *held = coop_p2_slot(r);
-    if (p == 0) {   /* P1 drops P2 out (never back in) */
+    if (p == 0) {   /* P1 drops P2 out (P2's own press brings P2 back) */
         if (g_p2_out) return;
         if (held != NULL) pslot_input_set(held, NULL);
-        g_p2_out = 1;
+        p2_set_out(g_eng.tick());
         g_sw[1].tap = 0;
         g_sw[1].down = 0;
-        FILE *f = fopen("coop.log", "a");
-        if (f != NULL) {
-            fprintf(f, "player 1 dropped player 2 out at tick %u\n", (unsigned)g_eng.tick());
-            fclose(f);
-        }
+        coop_log("player 1 dropped player 2 out");
         return;
     }
     if (!g_p2_out) {
         if (held != NULL) pslot_input_set(held, NULL);
-        g_p2_out = 1;
+        p2_set_out(g_eng.tick());
         g_sw[1].tap = 0;
-    } else {
-        g_p2_out = 0;                                /* coop_tick attaches P2 to a free member */
-    }
+        coop_log("player 2 left");
+    }   /* (out: P2's switch press already joined in sw_update) */
 }
 
 static void sw_update(wl_room *r)
@@ -292,6 +326,11 @@ static void sw_update(wl_room *r)
                 s->down = 1;
                 s->down_at = ts;
                 s->hold_fired = 0;
+                if (p == 1 && g_p2_out && (int32_t)(ts - g_out_at) > 0) {   /* P2 out: this press joins (and */
+                    g_p2_out = 0;                                         /* is no tap or hold)            */
+                    s->hold_fired = 1;
+                    coop_log("player 2 joined (switch)");
+                }
             } else if (!pressed && s->down) {
                 s->down = 0;
                 if (!s->hold_fired) sw_tap(r, p, ts, now);
@@ -300,6 +339,10 @@ static void sw_update(wl_room *r)
         if (s->down && !s->hold_fired && (uint32_t)(now - s->down_at) >= (p == 1 ? COOP_HOLD_MS : COOP_KICK_MS)) {
             s->hold_fired = 1;
             sw_hold(r, p);
+        }
+        if (p == 1 && g_p2_out && p2_join_press(m, now)) {
+            g_p2_out = 0;
+            coop_log("player 2 joined (button)");
         }
     }
     for (int p = 0; p < COOP_NIN; p++) {
@@ -314,6 +357,7 @@ static void sw_update(wl_room *r)
 void coop_tick(wl_room *r)
 {
     if (!g_coop || r->nin < COOP_NIN || r->in == NULL) return;
+    if (g_wait_pending) { g_wait_pending = 0; g_out_at = g_eng.tick(); }
     input_mgr *p2 = &r->in[1];
     wl_pslot *held = coop_p2_slot(r);
     if (!p1_in_control(r)) {

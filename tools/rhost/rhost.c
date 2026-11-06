@@ -61,6 +61,7 @@ static int g_n_test_hp;
 static struct { uint32_t frame; int32_t who; } g_test_drop[8];     /* --coop-test-drop F:WHO (test only) */
 static int g_n_test_drop;
 static uint32_t g_test_leave;                                         /* --coop-test-leave F (test only) */
+static uint32_t g_test_crash;                                         /* --test-crash F: a NULL write (test only) */
 uint32_t RT_TEXT_LO, RT_TEXT_SZ, RT_DATA_LO, RT_DATA_HI, RT_IMG_HI;
 
 /* ---- editions ---- */
@@ -88,11 +89,12 @@ void rh_log(const char *fmt, ...)
     va_start(ap, fmt); vfprintf(stdout, fmt, ap); va_end(ap); fflush(stdout);
     if (g_logf) { va_start(ap, fmt); vfprintf(g_logf, fmt, ap); va_end(ap); fflush(g_logf); }
 }
+static void crash_report(const char *why);
 void rh_fatal(const char *fmt, ...)
 {
     char b[512]; va_list ap; va_start(ap, fmt); vsnprintf(b, sizeof b, fmt, ap); va_end(ap);
     rh_log("FATAL %s\nRESULT status=fatal frame=%u\n", b, g_frame);
-    if (O.live) MessageBoxA(NULL, b, "OpenSummoners", MB_OK | MB_ICONERROR);
+    if (O.live) crash_report(b);
     ExitProcess(3);
 }
 
@@ -1135,11 +1137,94 @@ static void watch_str(char *wb, size_t n)
     for (int i = 0; i < O.n_watch; i++) wo += snprintf(wb + wo, n - wo, " %x=%d", O.watch[i], (int)G32(O.watch[i]));
 }
 static uint64_t g_fb_chain = 0xcbf29ce484222325ull; static uint32_t g_fb_n;   /* --fb-hash */
-/* every access violation: where, the registers, the ebp chain (first 8; the run's own handling continues) */
+/* --live: the player's crash report.  The game window goes away, the logs, the run's command line and the
+ * saves are copied to <game>\crashes\crash-<date>-<time>\ (rhost.log + rhost.prev.log, coop.log, lang.log,
+ * fs_*.log, user\), and a message box says where (English, or Portuguese with a Portuguese translation / Windows),
+ * offering to open the folder.  Then the process ends. */
+static void copy_tree(const char *from, const char *to)
+{
+    char pat[MAX_PATH], a[MAX_PATH], b[MAX_PATH];
+    WIN32_FIND_DATAA fd;
+    CreateDirectoryA(to, NULL);
+    snprintf(pat, sizeof pat, "%s\\*", from);
+    HANDLE h = FindFirstFileA(pat, &fd);
+    if (h == INVALID_HANDLE_VALUE) return;
+    do {
+        if (!strcmp(fd.cFileName, ".") || !strcmp(fd.cFileName, "..")) continue;
+        snprintf(a, sizeof a, "%s\\%s", from, fd.cFileName);
+        snprintf(b, sizeof b, "%s\\%s", to, fd.cFileName);
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) copy_tree(a, b);
+        else CopyFileA(a, b, FALSE);
+    } while (FindNextFileA(h, &fd));
+    FindClose(h);
+}
+static void crash_report(const char *why)
+{
+    static volatile LONG once;
+    if (InterlockedExchange(&once, 1)) return;
+    HWND gw = FindWindowA("CLASS_LIZSOFT_SOTES", NULL);   /* out of the way (fullscreen included) */
+    if (gw) ShowWindow(gw, SW_MINIMIZE);
+    SYSTEMTIME st; GetLocalTime(&st);
+    char dir[MAX_PATH], p[MAX_PATH], q[MAX_PATH];
+    snprintf(p, sizeof p, "%s\\crashes", g_gamedir_abs);
+    CreateDirectoryA(p, NULL);
+    snprintf(dir, sizeof dir, "%s\\crash-%04u%02u%02u-%02u%02u%02u", p, st.wYear, st.wMonth, st.wDay, st.wHour,
+             st.wMinute, st.wSecond);
+    CreateDirectoryA(dir, NULL);
+    if (g_logf) fflush(g_logf);
+    static const char *const LOGS[] = { "rhost.log", "rhost.prev.log" };
+    for (int i = 0; i < 2; i++) {
+        snprintf(p, sizeof p, "%s\\%s", O.rundir, LOGS[i]);
+        snprintf(q, sizeof q, "%s\\%s", dir, LOGS[i]);
+        CopyFileA(p, q, FALSE);
+    }
+    static const char *const GAME_LOGS[] = { "coop.log", "lang.log", "fs_boot.log", "fs_warning.log" };
+    for (int i = 0; i < 4; i++) {
+        snprintf(p, sizeof p, "%s\\%s", g_gamedir_abs, GAME_LOGS[i]);
+        snprintf(q, sizeof q, "%s\\%s", dir, GAME_LOGS[i]);
+        CopyFileA(p, q, FALSE);
+    }
+    snprintf(p, sizeof p, "%s\\user", g_gamedir_abs);
+    snprintf(q, sizeof q, "%s\\user", dir);
+    copy_tree(p, q);
+    snprintf(p, sizeof p, "%s\\crash.txt", dir);
+    FILE *f = fopen(p, "w");
+    if (f) {
+        fprintf(f, "%s\nframe %u\ncommand line: %s\n", why, g_frame, GetCommandLineA());
+        fclose(f);
+    }
+    int pt = (g_lang_name && !_strnicmp(g_lang_name, "pt", 2)) ||
+             PRIMARYLANGID(GetUserDefaultUILanguage()) == LANG_PORTUGUESE;
+    char msg[1024];
+    snprintf(msg, sizeof msg, pt
+        ? "O jogo fechou por causa de um erro.\n\nOs detalhes (logs e uma cópia dos saves) foram guardados em:\n%s\n\n"
+          "Para relatar o problema, mande essa pasta e conte o que estava acontecendo.\n\nAbrir a pasta agora?"
+        : "The game closed because of an error.\n\nThe details (logs and a copy of the saves) were saved in:\n%s\n\n"
+          "To report the problem, send that folder and say what was happening.\n\nOpen the folder now?", dir);
+    if (MessageBoxA(NULL, msg, "CoopSummoners", MB_YESNO | MB_ICONERROR | MB_TOPMOST | MB_SETFOREGROUND) == IDYES) {
+        char cmd[MAX_PATH + 32];
+        snprintf(cmd, sizeof cmd, "explorer.exe \"%s\"", dir);
+        STARTUPINFOA si = { .cb = sizeof si }; PROCESS_INFORMATION pi;
+        if (CreateProcessA(NULL, cmd, NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi)) {
+            CloseHandle(pi.hThread); CloseHandle(pi.hProcess);
+        }
+    }
+}
+
+/* every access violation: where, the registers, the ebp chain (first 8; the run's own handling continues).
+ * --live: a crash is the end — the player's crash report, then exit */
 static LONG CALLBACK crash_veh(EXCEPTION_POINTERS *e)
 {
     static int n;
-    if (e->ExceptionRecord->ExceptionCode != EXCEPTION_ACCESS_VIOLATION || n++ >= 8) return EXCEPTION_CONTINUE_SEARCH;
+    DWORD code = e->ExceptionRecord->ExceptionCode;
+    if (O.live && (code == EXCEPTION_ILLEGAL_INSTRUCTION || code == EXCEPTION_INT_DIVIDE_BY_ZERO ||
+                   code == EXCEPTION_PRIV_INSTRUCTION)) {
+        char w[96]; snprintf(w, sizeof w, "exception %08lx at %08x", code, (unsigned)(uintptr_t)e->ExceptionRecord->ExceptionAddress);
+        rh_log("%s (frame %u)\n", w, g_frame);
+        crash_report(w);
+        ExitProcess(4);
+    }
+    if (code != EXCEPTION_ACCESS_VIOLATION || n++ >= 8) return EXCEPTION_CONTINUE_SEARCH;
     CONTEXT *c = e->ContextRecord;
     char b[160]; int o = 0; uint32_t *fp = (uint32_t *)(uintptr_t)c->Ebp;
     uintptr_t lo = c->Esp, hi = c->Esp + 0x100000;   /* the frame walk stays on this stack (no probing reads) */
@@ -1149,6 +1234,11 @@ static LONG CALLBACK crash_veh(EXCEPTION_POINTERS *e)
            g_frame, (unsigned)(uintptr_t)e->ExceptionRecord->ExceptionAddress,
            e->ExceptionRecord->ExceptionInformation[0] ? "write" : "read", (unsigned long)e->ExceptionRecord->ExceptionInformation[1],
            c->Eax, c->Ebx, c->Ecx, c->Edx, c->Esi, c->Edi, c->Esp, c->Ebp, b);
+    if (O.live) {
+        char w[96]; snprintf(w, sizeof w, "access violation at %08x", (unsigned)(uintptr_t)e->ExceptionRecord->ExceptionAddress);
+        crash_report(w);
+        ExitProcess(4);
+    }
     return EXCEPTION_CONTINUE_SEARCH;
 }
 
@@ -1167,6 +1257,7 @@ static void __cdecl pre_flip(void)
             coop_test_drop(g_test_drop[i].who);
             rh_log("coop-test-drop frame %u who %d\n", g_frame, g_test_drop[i].who);
         }
+    if (g_test_crash && g_frame == g_test_crash) { rh_log("test-crash frame %u\n", g_frame); *(volatile int *)(uintptr_t)8 = 1; }
     if (g_test_leave && (g_frame == g_test_leave || g_frame == g_test_leave + 60)) {
         coop_test_leave(g_frame == g_test_leave);
         rh_log("coop-test-leave frame %u %s\n", g_frame, g_frame == g_test_leave ? "leader leaves" : "bodies restored");
@@ -1400,6 +1491,8 @@ static void parse(int argc, char **argv)
                        &g_test_hp[g_n_test_hp].hp) == 3) g_n_test_hp++;
         }
         else if (!strcmp(a, "--coop-test-leave")) g_test_leave = strtoul(ARG(), 0, 0);   /* FRAME */
+        else if (!strcmp(a, "--test-crash")) g_test_crash = strtoul(ARG(), 0, 0);        /* FRAME */
+        else if (!strcmp(a, "--coop-p2-wait")) coop_p2_wait();   /* P2 starts out: joins with a button press */
         else if (!strcmp(a, "--coop-test-drop") && g_n_test_drop < 8) {   /* FRAME:WHO */
             const char *v = ARG();
             if (sscanf(v, "%u:%d", &g_test_drop[g_n_test_drop].frame, &g_test_drop[g_n_test_drop].who) == 2)
@@ -1602,6 +1695,10 @@ int main(int argc, char **argv)
     QueryPerformanceFrequency(&g_qf); QueryPerformanceCounter(&g_t0);
     CreateDirectoryA(O.rundir, NULL);
     char lp[MAX_PATH]; snprintf(lp, sizeof lp, "%s\\rhost.log", O.rundir);
+    if (O.live) {   /* the previous play's log stays as rhost.prev.log (a crash's evidence survives one relaunch) */
+        char pp[MAX_PATH]; snprintf(pp, sizeof pp, "%s\\rhost.prev.log", O.rundir);
+        MoveFileExA(lp, pp, MOVEFILE_REPLACE_EXISTING);
+    }
     g_logf = fopen(lp, "w");
     g_log = stdout;
 #ifdef RH_PRODUCT

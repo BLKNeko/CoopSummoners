@@ -16,8 +16,9 @@
  *
  * The switch key is co-op's (coop.c, "the switch key"): both players tap within 0.5 s →
  * they swap characters (P1 keeps the lead); a lone tap → the game's own switch to a free
- * member once the window has passed; P2 holds it 1.5 s → leaves (the AI takes over) or
- * rejoins; P1 holds it 5 s → P2 is dropped out (P2's own hold rejoins).  A fallen member keeps its player; game over stays the game's own (all down).
+ * member once the window has passed; P2 holds it 1.5 s → leaves (the AI takes over); P1 holds
+ * it 5 s → P2 is dropped out; while out, P2's next press of switch / jump / attack / use joins.
+ * A fallen member keeps its player; game over stays the game's own (all down).
  *
  * P2 keyboard (numpad): 8/5/4/6 up/down/left/right, 1 attack, 2 jump, 3 use,
  * 0 sheathe / skill modifier, + switch character.
@@ -56,6 +57,10 @@ wl_pslot *coop_p2_slot(const wl_room *r);
 wl_pslot *coop_leader_fallback(const wl_room *r, const wl_pslot *cur);
 /* P2 is in the game (co-op on and P2 has not left with a switch hold) */
 int coop_p2_joined(void);
+/* rhost --coop-p2-wait (the launcher's co-op): P2 starts out (the AI drives the second member) and joins with a
+ * press of jump / attack / use / switch on P2's pad or the numpad.  Without it P2 starts in, as before.
+ * Whenever P2 is out (left with a 1.5 s hold, or dropped by P1's 5 s hold), such a press joins again. */
+void coop_p2_wait(void);
 /* After char_ai built a player-driven character's command (room_char_step): while that
  * character is at 0 HP ("Disabled": in co-op a fallen member keeps its player), drop the
  * attack and the skill / spell from the command; moving, jumping and "use" stay.  The base
