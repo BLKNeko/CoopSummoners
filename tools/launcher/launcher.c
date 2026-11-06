@@ -45,7 +45,7 @@ enum {
     S_ASK_OTHER, S_ASK_INSTALL, S_ASK_UNINSTALL, S_DONE_INSTALL, S_DONE_BACKUP, S_DONE_UNINSTALL,
     S_ERR_COPY, S_ERR_DENIED, S_ERR_START, S_ERR_NOT_GAME, S_NOT_FOUND, S_CONTROLS_TEXT,
     S_GAMELANG, S_LANG_EN, S_LANG_PT, S_LANG_PT_NAMES,
-    S_WSCALE, S_WS_1, S_WS_AUTO, S_WS_2, S_WS_3, S_N
+    S_WSCALE, S_WS_1, S_WS_AUTO, S_WS_2, S_WS_3, S_ASK_NO_BACKUP, S_N
 };
 
 static const wchar_t *const STR_EN[S_N] = {
@@ -95,14 +95,18 @@ static const wchar_t *const STR_EN[S_N] = {
     L"Switch key in co-op\r\n"
     L"- Both players tap within 0.5 s: you swap characters.\r\n"
     L"- One player taps alone: the game's normal switch to a free AI member.\r\n"
-    L"- Player 2 holds it 1.5 s: player 2 leaves (AI takes over). Hold again to rejoin.\r\n"
-    L"- Player 1 holds it 5 s: player 2 is dropped out (e.g. no second controller).\r\n"
+    L"- Player 2 holds it 1.5 s: player 2 leaves (AI takes over).\r\n"
+    L"- Player 1 holds it 5 s: player 2 is dropped out.\r\n"
+    L"\r\n"
+    L"Player 2 starts out of the game (the AI plays the 2nd character): press\r\n"
+    L"jump, attack, use or switch on pad 2 or the numpad to join, and to rejoin.\r\n"
     L"\r\n"
     L"Player 1 is always the leader (camera, talking, menus).\r\n"
     L"A fallen player can walk but not attack until healed.\r\n"
     L"Game over only when the whole party is down.\r\n",
     L"Game language:", L"English (original)", L"Português (Brasil)", L"Português, original names",
     L"Window size:", L"Original (640×480)", L"Largest that fits", L"2× (1280×960)", L"3× (1920×1440)",
+    L"Could not back up the saves (user\\ to user-backups\\).\n\nPlay anyway?",
 };
 
 static const wchar_t *const STR_PT[S_N] = {
@@ -152,14 +156,19 @@ static const wchar_t *const STR_PT[S_N] = {
     L"Tecla de troca no co-op\r\n"
     L"- Os dois apertam em até 0,5 s: vocês trocam de personagem.\r\n"
     L"- Só um aperta: a troca normal do jogo para um membro livre da IA.\r\n"
-    L"- O jogador 2 segura 1,5 s: sai do jogo (a IA assume). Segure de novo para voltar.\r\n"
-    L"- O jogador 1 segura 5 s: tira o jogador 2 do jogo (ex.: sem o segundo controle).\r\n"
+    L"- O jogador 2 segura 1,5 s: sai do jogo (a IA assume).\r\n"
+    L"- O jogador 1 segura 5 s: tira o jogador 2 do jogo.\r\n"
+    L"\r\n"
+    L"O jogador 2 começa fora do jogo (a IA joga com o 2º personagem): aperte\r\n"
+    L"pular, atacar, usar ou trocar no controle 2 ou no teclado numérico para\r\n"
+    L"entrar, e também para voltar.\r\n"
     L"\r\n"
     L"O jogador 1 é sempre o líder (câmera, conversas, menus).\r\n"
     L"Um jogador caído pode andar, mas não atacar, até ser curado.\r\n"
     L"Game over só quando o grupo inteiro cai.\r\n",
     L"Idioma do jogo:", L"Inglês (original)", L"Português (Brasil)", L"Português, nomes originais",
     L"Tamanho da janela:", L"Original (640×480)", L"O maior que couber", L"2× (1280×960)", L"3× (1920×1440)",
+    L"Não foi possível fazer o backup dos saves (user\\ para user-backups\\).\n\nJogar mesmo assim?",
 };
 
 static const wchar_t *const *T = STR_EN;
@@ -542,7 +551,7 @@ static void err(int what, DWORD code)
 }
 
 /* copy (FO_COPY) or recycle (FO_DELETE + allow undo) a file or folder with the shell: handles whole trees */
-static int shell_op(UINT op, const wchar_t *from, const wchar_t *to)
+static int shell_op(UINT op, const wchar_t *from, const wchar_t *to, int undo)
 {
     wchar_t f[MAX_PATH + 2] = { 0 }, t[MAX_PATH + 2] = { 0 };
     wcsncpy(f, from, MAX_PATH);
@@ -553,7 +562,7 @@ static int shell_op(UINT op, const wchar_t *from, const wchar_t *to)
     s.wFunc = op;
     s.pFrom = f;
     s.pTo = to != NULL ? t : NULL;
-    s.fFlags = FOF_NOCONFIRMATION | FOF_NOCONFIRMMKDIR | FOF_NOERRORUI | FOF_SILENT | (op == FO_DELETE ? FOF_ALLOWUNDO : 0);
+    s.fFlags = FOF_NOCONFIRMATION | FOF_NOCONFIRMMKDIR | FOF_NOERRORUI | FOF_SILENT | (undo ? FOF_ALLOWUNDO : 0);
     return SHFileOperationW(&s) == 0 && !s.fAnyOperationsAborted;
 }
 
@@ -573,7 +582,78 @@ static int backup_saves(wchar_t *made)
     wchar_t name[64];
     swprintf(name, 64, L"user-backup-%04u%02u%02u-%02u%02u%02u", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
     join(made, g_game_dir, name);
-    if (!shell_op(FO_COPY, user, made)) { made[0] = 0; return 0; }
+    if (!shell_op(FO_COPY, user, made, 0)) { made[0] = 0; return 0; }
+    return 1;
+}
+
+/* every play first copies user\ to user-backups\<date-time>\ (unless it equals the newest copy: quitting and
+ * restarting must not rotate the real backups away); the newest AUTO_BACKUPS stay, older ones are deleted */
+#define AUTO_BACKUPS 5
+
+static int dirs_equal(const wchar_t *a, const wchar_t *b)
+{
+    wchar_t pat[MAX_PATH], pa[MAX_PATH], pb[MAX_PATH];
+    WIN32_FIND_DATAW fd;
+    int na = 0, nb = 0, eq = 1;
+    swprintf(pat, MAX_PATH, L"%ls\\*", a);
+    HANDLE h = FindFirstFileW(pat, &fd);
+    if (h == INVALID_HANDLE_VALUE) return 0;
+    do {
+        if (!wcscmp(fd.cFileName, L".") || !wcscmp(fd.cFileName, L"..")) continue;
+        na++;
+        join(pa, a, fd.cFileName);
+        join(pb, b, fd.cFileName);
+        if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) eq = is_dir(pb) && dirs_equal(pa, pb);
+        else eq = exists(pb) && !is_dir(pb) && same_file(pa, pb);
+    } while (eq && FindNextFileW(h, &fd));
+    FindClose(h);
+    if (!eq) return 0;
+    swprintf(pat, MAX_PATH, L"%ls\\*", b);
+    h = FindFirstFileW(pat, &fd);
+    if (h == INVALID_HANDLE_VALUE) return 0;
+    do {
+        if (wcscmp(fd.cFileName, L".") && wcscmp(fd.cFileName, L"..")) nb++;
+    } while (FindNextFileW(h, &fd));
+    FindClose(h);
+    return na == nb;
+}
+
+static int name_cmp(const void *a, const void *b) { return wcscmp((const wchar_t *)a, (const wchar_t *)b); }
+
+static int auto_backup(void)
+{
+    wchar_t user[MAX_PATH], root[MAX_PATH], pat[MAX_PATH], p[MAX_PATH];
+    join(user, g_game_dir, L"user");
+    if (!is_dir(user)) return 1;   /* nothing saved yet */
+    join(root, g_game_dir, L"user-backups");
+    CreateDirectoryW(root, NULL);
+    static wchar_t names[64][32];
+    int n = 0;
+    WIN32_FIND_DATAW fd;
+    swprintf(pat, MAX_PATH, L"%ls\\2*", root);
+    HANDLE h = FindFirstFileW(pat, &fd);
+    if (h != INVALID_HANDLE_VALUE) {
+        do {
+            if ((fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) && wcslen(fd.cFileName) < 32 && n < 64)
+                wcscpy(names[n++], fd.cFileName);
+        } while (FindNextFileW(h, &fd));
+        FindClose(h);
+    }
+    qsort(names, (size_t)n, sizeof names[0], name_cmp);
+    if (n > 0) {
+        join(p, root, names[n - 1]);
+        if (dirs_equal(user, p)) return 1;   /* unchanged since the newest copy */
+    }
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+    wchar_t name[32];
+    swprintf(name, 32, L"%04u%02u%02u-%02u%02u%02u", st.wYear, st.wMonth, st.wDay, st.wHour, st.wMinute, st.wSecond);
+    join(p, root, name);
+    if (!shell_op(FO_COPY, user, p, 0)) return 0;
+    for (int i = 0; i + AUTO_BACKUPS < n + 1; i++) {   /* n + 1 copies now: drop the oldest */
+        join(p, root, names[i]);
+        shell_op(FO_DELETE, p, NULL, 0);
+    }
     return 1;
 }
 
@@ -642,7 +722,7 @@ static void do_uninstall(void)
         RemoveDirectoryW(p);   /* only when empty */
     }
     join(p, g_game_dir, L"opensummoners-standalone");   /* the mod exe's log + audit folder */
-    if (is_dir(p)) shell_op(FO_DELETE, p, NULL);
+    if (is_dir(p)) shell_op(FO_DELETE, p, NULL, 1);
     info(TR(S_DONE_UNINSTALL));
     refresh();
 }
@@ -655,11 +735,12 @@ static void play(int coop)
     } else if (!confirm_version()) {
         return;
     }
-    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 96], ws[32] = L"";
+    if (!auto_backup() && !ask(TR(S_ASK_NO_BACKUP))) return;
+    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 128], ws[32] = L"";
     installed_path(exe);
     int pt = g_lang_pt > 0 && lang_available();
     if (g_wscale > 0) swprintf(ws, 32, L" --window-scale %ls", WSCALE_INI[g_wscale]);
-    swprintf(cmd, MAX_PATH + 96, L"\"%ls\"%ls%ls%ls%ls", exe, coop ? L" --coop" : L"", pt ? L" --lang pt-br" : L"",
+    swprintf(cmd, MAX_PATH + 128, L"\"%ls\"%ls%ls%ls%ls", exe, coop ? L" --coop --coop-p2-wait" : L"", pt ? L" --lang pt-br" : L"",
              pt && g_lang_pt == 2 ? L" --lang-names original" : L"", ws);
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;

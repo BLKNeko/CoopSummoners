@@ -39,12 +39,19 @@ one screen.
   or in co-op. English and Portuguese.
 - **Player 2 controls a party ally** (Sana, and later Stella) instead of the AI, with the
   numpad or a second gamepad.
-- **Player 2 starts in the game** and takes the first free party member automatically.
+- **Player 2 joins with a button press**: with the launcher's *Play Co-op*, player 2 starts
+  out of the game (the AI plays the second character) and joins by pressing jump, attack,
+  use or switch on the second pad or the numpad, taking the first free party member. (Run
+  by hand with `--coop` alone, player 2 starts in the game, as in earlier versions.)
 - **Swap characters LEGO-style**: both players press *switch* within half a second and
   trade characters.
 - **Drop out / drop in**: player 2 holds *switch* for 1.5 s to leave (the AI takes the
-  character back) and again to rejoin. Player 1 can also drop player 2 out by holding
-  *switch* for 5 s (e.g. co-op started without the second controller).
+  character back) and presses a button to rejoin. Player 1 can also drop player 2 out by
+  holding *switch* for 5 s.
+- **Crash report**: if the game closes on an error, a message says so and the logs plus a
+  copy of the saves go to `crashes\crash-<date>-<time>\` in the game folder.
+- **Save backups**: every time the launcher starts the game, it copies `user\` to
+  `user-backups\<date>-<time>\` (when it changed) and keeps the last 5.
 - **Fallen characters stay with their player**: a player at 0 HP can still walk, jump and
   investigate, but cannot attack or cast until healed. Game over only when the whole party
   is down, as in the base game.
@@ -112,6 +119,7 @@ The launcher also:
 - lists the **connected gamepads** in the same order the game sees them, so you know which
   one is player 1 and which is player 2;
 - shows the full **controls** (button **Controls...**);
+- **backs up the saves** before every game (`user-backups\`, the last 5 versions);
 - sets the **window size** used when you pick *Windowed* in the game's options window
   (*Original*, *Largest that fits* — the default — or 2× / 3×), with the picture scaled
   pixel for pixel;
@@ -257,8 +265,9 @@ file go to `opensummoners-standalone\`, and gamepad messages go to `coop.log`.
 |---|---|
 | **Both players tap switch within 0.5 s** | The two players **swap characters**, even if one of them is down. Player 1 still leads. |
 | **One player taps switch alone** | After the 0.5 s window, the base game's normal switch to a free AI member (nothing happens if there is none). |
-| **Player 2 holds switch for 1.5 s** | **Player 2 leaves**: the AI takes the character back. Hold again to **rejoin** with the first free member. |
-| **Player 1 holds switch for 5 s** | **Player 2 is dropped out**, as if player 2 had left: the AI takes the character back. For when player 2 can't do it (no second controller). Player 2 rejoins by holding switch for 1.5 s. |
+| **Player 2 holds switch for 1.5 s** | **Player 2 leaves**: the AI takes the character back. |
+| **Player 1 holds switch for 5 s** | **Player 2 is dropped out**, as if player 2 had left: the AI takes the character back. For when player 2 can't do it. |
+| **Player 2 is out and presses jump, attack, use or switch** | **Player 2 joins** with the first free party member. With *Play Co-op* player 2 starts out, so this is also how player 2 enters the game. |
 
 ### Falling in battle
 
@@ -340,8 +349,9 @@ double-byte characters (`text_lead` in `src/lang.h`). Without `--lang`, nothing 
   Parsec.
 - Only the **2012 English edition** is supported.
 
-Found a bug? Open an issue with what happened, the save if you can, and the
-`coop.log` / `opensummoners-standalone\` files from your play folder.
+Found a bug? Open an issue with what happened. After a crash, attach the folder the error
+message names (`crashes\crash-<date>-<time>\`: logs + saves); otherwise the save if you can
+and the `coop.log` / `opensummoners-standalone\` files from your play folder.
 
 ---
 
@@ -353,8 +363,9 @@ Found a bug? Open an issue with what happened, the save if you can, and the
 | The launcher can't find the game | Click **Browse...** and choose the folder that has `sotes.exe` (in Steam: right-click the game → **Manage** → **Browse local files** shows it). |
 | "Install mod" says access is denied | Close the game if it's running and try again. If the game is under `C:\Program Files`, right-click `CoopSummoners.exe` → **Run as administrator**. |
 | Players 1 and 2 have the wrong pads in the launcher's list | Same fix as below: the list shows the order the game will use. |
-| Player 2 can't do anything | Is there a second party member yet? In a new game Arche starts alone. Has player 2 left by holding switch? Hold numpad **+** for 1.5 s to rejoin. |
-| Started co-op without the second controller: player 2's character stands still | Player 1 holds **switch** for 5 s: player 2 is dropped out and the AI drives the character again. |
+| Player 2 can't do anything | Is there a second party member yet? In a new game Arche starts alone. Player 2 starts out of the game: press jump, attack, use or switch (numpad **2**, **1**, **3** or **+**) to join. |
+| Player 2's character stands still (no one plays it) | Player 1 holds **switch** for 5 s: player 2 is dropped out and the AI drives the character again. |
+| I need an older save | `user-backups\` in the game folder has the last 5 versions of `user\`: close the game, copy the one you want back over `user\`. |
 | A gamepad does nothing | Plug both pads in **before** starting the game. A pad unplugged mid-game reconnects within a moment; check `coop.log` if it doesn't. |
 | Players 1 and 2 have the wrong pads | Windows decides the order. Unplug both, plug player 1's pad in first, then player 2's, and start the game again. |
 | The game starts without co-op | Check that `--coop` is in the `.bat` / shortcut / Steam launch options. |
@@ -365,7 +376,8 @@ Found a bug? Open an issue with what happened, the save if you can, and the
 ## Uninstall
 
 - **With the launcher:** click **Uninstall**, then delete the launcher's folder. Your saves
-  (`user\`) and the save backups (`user-backup-<date>`) stay in the game folder.
+  (`user\`), the save backups (`user-backup-<date>`, `user-backups\`) and any crash reports
+  (`crashes\`) stay in the game folder.
 - **Manual install:** delete the play folder. If you put the exe straight into the Steam
   game folder, delete `opensummoners-standalone.exe`, the `.bat` files, `coop.log` and the
   `opensummoners-standalone\` folder from it.
