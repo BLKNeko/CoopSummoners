@@ -219,6 +219,20 @@ static void p2_set_out(uint32_t now)
     g_out_at = now;
 }
 
+/* the on-screen notices (drawn by coop_overlay_draw): which, since when */
+enum { NOTICE_NONE, NOTICE_JOINED, NOTICE_LEFT, NOTICE_DROPPED };
+static int g_notice;
+static uint32_t g_notice_at;
+static int g_ui_pt;           /* the notices in Portuguese */
+
+void coop_set_lang_pt(int pt) { g_ui_pt = pt != 0; }
+
+static void notice(int k)
+{
+    g_notice = k;
+    g_notice_at = g_eng.tick();
+}
+
 static void coop_log(const char *what)
 {
     FILE *f = fopen("coop.log", "a");
@@ -296,6 +310,7 @@ static void sw_hold(wl_room *r, int p)
         g_sw[1].tap = 0;
         g_sw[1].down = 0;
         coop_log("player 1 dropped player 2 out");
+        notice(NOTICE_DROPPED);
         return;
     }
     if (!g_p2_out) {
@@ -303,6 +318,7 @@ static void sw_hold(wl_room *r, int p)
         p2_set_out(g_eng.tick());
         g_sw[1].tap = 0;
         coop_log("player 2 left");
+        notice(NOTICE_LEFT);
     }   /* (out: P2's switch press already joined in sw_update) */
 }
 
@@ -330,6 +346,7 @@ static void sw_update(wl_room *r)
                     g_p2_out = 0;                                         /* is no tap or hold)            */
                     s->hold_fired = 1;
                     coop_log("player 2 joined (switch)");
+                    notice(NOTICE_JOINED);
                 }
             } else if (!pressed && s->down) {
                 s->down = 0;
@@ -343,6 +360,7 @@ static void sw_update(wl_room *r)
         if (p == 1 && g_p2_out && p2_join_press(m, now)) {
             g_p2_out = 0;
             coop_log("player 2 joined (button)");
+            notice(NOTICE_JOINED);
         }
     }
     for (int p = 0; p < COOP_NIN; p++) {
@@ -569,14 +587,85 @@ static int coop_marker(int32_t sw, int32_t sh, int32_t *sx, int32_t *sy, int32_t
     return 1;
 }
 
+/* ---- the notices: "P2 joined" / "P2 left" for 2 s, and P1's 5 s drop-out hold as a filling bar ---- */
+
+#define NOTICE_MS      2000
+#define KICK_BAR_AFTER 400    /* a shorter press is a tap: no bar */
+#define TXT_SCALE      2
+#define TXT_ADV        (6 * TXT_SCALE)
+#define NOTICE_Y       34     /* the panels' top: below the screen's top edge, clear of the portrait (left) */
+
+typedef struct { char c; uint8_t rows[7]; } ov_char;
+static const ov_char FONT[] = {
+    { 'A', { 0x0e, 0x11, 0x11, 0x1f, 0x11, 0x11, 0x11 } }, { 'D', { 0x1e, 0x11, 0x11, 0x11, 0x11, 0x11, 0x1e } },
+    { 'E', { 0x1f, 0x10, 0x10, 0x1e, 0x10, 0x10, 0x1f } }, { 'F', { 0x1f, 0x10, 0x10, 0x1e, 0x10, 0x10, 0x10 } },
+    { 'I', { 0x0e, 0x04, 0x04, 0x04, 0x04, 0x04, 0x0e } }, { 'J', { 0x07, 0x02, 0x02, 0x02, 0x02, 0x12, 0x0c } },
+    { 'L', { 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x1f } }, { 'N', { 0x11, 0x19, 0x15, 0x13, 0x11, 0x11, 0x11 } },
+    { 'O', { 0x0e, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0e } }, { 'P', { 0x1e, 0x11, 0x11, 0x1e, 0x10, 0x10, 0x10 } },
+    { 'R', { 0x1e, 0x11, 0x11, 0x1e, 0x14, 0x12, 0x11 } }, { 'S', { 0x0f, 0x10, 0x10, 0x0e, 0x01, 0x01, 0x1e } },
+    { 'T', { 0x1f, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04 } }, { 'U', { 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x0e } },
+    { '2', { 0x0e, 0x11, 0x01, 0x06, 0x08, 0x10, 0x1f } },
+};
+
+static int32_t ov_text_w(const char *t) { return (int32_t)strlen(t) * TXT_ADV - TXT_SCALE; }
+
+/* `t` (the FONT's characters and spaces) at TXT_SCALE with its top-left at (x, y) */
+static void ov_text(const ov_surf *s, const char *t, int32_t x, int32_t y, uint32_t ink)
+{
+    for (; *t; t++, x += TXT_ADV) {
+        const ov_char *g = NULL;
+        for (size_t k = 0; k < sizeof FONT / sizeof FONT[0]; k++)
+            if (FONT[k].c == *t) g = &FONT[k];
+        if (g == NULL) continue;
+        for (int j = 0; j < 7; j++)
+            for (int i = 0; i < 5; i++)
+                if (g->rows[j] >> (4 - i) & 1) ov_rect(s, x + i * TXT_SCALE, y + j * TXT_SCALE, TXT_SCALE, TXT_SCALE, ink);
+    }
+}
+
+/* a rounded panel (the badge's look) */
+static void ov_panel(const ov_surf *s, int32_t x, int32_t y, int32_t w, int32_t h, uint32_t edge, uint32_t fill)
+{
+    ov_rect(s, x + 1, y, w - 2, h, edge);
+    ov_rect(s, x, y + 1, w, h - 2, edge);
+    ov_rect(s, x + 1, y + 1, w - 2, h - 2, fill);
+}
+
+static void ov_notices(const ov_surf *s, uint32_t edge, uint32_t fill, uint32_t ink)
+{
+    uint32_t now = g_eng.tick();
+    const sw_state *k = &g_sw[0];
+    if (k->down && !k->hold_fired && !g_p2_out && (uint32_t)(now - k->down_at) >= KICK_BAR_AFTER) {
+        uint32_t el = now - k->down_at;
+        if (el > COOP_KICK_MS) el = COOP_KICK_MS;
+        const char *t = g_ui_pt ? "TIRAR P2" : "DROP P2";
+        int32_t bw = 120, tw = ov_text_w(t), pw = bw + 16, ph = 7 * TXT_SCALE + 8 + 8 + 8;
+        int32_t px = s->w / 2 - pw / 2, py = NOTICE_Y;
+        ov_panel(s, px, py, pw, ph, edge, fill);
+        ov_text(s, t, s->w / 2 - tw / 2, py + 6, ink);
+        int32_t by = py + 6 + 7 * TXT_SCALE + 5, bx = px + 8;
+        ov_rect(s, bx - 1, by - 1, bw + 2, 8 + 2, edge);
+        ov_rect(s, bx, by, bw, 8, ov_rgb(s, 24, 40, 80));
+        ov_rect(s, bx, by, (int32_t)((uint32_t)bw * el / COOP_KICK_MS), 8, ink);
+        return;
+    }
+    if (g_notice == NOTICE_NONE || (uint32_t)(now - g_notice_at) >= NOTICE_MS) return;
+    const char *t = g_notice == NOTICE_JOINED ? (g_ui_pt ? "P2 ENTROU" : "P2 JOINED") : (g_ui_pt ? "P2 SAIU" : "P2 LEFT");
+    int32_t tw = ov_text_w(t), pw = tw + 16, ph = 7 * TXT_SCALE + 12;
+    int32_t px = s->w / 2 - pw / 2;
+    ov_panel(s, px, NOTICE_Y, pw, ph, edge, fill);
+    ov_text(s, t, px + 8, NOTICE_Y + 6, ink);
+}
+
 void coop_overlay_draw(uint8_t *px, int32_t pitch, int32_t w, int32_t h, int32_t bpp,
                        uint32_t rmask, uint32_t gmask, uint32_t bmask)
 {
     if (!g_coop || px == NULL || (bpp != 16 && bpp != 32)) return;
     ov_surf s = { px, pitch, w, h, bpp, rmask, gmask, bmask };
     int32_t x, y, side;
-    if (!coop_marker(w, h, &x, &y, &side)) return;
     uint32_t edge = ov_rgb(&s, 16, 24, 48), fill = ov_rgb(&s, 48, 144, 255), ink = ov_rgb(&s, 255, 255, 255);
+    ov_notices(&s, edge, fill, ink);
+    if (!coop_marker(w, h, &x, &y, &side)) return;
     if (side == 0) {
         ov_arrow(&s, x, y - 4, 0, 5, edge, fill);
         ov_badge(&s, x - BADGE_W / 2, y - 10 - BADGE_H, edge, fill, ink);

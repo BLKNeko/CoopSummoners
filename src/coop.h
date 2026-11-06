@@ -61,6 +61,9 @@ int coop_p2_joined(void);
  * press of jump / attack / use / switch on P2's pad or the numpad.  Without it P2 starts in, as before.
  * Whenever P2 is out (left with a 1.5 s hold, or dropped by P1's 5 s hold), such a press joins again. */
 void coop_p2_wait(void);
+/* the on-screen notices ("P2 JOINED" / "P2 LEFT" for 2 s, P1's drop-out hold as a filling bar, drawn by
+ * coop_overlay_draw) in Portuguese ("P2 ENTROU" / "P2 SAIU" / "TIRAR P2") */
+void coop_set_lang_pt(int pt);
 /* After char_ai built a player-driven character's command (room_char_step): while that
  * character is at 0 HP ("Disabled": in co-op a fallen member keeps its player), drop the
  * attack and the skill / spell from the command; moving, jumping and "use" stay.  The base
