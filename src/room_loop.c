@@ -46,7 +46,7 @@ void room_input_update(wl_room *r)
             old[k] = m->axis_held[k];
             m->axis_held[k] = 0;
         }
-        if (m->src_kb == 2) coop_p2_produce(m, sysp(0x2878));   /* co-op only: never 2 in retail */
+        if (m->src_kb == 2) coop_produce(r, j, sysp(0x2878));   /* co-op only: never 2 in retail */
         else if (m->src_kb != 0) input_dik_produce(m, sysp(0x2878));
         for (uint32_t k = 0; k < 2; k++) {
             void *joy = sysp(0x287c + 4 * k);

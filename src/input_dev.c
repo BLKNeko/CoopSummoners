@@ -295,6 +295,9 @@ int32_t id_5ba120(wl_char *self, int32_t * a2, int32_t a3, int32_t a4)
     ((intptr_t)D(0x5ba200) /* id_5ba200 by address */),
     c,
     1);
+  a4 = coop_game_pad_index(c, (intptr_t)a2, a4);   /* co-op mod: player 1's gamepad from the launcher (unchanged without) */
+  if ( a4 == -2 )
+    return 0;
   if ( a4 == -1 )
   {
     if ( F32(c, 0x4884) > 0 )

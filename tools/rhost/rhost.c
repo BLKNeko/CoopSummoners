@@ -52,10 +52,56 @@ rh_opts_t O;
  * (env OPENSUMMONERS_LANG = NAME); then the table names: NAME.names.tsv, or with --lang-names original (env
  * OPENSUMMONERS_LANG_NAMES) NAME.en-names.tsv, the names put back in English; see src/lang.h */
 static const char *g_lang_name, *g_lang_file, *g_lang_names;
+static char g_gamedir_abs[MAX_PATH];
+static const char *g_controls_file;   /* --controls (default <game>\coop-controls.ini when present) */
+
+/* the players' devices and keys, written by the launcher (sections [p1] [p2] [p3]):
+ *   keyboard=0|1  pad=0|1  pad_guid={...}  pad_name=...  pad_index=N
+ *   keys=up,down,left,right,attack,jump,use,mod,switch (DIK codes; players 2 / 3)
+ *   buttons=(the same order; gamepad button numbers for attack..switch)
+ * missing keys keep the defaults (coop_controls_default) */
+static void load_controls(void)
+{
+    char path[MAX_PATH], sec[8], v[160];
+    if (g_controls_file) snprintf(path, sizeof path, "%s", g_controls_file);
+    else snprintf(path, sizeof path, "%s\\coop-controls.ini", g_gamedir_abs);
+    if (GetFileAttributesA(path) == INVALID_FILE_ATTRIBUTES) return;
+    char full[MAX_PATH]; GetFullPathNameA(path, sizeof full, full, NULL);
+    coop_player_ctl ctl[COOP_NIN];
+    coop_controls_default(ctl);
+    for (int p = 0; p < COOP_NIN; p++) {
+        coop_player_ctl *c = &ctl[p];
+        snprintf(sec, sizeof sec, "p%d", p + 1);
+        c->kb = (int)GetPrivateProfileIntA(sec, "keyboard", c->kb, full);
+        c->pad = (int)GetPrivateProfileIntA(sec, "pad", c->pad, full);
+        c->pad_index = (int)GetPrivateProfileIntA(sec, "pad_index", c->pad_index, full);
+        GetPrivateProfileStringA(sec, "pad_name", "", c->pad_name, sizeof c->pad_name, full);
+        GetPrivateProfileStringA(sec, "pad_guid", "", v, sizeof v, full);
+        GUID g;
+        unsigned d4[8];
+        unsigned long d1; unsigned d2, d3;
+        if (sscanf(v, "{%8lx-%4x-%4x-%2x%2x-%2x%2x%2x%2x%2x%2x}", &d1, &d2, &d3, &d4[0], &d4[1], &d4[2], &d4[3],
+                   &d4[4], &d4[5], &d4[6], &d4[7]) == 11) {
+            g.Data1 = d1; g.Data2 = (unsigned short)d2; g.Data3 = (unsigned short)d3;
+            for (int i = 0; i < 8; i++) g.Data4[i] = (unsigned char)d4[i];
+            memcpy(c->pad_guid, &g, 16);
+        }
+        static const char *const LISTS[2] = { "keys", "buttons" };
+        for (int l = 0; l < 2; l++) {
+            uint8_t *dst = l ? c->buttons : c->keys;
+            if (!GetPrivateProfileStringA(sec, LISTS[l], "", v, sizeof v, full) || !v[0]) continue;
+            char *t = strtok(v, ",");
+            for (int a = 0; a < COOP_NACT && t; a++, t = strtok(NULL, ",")) dst[a] = (uint8_t)strtoul(t, 0, 0);
+        }
+        rh_log("controls p%d: keyboard %d pad %d (%s%s index %d)\n", p + 1, c->kb, c->pad, c->pad_name,
+               c->pad_guid[0] || c->pad_guid[1] ? ", guid" : "", c->pad_index);
+    }
+    coop_set_controls(ctl);
+    rh_log("controls: %s\n", full);
+}
 volatile uint32_t g_frame, g_ticks;
 FILE *g_log;
 static FILE *g_logf;
-static char g_gamedir_abs[MAX_PATH];
 static int g_finished;
 static struct { uint32_t frame; int32_t who, hp; } g_test_hp[8];   /* --coop-test-hp F:WHO:HP (test only) */
 static int g_n_test_hp;
@@ -1529,7 +1575,8 @@ static void parse(int argc, char **argv)
         }
         else if (!strcmp(a, "--coop-test-leave")) g_test_leave = strtoul(ARG(), 0, 0);   /* FRAME */
         else if (!strcmp(a, "--test-crash")) g_test_crash = strtoul(ARG(), 0, 0);        /* FRAME */
-        else if (!strcmp(a, "--coop-p2-wait")) coop_p2_wait();   /* P2 starts out: joins with a button press */
+        else if (!strcmp(a, "--coop-wait") || !strcmp(a, "--coop-p2-wait")) coop_wait();   /* players 2 / 3 start out */
+        else if (!strcmp(a, "--controls")) g_controls_file = ARG();   /* the players' devices / keys (ini) */
         else if (!strcmp(a, "--coop-test-drop") && g_n_test_drop < 8) {   /* FRAME:WHO */
             const char *v = ARG();
             if (sscanf(v, "%u:%d", &g_test_drop[g_n_test_drop].frame, &g_test_drop[g_n_test_drop].who) == 2)
@@ -1751,6 +1798,7 @@ int main(int argc, char **argv)
     if (!SetCurrentDirectoryA(g_gamedir_abs)) rh_fatal("cannot cd to %s", g_gamedir_abs);
     {   /* co-op mod translations: before rh_hooks_install binds g_eng.data */
         if (!g_lang_name && !g_lang_file) g_lang_name = getenv("OPENSUMMONERS_LANG");
+        load_controls();   /* the players' devices and keys (the launcher's coop-controls.ini) */
         coop_set_lang_pt(g_lang_name && !_strnicmp(g_lang_name, "pt", 2));   /* the co-op notices' language */
         char lp[MAX_PATH], why[256];
         if (g_lang_file) snprintf(lp, sizeof lp, "%s", g_lang_file);

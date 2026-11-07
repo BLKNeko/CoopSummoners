@@ -16,7 +16,18 @@ and read the `coop[...]` status lines.
 | T7-p1-hold3s | P1 holds Enter f4500-4700 (~3 s) | just a tap: no free member, no change, P2 stays — PASS (2026-11-05) |
 | T8-p2-join-btn | P2 numpad 2 (jump) f4500 | with `--coop-p2-wait`: p2out=1 until f4500, then P2 on Sana — PASS (2026-11-06) |
 
-Since 2026-11-06 a P2 who is out joins with a press (switch, jump, attack, use) instead of a 1.5 s
+**Three players (2026-11-06, later):** joining is a 1 s hold of switch again (a press no longer
+joins: T8's jump at f4500 leaves P2 out); T4's P2 rejoins at ~f5070 (1 s into its f5000 hold). T1 /
+T2 / T3 / T5 equal the two-player build (frame / tick / rng / pixels). `T9-p3` (P3 on the keyboard:
+copy `T9-p3/controls.ini` to a LOCAL folder — Windows' ini reader fails on `\\wsl.localhost` — and
+pass `--controls <that file>`; `--lang pt-br --lang-file data/lang/pt-br.tsv` for the Portuguese
+panels): P3 holds H f4500-4600 → joins, waits (Sana is P2's), "P3 ENTRANDO" bar / "P3 ESPERANDO";
+P2 holds + f4800-4920 → leaves, P3 takes Sana at once ("P2 SAIU" / "P3 ENTROU", purple P3 badge);
+P2 holds + f5100-5180 → joins, waits; P1 Enter + P3 H taps at f5300-5309 → P1 and P3 swap (P1 Sana,
+P3 Arche); P1 holds Enter f5500-5900 → "TIRAR TODOS" bar, both dropped ("P2 SAIU" / "P3 SAIU") —
+PASS (shots checked).
+
+Earlier (two players, 2026-11-06) a P2 who is out joined with a press (switch, jump, attack, use) instead of a 1.5 s
 hold: T4-drop's P2 is back on Arche at f5000 (the press) instead of f5100. With `--coop-p2-wait`
 (the launcher's Play Co-op): T2 P2 stays out the whole run (P1's lone tap at f4500 takes the free
 Sana), T3's numpad + at f4500 joins, T8's jump at f4500 joins. Without it, T1 / T2 / T3 / T5 equal
