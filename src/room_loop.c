@@ -784,6 +784,7 @@ int room_loop_run(wl_roomloop *rl)
         }
         if (g_world->room != NULL && rl->ui_lock == 0) {
             room_pickups(g_world->room);
+            coop_light_tick(g_world->room);   /* co-op only: players 2 / 3's lights (their coins) */
             const wl_pslot *ld = g_world->room->leader;
             /* co-op only: a leader slot with no character (no member left to take the lead) skips the
              * passes that read it, instead of crashing; never happens with co-op off */

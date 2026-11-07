@@ -60,3 +60,15 @@ rng / pixels.
 Spell panel: `T4-drop` with `--shot-at 4450,4700,4900,5300` — f4450 leader portrait Arche (P1) with
 Sana's spells top right (P2 drives Sana); f4700 P2 out → no spells; f4900 / f5300 Sana is P1's →
 her panel as in the base game — PASS (checked on the screenshots).
+
+**The light (2026-11-06, latest):** `L1-light` = `F1-fall` + player 2's numpad while out (run with
+`--coop-wait --frames 28500 --log-every 10`, no save folder): 8 / 1 at f22440 bring the light (above
+the leader, clamped to the view's top), 1 held = magnet; 2 at f22800 / f23000 = pings, 6 f22900-23000
+flies it right; 1 again f24000-24250 and f27650-28100. `coop.log`: "player 2's light took 1 gold" x4
+(ticks 1384096-1443968), status `l2=... mag c3` at f24100, `c4` from f27800; the party's gold rises with
+it (gold=15 at f24100). Shots: f24010 the magnet ring with its 8 beads, coins flying in, "+3" / "3";
+f22830 the ping rings. `L2-p3-wait` = `T9-p3` + P3's L / I f4640-4700, O (ping) f4720, U (magnet)
+f4740-4800 while it waits (`--controls <local T9 controls.ini>`): purple light `l3=...` from f4650, gone
+at f4900 when P3 takes Sana; coop.log equal to T9's — PASS (shots checked). T1-T7 equal the previous
+build in frame / tick / rng / pixels (no light there: the out players press only switch); the 10
+non-co-op scenarios equal upstream.

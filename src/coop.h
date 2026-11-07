@@ -64,6 +64,13 @@ void coop_set_controls(const coop_player_ctl ctl[COOP_NIN]);
  * (players 2 / 3 open their own) */
 int32_t coop_game_pad_index(intptr_t dinput, intptr_t slot, int32_t index);
 
+/* Once per room update (the room loop, right after the party's pickups room_pickups 0x59ca90, so only
+ * while the game runs: not in menus or cutscenes): the lights of players 2 / 3 who play no character.
+ * Directions fly the light (through walls, kept on screen); it takes the coins it touches (gold as the
+ * party's pickup takes it; never items); hold attack = a magnet pulling the coins near it; jump / use =
+ * a ping ring.  It appears at the leader on the first input and goes after 10 s without any.  Each
+ * player's coins this session are counted under the light. */
+void coop_light_tick(wl_room *r);
 /* the number of input managers a room gets (1 off, COOP_NIN on) */
 uint16_t coop_room_inputs(void);
 /* configure the managers after input_init(r, 0, ...): player 1's devices; with co-op, [1..] co-op's */
