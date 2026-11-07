@@ -51,7 +51,8 @@ one screen.
 - **On-screen notices**: "P2 / P3 joined / left / waiting" and bars while a switch hold fills.
 - **A light for players with no character**: player 2 or 3 out of the game (or waiting for a
   free ally) flies a small light (blue / purple) that picks up coins, pulls them in with a
-  magnet, carries items to the leader and pings spots for the others. It counts that player's coins.
+  magnet, carries items to the leader, lets out a healing / damaging wave every 20 s and pings
+  spots for the others. It counts that player's coins.
 - **Crash report**: if the game closes on an error, a message says so and the logs plus a
   copy of the saves go to `crashes\crash-<date>-<time>\` in the game folder.
 - **Save backups**: every time the launcher starts the game, it copies `user\` to
@@ -297,6 +298,7 @@ Player 2 or 3 out of the game, or in and waiting for a free ally, has a light in
 |---|---|
 | **Any direction, attack, jump or use** | The light appears at the leader. It flies with the directions, **through walls**, and stays on screen. |
 | **Touch a coin** | The coin goes to the party's money, as if a character had picked it up (the same sound; the purse cap still applies). Items are not taken: carry them to the leader (hold jump). |
+| **Tap attack** | **Wave** (every 20 s): allies within ~50 px get back **8 % of their max HP** (at least 5; fallen allies are not raised), and foes within reach take **25 % of what a plain hit of the leader would deal them** (at least 1), through the game's own hit: damage number, a small hop, death, EXP and drops as usual. An arc round the light fills while it recharges (red when tapped too soon); a flash when it is ready. A character is reached by one wave per 3 s (two lights don't stack). |
 | **Hold attack** | **Magnet**: a ring shows its reach, and the coins on the ground inside it fly to the light. |
 | **Hold jump** | **Carry an item**: the first item on the ground the light reaches hangs under it while jump is held. Bring it to the leader, who picks it up as usual; let go and it falls. Walls and floors stop it (stuck behind, it is dropped there). |
 | **Tap jump with no item near, or use** | **Ping**: rings spread where the light is, to point something out to the others. |
@@ -539,7 +541,7 @@ producers, from each player's keyboard keys or own gamepad as `coop-controls.ini
 
 | File | What it does |
 |---|---|
-| `src/coop.c`, `src/coop.h` | Everything co-op: players 2 / 3's input (keys, gamepads), attach / release, the switch rules, the fallen-character filter, the spell panel choice, the lights (coins, magnet, carrying items, ping), the P2 / P3 markers and notices. |
+| `src/coop.c`, `src/coop.h` | Everything co-op: players 2 / 3's input (keys, gamepads), attach / release, the switch rules, the fallen-character filter, the spell panel choice, the lights (coins, magnet, carrying items, the wave, ping), the P2 / P3 markers and notices. |
 | `src/scene_loop.c` | Creates the extra input managers when co-op is on. |
 | `src/room_loop.c` | Feeds players 2 / 3 (`coop_produce`); runs `coop_tick`; filters a fallen player's commands. |
 | `src/input_dev.c` | Gamepad re-acquire after hot-plug (co-op only); player 1's gamepad from the launcher's choice. |
