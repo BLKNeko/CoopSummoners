@@ -103,6 +103,15 @@ static const wchar_t *const STR_EN[S_N] = {
     L"Players 2 and 3 start out of the game (the AI plays the others).\r\n"
     L"With one free ally, whoever joins first plays it; the other waits.\r\n"
     L"\r\n"
+    L"The light (player 2 / 3 with no character: out or waiting)\r\n"
+    L"- Any direction / attack / jump / use: a light appears at the leader.\r\n"
+    L"  It flies with the directions, through walls, and stays on screen.\r\n"
+    L"- It takes the coins it touches (never items). Its number = your\r\n"
+    L"  coins this session.\r\n"
+    L"- Hold attack: magnet, the coins near it fly to it.\r\n"
+    L"- Jump or use: a ring where it is, to show the others something.\r\n"
+    L"- It goes away after 10 s without input, and when you take a character.\r\n"
+    L"\r\n"
     L"Player 1 is always the leader (camera, talking, menus).\r\n"
     L"A fallen player can walk but not attack until healed.\r\n"
     L"Game over only when the whole party is down.\r\n",
@@ -171,6 +180,15 @@ static const wchar_t *const STR_PT[S_N] = {
     L"\r\n"
     L"Os jogadores 2 e 3 começam fora do jogo (a IA joga com os outros).\r\n"
     L"Com só um aliado livre, quem entrar primeiro fica com ele; o outro espera.\r\n"
+    L"\r\n"
+    L"A luz (jogador 2 / 3 sem personagem: fora do jogo ou esperando)\r\n"
+    L"- Qualquer direção / atacar / pular / usar: uma luz aparece no líder.\r\n"
+    L"  Ela voa com as direções, atravessa paredes e fica dentro da tela.\r\n"
+    L"- Pega as moedas em que encostar (itens não). O número embaixo dela =\r\n"
+    L"  as suas moedas nesta sessão.\r\n"
+    L"- Segure atacar: ímã, as moedas perto voam até ela.\r\n"
+    L"- Pular ou usar: um anel onde ela está, para mostrar algo aos outros.\r\n"
+    L"- Some depois de 10 s sem tocar em nada, e quando você pega um personagem.\r\n"
     L"\r\n"
     L"O jogador 1 é sempre o líder (câmera, conversas, menus).\r\n"
     L"Um jogador caído pode andar, mas não atacar, até ser curado.\r\n"
@@ -1233,13 +1251,13 @@ static void show_controls(void)
     wcsncpy(title, TR(S_CONTROLS), 63);
     title[63] = 0;
     for (size_t n = wcslen(title); n > 0 && title[n - 1] == L'.'; ) title[--n] = 0;
-    RECT r = { 0, 0, S(720), S(470) };
+    RECT r = { 0, 0, S(720), S(600) };
     AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, FALSE);
     h = CreateWindowExW(0, L"CoopSummonersHelp", title, WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT,
                         CW_USEDEFAULT, r.right - r.left, r.bottom - r.top, g_wnd, NULL, GetModuleHandleW(NULL), NULL);
     HWND e = CreateWindowExW(0, L"EDIT", TR(S_CONTROLS_TEXT),
                              WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL, 0, 0,
-                             S(720), S(470), h, (HMENU)1, GetModuleHandleW(NULL), NULL);
+                             S(720), S(600), h, (HMENU)1, GetModuleHandleW(NULL), NULL);
     SendMessageW(e, WM_SETFONT, (WPARAM)g_font_mono, TRUE);
     SendMessageW(e, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELPARAM(S(10), S(10)));
 }

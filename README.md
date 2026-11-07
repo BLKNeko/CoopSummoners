@@ -49,6 +49,9 @@ one screen.
   character back) and 1 s to rejoin. Player 1 can drop everyone else out by holding *switch*
   for 5 s.
 - **On-screen notices**: "P2 / P3 joined / left / waiting" and bars while a switch hold fills.
+- **A light for players with no character**: player 2 or 3 out of the game (or waiting for a
+  free ally) flies a small light (blue / purple) that picks up coins, pulls them in with a
+  magnet and pings spots for the others. It counts that player's coins.
 - **Crash report**: if the game closes on an error, a message says so and the logs plus a
   copy of the saves go to `crashes\crash-<date>-<time>\` in the game folder.
 - **Save backups**: every time the launcher starts the game, it copies `user\` to
@@ -286,6 +289,21 @@ warning.
 | **Player 2 / 3 holds switch for 1.5 s** | **Leaves**: the AI takes the character back. |
 | **Player 1 holds switch for 5 s** | **Everyone else is dropped out**, as if they had left. For when a player can't do it. |
 
+### The light (players with no character)
+
+Player 2 or 3 out of the game, or in and waiting for a free ally, has a light instead:
+
+| What you do | What happens |
+|---|---|
+| **Any direction, attack, jump or use** | The light appears at the leader. It flies with the directions, **through walls**, and stays on screen. |
+| **Touch a coin** | The coin goes to the party's money, as if a character had picked it up (the same sound; the purse cap still applies). Items are left for the leader. |
+| **Hold attack** | **Magnet**: a ring shows its reach, and the coins on the ground inside it fly to the light. |
+| **Jump or use** | **Ping**: rings spread where the light is, to point something out to the others. |
+| **No input for 10 s** | The light goes away (any key brings it back). It also goes when you take a character, and during cutscenes and menus. |
+
+The number under the light is that player's coins this session ("+N" rises over it as it
+collects). It is not saved.
+
 ### Falling in battle
 
 - A character at 0 HP is **"Disabled"**, as in the base game: healed by items or by
@@ -520,7 +538,7 @@ producers, from each player's keyboard keys or own gamepad as `coop-controls.ini
 
 | File | What it does |
 |---|---|
-| `src/coop.c`, `src/coop.h` | Everything co-op: players 2 / 3's input (keys, gamepads), attach / release, the switch rules, the fallen-character filter, the spell panel choice, the P2 / P3 markers and notices. |
+| `src/coop.c`, `src/coop.h` | Everything co-op: players 2 / 3's input (keys, gamepads), attach / release, the switch rules, the fallen-character filter, the spell panel choice, the lights (coins, magnet, ping), the P2 / P3 markers and notices. |
 | `src/scene_loop.c` | Creates the extra input managers when co-op is on. |
 | `src/room_loop.c` | Feeds players 2 / 3 (`coop_produce`); runs `coop_tick`; filters a fallen player's commands. |
 | `src/input_dev.c` | Gamepad re-acquire after hot-plug (co-op only); player 1's gamepad from the launcher's choice. |
