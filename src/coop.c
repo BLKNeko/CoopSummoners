@@ -7,14 +7,18 @@
 #include <string.h>
 
 #include "camera_follow.h"
+#include "char_attack.h"
+#include "char_def.h"
 #include "char_hit.h"
 #include "char_state.h"
+#include "char_status.h"
 #include "engine_calls.h"
 #include "entity_move.h"
 #include "input.h"
 #include "party_member.h"
 #include "room_load.h"
 #include "scene_loop.h"
+#include "sound_fx.h"
 
 int g_coop;
 
@@ -582,12 +586,25 @@ void coop_tick(wl_room *r)
 #define LIGHT_GAIN_MS   900      /* the "+N" over the light */
 #define LIGHT_TRAIL     8
 #define LIGHT_PINGS     3
+#define LIGHT_TAP_MS    250      /* attack released sooner = a tap (the wave); held longer = the magnet */
+#define LIGHT_WAVE_MS   20000    /* the wave's recharge */
+#define LIGHT_WAVE_R    5000     /* its reach (px x 100 from the light's centre to the body's centre) */
+#define LIGHT_WAVE_HEAL 80       /* per mille of an ally's max HP (at least LIGHT_WAVE_MIN) */
+#define LIGHT_WAVE_MIN  5
+#define LIGHT_WAVE_DMG  250      /* per mille of the leader's plain hit on that foe (after its defence) */
+#define LIGHT_WAVE_SAME 3000     /* the same character takes one wave per this long (two lights) */
+#define LIGHT_WAVE_SHOW 450      /* the drawn wave's life */
 
 typedef struct coop_light {
     int        on;
     int32_t    x, y, vx, vy;
     uint32_t   last_input, seen;    /* the last input / the last update (drawn only while updated) */
     int        prev_jump, prev_use, magnet;
+    int        atk_down;            /* attack held since atk_at (a tap = the wave, a hold = the magnet) */
+    uint32_t   atk_at;
+    int        waved;               /* a wave was let out (wave_at valid) */
+    uint32_t   wave_at, deny_at;    /* the last wave / the last tap while recharging */
+    int32_t    wave_x, wave_y;
     wl_entity *drag;                /* the item it carries, or NULL */
     uint32_t   coins;               /* this session's coins */
     int32_t    gain;
@@ -737,6 +754,98 @@ static void light_drop(coop_light *L, int p, const char *why)
     L->drag = NULL;
 }
 
+/* ---- the wave (a tap of attack): heals the allies in reach, hits the foes ----
+ *
+ * Heal: the healing item's own path (its use in menu_helpers.c: char_add_hp, the "%d" float in colour 7,
+ * sound 85): LIGHT_WAVE_HEAL of the max HP (hp_max + both bonuses, as char_add_hp caps it); fallen members
+ * (0 HP) are not raised.  Hit: a pending hit queued on the foe (char_hit_queue 0x4891c0, as a sword's hit box
+ * fills it), taken by the game's own char_take_hit: the defence, the damage number, the stagger / flinch (its
+ * armour rules: bosses that never flinch don't), death, EXP and drops.  Its power: the leader's plain physical
+ * hit (char_atk_roll 0x4481f0 at 100 %, the middle of its spread) less the foe's defence (char_take_hit's
+ * (def stats) / 4) = what the leader would deal; LIGHT_WAVE_DMG of that (at least 1), plus the defence back so
+ * the game's subtraction lands on it.  No attacker (no combo, no record), no direction (no sideways knock),
+ * rule 2 (a small hop). */
+
+static struct { const void *who; uint32_t at; } g_wave_mark[48];
+
+/* `who` was not reached by a wave within LIGHT_WAVE_SAME: mark it now */
+static int wave_mark(const void *who, uint32_t now)
+{
+    int free_k = -1;
+    for (int k = 0; k < 48; k++) {
+        if (g_wave_mark[k].who == who) {
+            if ((uint32_t)(now - g_wave_mark[k].at) < LIGHT_WAVE_SAME) return 0;
+            g_wave_mark[k].at = now;
+            return 1;
+        }
+        if (free_k < 0 && (g_wave_mark[k].who == NULL || (uint32_t)(now - g_wave_mark[k].at) >= LIGHT_WAVE_SAME))
+            free_k = k;
+    }
+    if (free_k < 0) free_k = 0;
+    g_wave_mark[free_k].who = who;
+    g_wave_mark[free_k].at = now;
+    return 1;
+}
+
+static int wave_reaches(const coop_light *L, const wl_body *b)
+{
+    int32_t dx = L->x - (b->x + b->w / 2), dy = L->y - (b->y + b->h / 2);
+    int32_t rx = LIGHT_WAVE_R + b->w / 2, ry = LIGHT_WAVE_R + b->h / 2;
+    if (dx <= -rx || dx >= rx || dy <= -ry || dy >= ry) return 0;
+    /* inside the ellipse rx x ry (the reach grown by the half box): (dx / rx)^2 + (dy / ry)^2 <= 1 */
+    return (int64_t)dx * dx * ry * ry + (int64_t)dy * dy * rx * rx <= (int64_t)rx * rx * ry * ry;
+}
+
+static void light_wave(wl_room *r, coop_light *L, int p, uint32_t now)
+{
+    if (L->waved && (uint32_t)(now - L->wave_at) < LIGHT_WAVE_MS) { L->deny_at = now; return; }
+    L->waved = 1;
+    L->wave_at = now;
+    L->wave_x = L->x;
+    L->wave_y = L->y;
+    int healed = 0, hit = 0;
+    for (int k = 0; k < 8; k++) {   /* the allies */
+        wl_pslot *s = r->slot[k];
+        if (s == NULL || s->active != 1 || s->ch == NULL || s->ch->base.body == NULL || s->ch->party == NULL) continue;
+        wl_char *c = s->ch;
+        wl_party *pt = c->party;
+        int32_t max = pt->hp_max + pt->hp_bonus1 + pt->hp_bonus2;
+        if (pt->hp <= 0 || pt->hp >= max || !wave_reaches(L, c->base.body) || !wave_mark(c, now)) continue;
+        int32_t amt = (int32_t)((int64_t)max * LIGHT_WAVE_HEAL / 1000), got = 0;
+        if (amt < LIGHT_WAVE_MIN) amt = LIGHT_WAVE_MIN;
+        char_add_hp(c, amt, &got, 0);
+        if (got <= 0) continue;
+        wl_body *b = c->base.body;
+        float_text(c, (const char *)g_eng.data(0x854540u), got, b, 0, b->x + b->w / 2, b->y + b->h, b->facing, 7, 9, 60, -48000);   /* "%d" */
+        sfx_play_at(&c->base, 0, 85, 0, 0, 0);
+        healed++;
+    }
+    const wl_pslot *ld = r->leader;
+    wl_char *lc = ld != NULL && ld->active == 1 ? ld->ch : NULL;
+    wl_world *wd = *g_eng.world;
+    static int32_t wave_id = 0x0c0f0000;
+    for (int i = 0; lc != NULL && lc->party != NULL && i < 32; i++) {   /* the foes */
+        wl_char *c = wd->chars[i];
+        if (c == NULL || c->base.alive == 0 || c->base.body == NULL || c->party == NULL) continue;
+        if (faction_relation(lc->base.faction, c->base.faction) != 1 || !char_targetable(c, 0, 1)) continue;
+        if (get32(c, 0x15ab0) != 0 || !wave_reaches(L, c->base.body) || !wave_mark(c, now)) continue;
+        const uint8_t *fp = (const uint8_t *)c->party;
+        int32_t ds = get32(c, 0xc7dc) + get32(fp, 0x90) + get32(fp, 0x78) + get32(fp, 0x68);
+        int32_t def = stat_jitter((ds < 0 ? 0 : ds) / 4, 1000, 500);   /* the middle of char_take_hit's defence */
+        int32_t full = char_atk_roll(lc, 1000, 500, 0, 0) - def;   /* the leader's plain hit on this foe */
+        if (full < 1) full = 1;
+        int32_t dmg = (int32_t)((int64_t)full * LIGHT_WAVE_DMG / 1000);
+        if (dmg < 1) dmg = 1;
+        const wl_body *b = c->base.body;
+        char_hit_queue(c, (int32_t)(intptr_t)lc, 0, 99, 2, b->x + b->w / 2, b->y + b->h / 2, 0, 0, 0, 2, wave_id++,
+                       dmg + def, 0, 0, 0, 0);
+        coop_log("player %d's wave hits %d (hp %d): leader's hit %d, defence %d -> %d", p + 1, (int)c->base.code,
+                 (int)c->party->hp, (int)full, (int)def, (int)dmg);
+        hit++;
+    }
+    coop_log("player %d's wave: %d healed, %d hit", p + 1, healed, hit);
+}
+
 void coop_light_tick(wl_room *r)
 {
     if (!g_coop || r == NULL || r->nin < 2 || r->in == NULL || g_eng.world == NULL || *g_eng.world == NULL) return;
@@ -750,6 +859,8 @@ void coop_light_tick(wl_room *r)
         int jump = h[COOP_A_JUMP], use = h[COOP_A_USE];
         if (!ctl || played(r, p) != NULL) {
             light_drop(L, p, "dropped");
+            L->atk_down = h[COOP_A_ATTACK];   /* a press from before is a hold: no wave on its release */
+            L->atk_at = now - LIGHT_TAP_MS;
             L->on = 0;
             L->prev_jump = jump;
             L->prev_use = use;
@@ -761,6 +872,8 @@ void coop_light_tick(wl_room *r)
             light_spawn(L, r, v);
             L->prev_jump = jump;   /* the press that brought it does nothing else */
             L->prev_use = use;
+            L->atk_down = h[COOP_A_ATTACK];
+            L->atk_at = now - LIGHT_TAP_MS;
         }
         if (any) L->last_input = now;
         if ((uint32_t)(now - L->last_input) > LIGHT_IDLE_MS) { light_drop(L, p, "dropped"); L->on = 0; continue; }
@@ -825,7 +938,12 @@ void coop_light_tick(wl_room *r)
             if (ex > LIGHT_SNAG || ex < -LIGHT_SNAG || ey > LIGHT_SNAG || ey < -LIGHT_SNAG)
                 light_drop(L, p, "snagged (wall / floor), dropped");
         }
-        L->magnet = h[COOP_A_ATTACK];
+        if (h[COOP_A_ATTACK] && !L->atk_down) { L->atk_down = 1; L->atk_at = now; }
+        else if (!h[COOP_A_ATTACK] && L->atk_down) {
+            L->atk_down = 0;
+            if ((uint32_t)(now - L->atk_at) < LIGHT_TAP_MS) light_wave(r, L, p, now);
+        }
+        L->magnet = L->atk_down && (uint32_t)(now - L->atk_at) >= LIGHT_TAP_MS;
         light_coins(r, L, p, now);
         L->seen = now;
     }
@@ -858,9 +976,25 @@ void coop_status(char *buf, size_t n)
     char l[COOP_NIN][64];
     for (int p = 1; p < COOP_NIN; p++) {
         const coop_light *L = &g_light[p];
-        if (L->on) snprintf(l[p], sizeof l[p], " l%d=%d,%d%s%s c%u", p + 1, (int)L->x, (int)L->y, L->magnet ? " mag" : "", L->drag ? " drag" : "", L->coins);
+        if (L->on) snprintf(l[p], sizeof l[p], " l%d=%d,%d%s%s%s c%u", p + 1, (int)L->x, (int)L->y, L->magnet ? " mag" : "", L->drag ? " drag" : "", L->waved && (uint32_t)(g_eng.tick() - L->wave_at) < LIGHT_WAVE_MS ? " cd" : "", L->coins);
         else if (L->coins) snprintf(l[p], sizeof l[p], " l%d- c%u", p + 1, L->coins);
         else l[p][0] = 0;
+    }
+    char foe[64] = "";   /* the foe nearest the leader: where (centre), its HP */
+    if (ld != NULL && ld->ch != NULL && ld->ch->base.body != NULL) {
+        const wl_body *lb = ld->ch->base.body;
+        int64_t best = -1;
+        for (int i = 0; i < 32; i++) {
+            const wl_char *c = (*g_eng.world)->chars[i];
+            if (c == NULL || c->base.alive == 0 || c->base.body == NULL || c->party == NULL) continue;
+            if (faction_relation(ld->ch->base.faction, c->base.faction) != 1) continue;
+            const wl_body *fb = c->base.body;
+            int64_t dx = fb->x - lb->x, dy = fb->y - lb->y, d = dx * dx + dy * dy;
+            if (best >= 0 && d >= best) continue;
+            best = d;
+            snprintf(foe, sizeof foe, " foe=%d,%d/hp%d", (int)(fb->x + fb->w / 2), (int)(fb->y + fb->h / 2),
+                     (int)c->party->hp);
+        }
     }
     char it[64] = "";   /* the first item lying around: where, its body phase, its state */
     for (int k = 0; k < 96; k++) {
@@ -870,8 +1004,8 @@ void coop_status(char *buf, size_t n)
                  (int)get32(e, 0x204));
         break;
     }
-    snprintf(buf, n, " coop[nin=%u act=%d p1ctl=%d p2out=%d lead=%s p2=%s p3out=%d p3=%s gold=%d%s%s%s]", (unsigned)r->nin,
-             nact, p1_in_control(r), g_out[1], a, b[1], g_out[2], b[2], (int)get32(r, 0x4014), l[1], l[2], it);
+    snprintf(buf, n, " coop[nin=%u act=%d p1ctl=%d p2out=%d lead=%s p2=%s p3out=%d p3=%s gold=%d%s%s%s%s]", (unsigned)r->nin,
+             nact, p1_in_control(r), g_out[1], a, b[1], g_out[2], b[2], (int)get32(r, 0x4014), l[1], l[2], it, foe);
 }
 
 void coop_filter_cmd(wl_char *c)
@@ -1218,6 +1352,26 @@ static void player_rgb(int p, uint8_t *r, uint8_t *g, uint8_t *b)
     else { *r = 80; *g = 170; *b = 255; }
 }
 
+/* sin x 1000 in 32 steps (a turn) */
+static const int16_t SIN32[32] = { 0, 195, 383, 556, 707, 831, 924, 981, 1000, 981, 924, 831, 707, 556, 383, 195,
+                                   0, -195, -383, -556, -707, -831, -924, -981, -1000, -981, -924, -831, -707,
+                                   -556, -383, -195 };
+
+/* an arc of radius rad from the top, clockwise, over `el` / `total` of a turn (256 dots) */
+static void ov_arc(const ov_surf *s, int32_t cx, int32_t cy, int32_t rad, uint32_t el, uint32_t total, uint8_t r,
+                   uint8_t g, uint8_t b, int32_t a)
+{
+    uint32_t n = total ? (uint32_t)((uint64_t)el * 256 / total) : 256;
+    for (uint32_t k = 0; k < n && k < 256; k++) {
+        int i = (int)(k / 8), f = (int)(k % 8);   /* between table steps i and i + 1 */
+        int32_t sx = (SIN32[i] * (8 - f) + SIN32[(i + 1) % 32] * f) / 8;
+        int32_t cxv = (SIN32[(i + 8) % 32] * (8 - f) + SIN32[(i + 9) % 32] * f) / 8;
+        ov_blend(s, cx + sx * rad / 1000, cy - cxv * rad / 1000, r, g, b, a);
+        ov_blend(s, cx + sx * (rad + 1) / 1000, cy - cxv * (rad + 1) / 1000, r, g, b, a);
+        ov_blend(s, cx + sx * (rad - 1) / 1000, cy - cxv * (rad - 1) / 1000, r, g, b, a / 2);
+    }
+}
+
 static void ov_lights(const ov_surf *s)
 {
     if (g_eng.world == NULL || *g_eng.world == NULL) return;
@@ -1241,6 +1395,16 @@ static void ov_lights(const ov_surf *s)
                 ov_ring(s, x, y, rad, 3, cr, cg, cb, a);
                 ov_ring(s, x, y, rad, 1, 255, 255, 255, a * 3 / 4);
             }
+        }
+        uint32_t wage = now - L->wave_at;
+        if (L->waved && wage < LIGHT_WAVE_SHOW) {   /* the wave: a burst and a ring out to its reach */
+            view_project(v, L->wave_x, L->wave_y, 0, 0, 0, 0, &x, &y, 0);
+            int32_t a = 255 - (int32_t)(wage * 255 / LIGHT_WAVE_SHOW);
+            int32_t rad = 8 + (int32_t)(wage * (LIGHT_WAVE_R / 100 - 8) / LIGHT_WAVE_SHOW);
+            ov_glow(s, x, y, rad, cr, cg, cb, a / 3);
+            ov_ring(s, x, y, rad, 4, cr, cg, cb, a);
+            ov_ring(s, x, y, rad, 1, 255, 255, 255, a);
+            ov_ring(s, x, y, rad * 2 / 3, 2, 255, 255, 255, a / 2);
         }
         if (!L->on) continue;
         if (L->drag != NULL && L->drag->body != NULL) {   /* the carried item: a glowing ring around it */
@@ -1279,6 +1443,14 @@ static void ov_lights(const ov_surf *s)
             ov_blend(s, x, y + d, 255, 255, 255, a);
         }
         ov_glow(s, x, y, 5, 255, 255, 255, 255);
+        if (L->waved && wage < LIGHT_WAVE_MS) {   /* recharging: an arc filling round the light */
+            int deny = (uint32_t)(now - L->deny_at) < 300 && L->deny_at != 0;
+            ov_arc(s, x, y, 24, 128, 128, 20, 24, 40, 170);
+            ov_arc(s, x, y, 24, wage, LIGHT_WAVE_MS, 255, deny ? 60 : 255, deny ? 60 : 255, 240);
+        } else if (L->waved && wage < LIGHT_WAVE_MS + 600) {   /* just ready again: a flash */
+            int32_t a = 255 - (int32_t)((wage - LIGHT_WAVE_MS) * 255 / 600);
+            ov_ring(s, x, y, 24 + (int32_t)((wage - LIGHT_WAVE_MS) * 12 / 600), 2, 255, 255, 255, a);
+        }
         uint32_t edge = ov_rgb(s, 16, 24, 48), ink = ov_rgb(s, 255, 255, 255);
         char t[16];
         snprintf(t, sizeof t, "%u", L->coins);

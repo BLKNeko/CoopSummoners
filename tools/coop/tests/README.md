@@ -83,3 +83,13 @@ taken"). Item 2 lands at 55816,54400 (f4880); 2 held f4890-4990, 6 f4890-4903 pi
 f4930-4960 lifts it to 42500 (shot f4950: the chest under the light inside the ring, the counter above);
 let go at f4990 it falls, bounces and lies at 54400 (phase 2, f5050) — PASS. Not covered: an item
 snagged on a wall (dropped where it is).
+
+**The wave (2026-11-07):** `L4-wave` = `F1-fall` + player 2's numpad while out (`--coop-wait --frames 24000`;
+`--log-every 1` around f23705 for the HP). 8 at f22440 brings the light; 1 tapped f22450-22455: "wave: 1
+healed, 0 hit" — Arche 84 -> 92 (8 % of 100), the "8" float under her (shot f22462). 1 tapped f22700: still
+recharging (no wave; shot f22706: the red arc ~20 % full). 6 / 5 f23560-23626 take the light to the slime
+fighting the leader; 1 tapped f23705-23710 (20 s of game time = ~1250 frames after the first): "wave hits
+100164 (hp 9): leader's hit 5, defence 3 -> 1", "1 healed, 1 hit"; the slime 9 -> 7 at f23711 (the defence
+roll moves ±1 at these sizes; the leader's own hit at f23709 took 5, as estimated). Lights tap / hold:
+`L1-light` (attack held = the magnet) unchanged; T1-T7 equal the previous build; the 10 non-co-op scenarios
+equal upstream.
