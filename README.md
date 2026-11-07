@@ -1,8 +1,8 @@
 # CoopSummoners
 
 **Local co-op for _Fortune Summoners: Secret of the Elemental Stone_.**
-A second player takes control of a party member that the AI would otherwise drive, on the
-same PC, with a second gamepad or the numpad.
+Up to two more players take control of the party members that the AI would otherwise drive,
+on the same PC, each with a gamepad or the keyboard.
 
 In the base game you control one character and the AI controls the others. CoopSummoners
 lets a friend take over one of those allies: you explore, fight and cast spells together on
@@ -35,19 +35,20 @@ one screen.
 ## Features
 
 - **A launcher** (`CoopSummoners.exe`) that finds the game in Steam, installs the mod in one
-  click, backs up your saves, shows which gamepad is which player, and starts the game solo
-  or in co-op. English and Portuguese.
-- **Player 2 controls a party ally** (Sana, and later Stella) instead of the AI, with the
-  numpad or a second gamepad.
-- **Player 2 joins with a button press**: with the launcher's *Play Co-op*, player 2 starts
-  out of the game (the AI plays the second character) and joins by pressing jump, attack,
-  use or switch on the second pad or the numpad, taking the first free party member. (Run
-  by hand with `--coop` alone, player 2 starts in the game, as in earlier versions.)
-- **Swap characters LEGO-style**: both players press *switch* within half a second and
+  click, backs up your saves, lets each player pick a device (and players 2 / 3 their keys or
+  buttons), and starts the game solo or in co-op. English and Portuguese.
+- **Players 2 and 3 control party allies** (Sana, Stella...) instead of the AI, each with the
+  keyboard or a gamepad.
+- **Join by holding switch**: with the launcher's *Play Co-op*, players 2 and 3 start out of
+  the game (the AI plays the allies) and join by holding their *switch* key / button for 1 s,
+  taking a free party member. With one free ally and two players wanting it, whoever joins
+  first plays it; the other **waits** and takes the next member that is free.
+- **Swap characters LEGO-style**: any two players press *switch* within half a second and
   trade characters.
-- **Drop out / drop in**: player 2 holds *switch* for 1.5 s to leave (the AI takes the
-  character back) and presses a button to rejoin. Player 1 can also drop player 2 out by
-  holding *switch* for 5 s.
+- **Drop out / drop in**: player 2 or 3 holds *switch* for 1.5 s to leave (the AI takes the
+  character back) and 1 s to rejoin. Player 1 can drop everyone else out by holding *switch*
+  for 5 s.
+- **On-screen notices**: "P2 / P3 joined / left / waiting" and bars while a switch hold fills.
 - **Crash report**: if the game closes on an error, a message says so and the logs plus a
   copy of the saves go to `crashes\crash-<date>-<time>\` in the game folder.
 - **Save backups**: every time the launcher starts the game, it copies `user\` to
@@ -55,10 +56,10 @@ one screen.
 - **Fallen characters stay with their player**: a player at 0 HP can still walk, jump and
   investigate, but cannot attack or cast until healed. Game over only when the whole party
   is down, as in the base game.
-- **"P2" marker** above player 2's character, and an arrow on the screen edge when player 2
-  is off screen.
-- **Spell panel for player 2**: when player 2 drives a caster, their spells show in the
-  top-right panel.
+- **"P2" (blue) / "P3" (purple) markers** above players 2 and 3's characters, and an arrow on
+  the screen edge when one is off screen.
+- **Spell panel for players 2 / 3**: when player 1's character doesn't cast but player 2 (else
+  3) drives a caster, their spells show in the top-right panel.
 - **Gamepad hot-plug**: a pad that is unplugged and plugged back in works again within a
   moment.
 - **Brazilian Portuguese translation** (machine translated, being reviewed): pick
@@ -84,7 +85,7 @@ one screen.
 | Game | **Fortune Summoners: Secret of the Elemental Stone**, Steam 2012 English edition ([store page](https://store.steampowered.com/app/203510/Fortune_Summoners/), app 203510). The stock Steam files work as they are. |
 | Not supported | The 2020 **Special Edition** (app 1381770) and the Japanese release. |
 | OS | Windows 10 or 11. |
-| Controllers | Player 1: keyboard and/or gamepad. Player 2: the numpad and/or a second gamepad. |
+| Controllers | Each player: the keyboard or a gamepad (chosen in the launcher). Player 1 can also use both. |
 
 Tested with Steam build 29910, `sotes.exe` SHA-256
 `7D779F2EB02B3C603857FEDBC52BE6973AC3B0B2C5C1BC696122DDAC89FB9F1B`.
@@ -121,8 +122,8 @@ The mod is a single program, `opensummoners-standalone.exe`, that runs the game 
 
 The launcher also:
 
-- lists the **connected gamepads** in the same order the game sees them, so you know which
-  one is player 1 and which is player 2;
+- sets each **player's device** (keyboard or a gamepad, by name) and players 2 / 3's **keys or
+  buttons** (**Keys...**);
 - shows the full **controls** (button **Controls...**);
 - **backs up the saves** before every game (`user-backups\`, the last 5 versions);
 - sets the **screen mode**: *Borderless full screen* (recommended, the default), *Window*,
@@ -237,21 +238,29 @@ file go to `opensummoners-standalone\`, and gamepad messages go to `coop.log`.
 
 ## Controls
 
-| Action | Player 1 | Player 2 |
-|---|---|---|
-| Device | keyboard (the game's key config) + gamepad 1 | numpad + gamepad 2 |
-| Move | arrow keys | numpad **8 / 5 / 4 / 6** (up / down / left / right) |
-| Attack | game config (default **X**) | numpad **1** |
-| Jump | game config (default **C**) | numpad **2** |
-| Use / investigate | game config | numpad **3** |
-| Sheathe / skill modifier | game config | numpad **0** |
-| Switch character | **Enter** / game config | numpad **+** |
+Each player's **device** is picked in the launcher (*Player 1 / 2 / 3*): player 1 *Keyboard +
+1st gamepad* (the default), *Keyboard only* or a gamepad; players 2 and 3 *Nobody*, *Keyboard* or
+a gamepad (listed by name, remembered even while unplugged). Two players on one gamepad get a
+warning.
 
-- **Both gamepads use the button layout from the game's own key configuration** (set it in
-  the game's options).
+| Action | Player 1 | Player 2 (default keyboard keys) | Player 3 (default keyboard keys) |
+|---|---|---|---|
+| Move | arrow keys | numpad **8 / 5 / 4 / 6** | **I / K / J / L** |
+| Attack | game config (default **X**) | numpad **1** | **U** |
+| Jump | game config (default **C**) | numpad **2** | **O** |
+| Use / investigate | game config | numpad **3** | **P** |
+| Sheathe / skill modifier | game config | numpad **0** | **Y** |
+| Switch character | **Enter** / game config | numpad **+** | **H** |
+
+- **Player 1** uses the game's own key configuration (set it in the game's options), on the
+  keyboard and on player 1's gamepad.
+- **Players 2 and 3** set their own keys (keyboard) or buttons (gamepad) with **Keys...** next
+  to their device: click an action, press the key / button (Esc cancels). Gamepads move with
+  the left stick or the d-pad; default buttons: attack 3, jump 1, use 2, sheathe 5, switch 4
+  (X, A, B, LB, Y on an Xbox-style pad).
 - The numpad keys work whether Num Lock is on or off.
-- To cast or use a skill, player 2 holds numpad **0** with a direction, just as player 1 does
-  with their modifier key.
+- To cast or use a skill, players 2 / 3 hold their sheathe / skill modifier with a direction,
+  just as player 1 does with theirs.
 
 ---
 
@@ -261,20 +270,21 @@ file go to `opensummoners-standalone\`, and gamepad messages go to `coop.log`.
 
 - **Player 1 is always the leader**: the camera follows player 1's character, and player 1
   talks to people, opens menus and reads signs.
-- **Player 2** controls the first party member that is free (not the leader, and not
-  knocked down).
-- **During cutscenes and dialogue**, player 2's character goes back to the AI for the length
-  of the scene, then returns to player 2.
+- **Players 2 and 3** each control a party member that is free (not the leader, not another
+  player's, and not knocked down). With no free member, a player who joins **waits** and takes
+  the next one that frees up (for example when the other player leaves).
+- **During cutscenes and dialogue**, players 2 and 3's characters go back to the AI for the
+  length of the scene, then return to the same players.
 
 ### The switch key
 
 | What you do | What happens |
 |---|---|
-| **Both players tap switch within 0.5 s** | The two players **swap characters**, even if one of them is down. Player 1 still leads. |
+| **Two players tap switch within 0.5 s** | Those two **swap characters** (any pair: 1 and 2, 1 and 3, 2 and 3), even if one of them is down. Player 1 still leads. |
 | **One player taps switch alone** | After the 0.5 s window, the base game's normal switch to a free AI member (nothing happens if there is none). |
-| **Player 2 holds switch for 1.5 s** | **Player 2 leaves**: the AI takes the character back. |
-| **Player 1 holds switch for 5 s** | **Player 2 is dropped out**, as if player 2 had left: the AI takes the character back. For when player 2 can't do it. |
-| **Player 2 is out and presses jump, attack, use or switch** | **Player 2 joins** with the first free party member. With *Play Co-op* player 2 starts out, so this is also how player 2 enters the game. |
+| **Player 2 / 3 out of the game holds switch for 1 s** | **Joins** with a free party member (the one it had last, if free), or waits for one. With *Play Co-op* players 2 and 3 start out, so this is also how they enter the game. A bar fills while the key is held. |
+| **Player 2 / 3 holds switch for 1.5 s** | **Leaves**: the AI takes the character back. |
+| **Player 1 holds switch for 5 s** | **Everyone else is dropped out**, as if they had left. For when a player can't do it. |
 
 ### Falling in battle
 
@@ -287,10 +297,13 @@ file go to `opensummoners-standalone\`, and gamepad messages go to `coop.log`.
 
 ### On screen
 
-- A blue **P2** badge points at player 2's character. When that character is off the left or
-  right of the screen, an arrow on that edge shows where they are.
+- A blue **P2** / purple **P3** badge points at that player's character. When the character is
+  off the left or right of the screen, an arrow on that edge shows where they are.
+- Panels at the top centre say when a player **joins**, **leaves** or **waits**, and show a bar
+  while a switch hold fills (joining, leaving, player 1's drop-out).
 - The **spell panel** (top right) shows up whenever a player controls a caster. If player 1's
-  leader does not cast, it shows player 2's spells; player 1's portrait stays where it is.
+  leader does not cast, it shows player 2's (else 3's) spells; player 1's portrait stays where
+  it is.
 
 ---
 
@@ -348,10 +361,10 @@ double-byte characters (`text_lead` in `src/lang.h`). Without `--lang`, nothing 
 
 ## Known limits
 
-- **One camera**, on player 1. Player 2 can walk off screen (the edge arrow helps).
-- **Player 2 cannot** open menus, talk to people or read signs: player 1 does those.
-- **Two players.** A third player (when Stella joins) is not supported yet.
-- **One spell panel.** If both players control casters, it shows player 1's.
+- **One camera**, on player 1. Players 2 and 3 can walk off screen (the edge arrows help).
+- **Players 2 and 3 cannot** open menus, talk to people or read signs: player 1 does those.
+- **Three players** at most (the party has up to three members).
+- **One spell panel.** If several players control casters, it shows player 1's (else 2's).
 - **Not tested yet:** saving and loading with co-op on, every cutscene, streaming over
   Parsec.
 - Only the **2012 English edition** is supported.
@@ -369,12 +382,12 @@ and the `coop.log` / `opensummoners-standalone\` files from your play folder.
 | Windows SmartScreen blocks the exe | The exes (`CoopSummoners.exe`, `opensummoners-standalone.exe`) aren't signed. Click **More info** → **Run anyway**, but only for files you downloaded from this repository's Releases or built yourself. |
 | The launcher can't find the game | Click **Browse...** and choose the folder that has `sotes.exe` (in Steam: right-click the game → **Manage** → **Browse local files** shows it). |
 | "Install mod" says access is denied | Close the game if it's running and try again. If the game is under `C:\Program Files`, right-click `CoopSummoners.exe` → **Run as administrator**. |
-| Players 1 and 2 have the wrong pads in the launcher's list | Same fix as below: the list shows the order the game will use. |
-| Player 2 can't do anything | Is there a second party member yet? In a new game Arche starts alone. Player 2 starts out of the game: press jump, attack, use or switch (numpad **2**, **1**, **3** or **+**) to join. |
+| A player has the wrong gamepad | Pick the right one in that player's list in the launcher (gamepads are listed by name). |
+| Player 2 or 3 can't do anything | Is there a free party member? In a new game Arche starts alone. Players 2 and 3 start out of the game: hold the switch key (player 2: numpad **+**, player 3: **H**, or the switch button of their gamepad) for 1 s to join. Check their device in the launcher. |
 | Player 2's character stands still (no one plays it) | Player 1 holds **switch** for 5 s: player 2 is dropped out and the AI drives the character again. |
 | I need an older save | `user-backups\` in the game folder has the last 5 versions of `user\`: close the game, copy the one you want back over `user\`. |
 | A gamepad does nothing | Plug both pads in **before** starting the game. A pad unplugged mid-game reconnects within a moment; check `coop.log` if it doesn't. |
-| Players 1 and 2 have the wrong pads | Windows decides the order. Unplug both, plug player 1's pad in first, then player 2's, and start the game again. |
+| Player 1's default gamepad is the wrong one | *Keyboard + 1st gamepad* takes the first one Windows lists: pick player 1's gamepad by name instead. |
 | The game starts without co-op | Check that `--coop` is in the `.bat` / shortcut / Steam launch options. |
 | The game won't start at all | Check the 5 game files are in the folder next to the exe, and that `sotes.exe` is the 2012 English Steam edition (see [Requirements](#requirements)). |
 
@@ -501,15 +514,16 @@ The engine already had the pieces co-op needs:
 - The leader switch (`room_leader_next`) only picks members with no manager, so a member
   held by player 2 is never taken.
 
-With co-op on, the room gets a **second manager** (the numpad map + joystick slot 1), and
-`coop_tick` attaches it to a free party member while player 1 is in control.
+With co-op on, the room gets **three input managers** (player 1 = the game's own; players 2 and 3 = co-op's
+producers, from each player's keyboard keys or own gamepad as `coop-controls.ini` sets them), and
+`coop_tick` attaches each joined player to a free party member while player 1 is in control.
 
 | File | What it does |
 |---|---|
-| `src/coop.c`, `src/coop.h` | Everything co-op: player 2's input, attach/release, the switch rules, the fallen-character filter, the spell panel choice, the P2 marker. |
-| `src/scene_loop.c` | Creates the second input manager when co-op is on. |
-| `src/room_loop.c` | Feeds player 2's keyboard map; runs `coop_tick`; filters a fallen player's commands. |
-| `src/input_dev.c` | Gamepad re-acquire after hot-plug (co-op only). |
+| `src/coop.c`, `src/coop.h` | Everything co-op: players 2 / 3's input (keys, gamepads), attach / release, the switch rules, the fallen-character filter, the spell panel choice, the P2 / P3 markers and notices. |
+| `src/scene_loop.c` | Creates the extra input managers when co-op is on. |
+| `src/room_loop.c` | Feeds players 2 / 3 (`coop_produce`); runs `coop_tick`; filters a fallen player's commands. |
+| `src/input_dev.c` | Gamepad re-acquire after hot-plug (co-op only); player 1's gamepad from the launcher's choice. |
 | `src/render_draw.c` | The spell panel can show player 2's caster. |
 | `src/char_state.c` | NULL guard in `char_add_hp` (a fallen player 2 falling into a pit crashed). |
 | `tools/rhost/` | The `--coop` option, the P2 marker overlay drawn before each Flip, and test-only options. |

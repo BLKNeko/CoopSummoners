@@ -46,7 +46,10 @@ enum {
     S_ERR_COPY, S_ERR_DENIED, S_ERR_START, S_ERR_NOT_GAME, S_NOT_FOUND, S_CONTROLS_TEXT,
     S_GAMELANG, S_LANG_EN, S_LANG_PT, S_LANG_PT_NAMES,
     S_WSCALE, S_WS_1, S_WS_AUTO, S_WS_2, S_WS_3, S_ASK_NO_BACKUP, S_WS_NOFIT,
-    S_SCREEN, S_SM_BORDERLESS, S_SM_WINDOW, S_SM_FULL, S_SM_ASK, S_N
+    S_SCREEN, S_SM_BORDERLESS, S_SM_WINDOW, S_SM_FULL, S_SM_ASK,
+    S_PLAYER, S_DEV_P1_DEFAULT, S_DEV_KB_ONLY, S_DEV_NONE, S_DEV_KB, S_DEV_PAD, S_DEV_GONE, S_KEYS_BTN, S_KEYS_TITLE,
+    S_ACT_0, S_ACT_1, S_ACT_2, S_ACT_3, S_ACT_4, S_ACT_5, S_ACT_6, S_ACT_7, S_ACT_8,
+    S_PRESS_KEY, S_PRESS_BTN, S_BUTTON_N, S_PAD_DIRS, S_DEFAULTS, S_OK_BTN, S_ASK_SAME_PAD, S_KEY_NONE, S_N
 };
 
 static const wchar_t *const STR_EN[S_N] = {
@@ -63,8 +66,8 @@ static const wchar_t *const STR_EN[S_N] = {
     L"Mod: installed. (opensummoners-standalone.exe is not next to the launcher, so it can't be updated from here.)",
     L"Mod: not installed, and opensummoners-standalone.exe is missing next to the launcher. Extract the whole zip.",
     L"Install mod", L"Update mod", L"Uninstall", L"Play Solo", L"Play Co-op",
-    L"Controllers (plug them in before starting the game):",
-    L"The first controller is player 1, the second is player 2. Player 2 can also use the numpad.",
+    L"Players and devices (plug the gamepads in before starting the game):",
+    L"Player 1 uses the game's own key setup. Players 2 and 3 join by holding their switch key 1 s.",
     L"No controller connected (keyboard: player 1 = arrows, player 2 = numpad).",
     L"not used",
     L"Controls...",
@@ -82,25 +85,23 @@ static const wchar_t *const STR_EN[S_N] = {
     L"Fortune Summoners was not found in your Steam libraries. Click \"Browse...\" and choose the game folder.",
     L"Controls\r\n"
     L"\r\n"
-    L"                      Player 1               Player 2\r\n"
-    L"Device                keyboard + 1st pad     numpad + 2nd pad\r\n"
-    L"Move                  arrow keys             numpad 8 / 5 / 4 / 6\r\n"
-    L"Attack                game config (X)        numpad 1\r\n"
-    L"Jump                  game config (C)        numpad 2\r\n"
-    L"Use / investigate     game config            numpad 3\r\n"
-    L"Sheathe / skill mod.  game config            numpad 0\r\n"
-    L"Switch character      Enter / game config    numpad +\r\n"
-    L"\r\n"
-    L"Gamepads use the button layout from the game's key configuration.\r\n"
+    L"Each player's device is chosen in the launcher (Player 1 / 2 / 3).\r\n"
+    L"Player 1 uses the game's own keys (arrows, X, C, Enter...; change\r\n"
+    L"them in the game's options). Players 2 and 3: \"Keys...\" next to\r\n"
+    L"their device (defaults: player 2 numpad 8/5/4/6, 1 attack, 2 jump,\r\n"
+    L"3 use, 0 sheathe, + switch; player 3 I/K/J/L, U attack, O jump,\r\n"
+    L"P use, Y sheathe, H switch; gamepads move with the stick / d-pad).\r\n"
     L"\r\n"
     L"Switch key in co-op\r\n"
-    L"- Both players tap within 0.5 s: you swap characters.\r\n"
+    L"- Two players tap within 0.5 s: they swap characters (any pair).\r\n"
     L"- One player taps alone: the game's normal switch to a free AI member.\r\n"
-    L"- Player 2 holds it 1.5 s: player 2 leaves (AI takes over).\r\n"
-    L"- Player 1 holds it 5 s: player 2 is dropped out.\r\n"
+    L"- Player 2 / 3 out of the game holds it 1 s: joins (takes a free\r\n"
+    L"  member, or waits until one is free).\r\n"
+    L"- Player 2 / 3 holds it 1.5 s: leaves (the AI takes over).\r\n"
+    L"- Player 1 holds it 5 s: everyone else is dropped out.\r\n"
     L"\r\n"
-    L"Player 2 starts out of the game (the AI plays the 2nd character): press\r\n"
-    L"jump, attack, use or switch on pad 2 or the numpad to join, and to rejoin.\r\n"
+    L"Players 2 and 3 start out of the game (the AI plays the others).\r\n"
+    L"With one free ally, whoever joins first plays it; the other waits.\r\n"
     L"\r\n"
     L"Player 1 is always the leader (camera, talking, menus).\r\n"
     L"A fallen player can walk but not attack until healed.\r\n"
@@ -111,6 +112,13 @@ static const wchar_t *const STR_EN[S_N] = {
     L"too big for this screen",
     L"Screen mode:", L"Borderless full screen (recommended)", L"Window", L"Original full screen (may lag)",
     L"Ask each time (the game's options window)",
+    L"Player %d:", L"Keyboard + 1st gamepad (default)", L"Keyboard only", L"Nobody", L"Keyboard", L"Gamepad: ",
+    L" (not connected)", L"Keys...", L"Keys — player %d",
+    L"Up", L"Down", L"Left", L"Right", L"Attack", L"Jump", L"Use / investigate", L"Sheathe / skill modifier",
+    L"Switch character",
+    L"Press a key... (Esc cancels)", L"Press a gamepad button... (Esc cancels)", L"Button %d",
+    L"Move: left stick or d-pad.", L"Defaults", L"OK",
+    L"Two players are set to the same gamepad. Play anyway?", L"(none)",
 };
 
 static const wchar_t *const STR_PT[S_N] = {
@@ -127,8 +135,8 @@ static const wchar_t *const STR_PT[S_N] = {
     L"Mod: instalado. (O opensummoners-standalone.exe não está ao lado do launcher, então não dá para atualizar por aqui.)",
     L"Mod: não instalado, e falta o opensummoners-standalone.exe ao lado do launcher. Extraia o zip inteiro.",
     L"Instalar mod", L"Atualizar mod", L"Desinstalar", L"Jogar Solo", L"Jogar Co-op",
-    L"Controles (conecte antes de abrir o jogo):",
-    L"O primeiro controle é o jogador 1, o segundo é o jogador 2. O jogador 2 também pode usar o teclado numérico.",
+    L"Jogadores e dispositivos (conecte os controles antes de abrir o jogo):",
+    L"O jogador 1 usa a configuração de teclas do próprio jogo. Os jogadores 2 e 3 entram segurando a tecla de troca por 1 s.",
     L"Nenhum controle conectado (teclado: jogador 1 = setas, jogador 2 = teclado numérico).",
     L"não usado",
     L"Comandos...",
@@ -146,26 +154,23 @@ static const wchar_t *const STR_PT[S_N] = {
     L"O Fortune Summoners não foi encontrado nas bibliotecas da Steam. Clique em \"Procurar...\" e escolha a pasta do jogo.",
     L"Comandos\r\n"
     L"\r\n"
-    L"                      Jogador 1              Jogador 2\r\n"
-    L"Dispositivo           teclado + 1º controle  teclado numérico + 2º controle\r\n"
-    L"Mover                 setas                  numérico 8 / 5 / 4 / 6\r\n"
-    L"Atacar                config. do jogo (X)    numérico 1\r\n"
-    L"Pular                 config. do jogo (C)    numérico 2\r\n"
-    L"Usar / investigar     config. do jogo        numérico 3\r\n"
-    L"Guardar / modif. hab. config. do jogo        numérico 0\r\n"
-    L"Trocar personagem     Enter / config.        numérico +\r\n"
-    L"\r\n"
-    L"Os controles usam os botões da configuração de teclas do jogo.\r\n"
+    L"O dispositivo de cada jogador é escolhido no launcher (Jogador 1 / 2 / 3).\r\n"
+    L"O jogador 1 usa as teclas do próprio jogo (setas, X, C, Enter...; mude\r\n"
+    L"nas opções do jogo). Jogadores 2 e 3: \"Teclas...\" ao lado do\r\n"
+    L"dispositivo (padrão: jogador 2 numérico 8/5/4/6, 1 atacar, 2 pular,\r\n"
+    L"3 usar, 0 guardar, + trocar; jogador 3 I/K/J/L, U atacar, O pular,\r\n"
+    L"P usar, Y guardar, H trocar; controles andam com analógico / direcional).\r\n"
     L"\r\n"
     L"Tecla de troca no co-op\r\n"
-    L"- Os dois apertam em até 0,5 s: vocês trocam de personagem.\r\n"
+    L"- Dois jogadores apertam em até 0,5 s: trocam de personagem (qualquer par).\r\n"
     L"- Só um aperta: a troca normal do jogo para um membro livre da IA.\r\n"
-    L"- O jogador 2 segura 1,5 s: sai do jogo (a IA assume).\r\n"
-    L"- O jogador 1 segura 5 s: tira o jogador 2 do jogo.\r\n"
+    L"- Jogador 2 / 3 fora do jogo segura 1 s: entra (pega um membro livre,\r\n"
+    L"  ou espera até ter um).\r\n"
+    L"- Jogador 2 / 3 segura 1,5 s: sai do jogo (a IA assume).\r\n"
+    L"- O jogador 1 segura 5 s: tira todos os outros do jogo.\r\n"
     L"\r\n"
-    L"O jogador 2 começa fora do jogo (a IA joga com o 2º personagem): aperte\r\n"
-    L"pular, atacar, usar ou trocar no controle 2 ou no teclado numérico para\r\n"
-    L"entrar, e também para voltar.\r\n"
+    L"Os jogadores 2 e 3 começam fora do jogo (a IA joga com os outros).\r\n"
+    L"Com só um aliado livre, quem entrar primeiro fica com ele; o outro espera.\r\n"
     L"\r\n"
     L"O jogador 1 é sempre o líder (câmera, conversas, menus).\r\n"
     L"Um jogador caído pode andar, mas não atacar, até ser curado.\r\n"
@@ -176,6 +181,13 @@ static const wchar_t *const STR_PT[S_N] = {
     L"não cabe nesta tela",
     L"Modo de tela:", L"Tela cheia sem bordas (recomendado)", L"Janela", L"Tela cheia original (pode travar)",
     L"Perguntar ao abrir (janela de opções do jogo)",
+    L"Jogador %d:", L"Teclado + 1º controle (padrão)", L"Só teclado", L"Ninguém", L"Teclado", L"Controle: ",
+    L" (desconectado)", L"Teclas...", L"Teclas — jogador %d",
+    L"Cima", L"Baixo", L"Esquerda", L"Direita", L"Atacar", L"Pular", L"Usar / investigar", L"Guardar arma / modif. habilidade",
+    L"Trocar personagem",
+    L"Aperte uma tecla... (Esc cancela)", L"Aperte um botão do controle... (Esc cancela)", L"Botão %d",
+    L"Mover: analógico esquerdo ou direcional.", L"Padrão", L"OK",
+    L"Dois jogadores estão no mesmo controle. Jogar mesmo assim?", L"(nenhuma)",
 };
 
 static const wchar_t *const *T = STR_EN;
@@ -311,8 +323,81 @@ enum { SCREEN_BORDERLESS, SCREEN_WINDOW, SCREEN_FULL, SCREEN_ASK };
 static int g_screen = SCREEN_BORDERLESS;
 static const wchar_t *const SCREEN_INI[4] = { L"borderless", L"window", L"fullscreen", L"ask" };
 
+/* the players' devices and keys ([p1] [p2] [p3] in launcher.ini; written for the game as coop-controls.ini at
+ * play).  Player 1: the game's own keys, a device choice only; players 2 / 3: keyboard keys (DIK codes) or
+ * gamepad buttons for the 9 actions (the order of the mod's COOP_A_*: up down left right attack jump use mod
+ * switch; a gamepad moves with its stick / d-pad, its buttons cover attack..switch) */
+#define NPLAYERS 3
+#define NACT 9
+enum { DEV_DEFAULT, DEV_KB, DEV_PAD, DEV_NONE, DEV_UNSET = -1 };
+static const wchar_t *const DEV_INI[4] = { L"default", L"keyboard", L"pad", L"none" };
+typedef struct {
+    int dev;
+    wchar_t guid[40];            /* the gamepad's DirectInput instance GUID, "{...}" */
+    wchar_t name[MAX_PATH];
+    uint8_t keys[NACT];
+    uint8_t buttons[NACT];
+} player_cfg;
+static player_cfg g_pl[NPLAYERS];
+static const uint8_t DEF_KEYS[NPLAYERS][NACT] = {
+    { 0 }, { 0x48, 0x4c, 0x4b, 0x4d, 0x4f, 0x50, 0x51, 0x52, 0x4e }, { 0x17, 0x25, 0x24, 0x26, 0x16, 0x18, 0x19, 0x15, 0x23 } };
+static const uint8_t DEF_BUTTONS[NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3 };
+
+static void list_parse(const wchar_t *s, uint8_t *out)
+{
+    for (int a = 0; a < NACT && *s; a++) {
+        out[a] = (uint8_t)wcstoul(s, (wchar_t **)&s, 0);
+        while (*s == L',' || *s == L' ') s++;
+    }
+}
+static void list_format(const uint8_t *v, wchar_t *out, size_t n)
+{
+    out[0] = 0;
+    for (int a = 0; a < NACT; a++) swprintf(out + wcslen(out), n - wcslen(out), a ? L",%u" : L"%u", v[a]);
+}
+
+static void players_load(void)
+{
+    for (int p = 0; p < NPLAYERS; p++) {
+        player_cfg *c = &g_pl[p];
+        wchar_t sec[8], v[128];
+        swprintf(sec, 8, L"p%d", p + 1);
+        memcpy(c->keys, DEF_KEYS[p], NACT);
+        memcpy(c->buttons, DEF_BUTTONS, NACT);
+        GetPrivateProfileStringW(sec, L"device", L"", v, 128, g_ini);
+        c->dev = DEV_UNSET;
+        for (int i = 0; i < 4; i++) if (wcscmp(v, DEV_INI[i]) == 0) c->dev = i;
+        if (p == 0 && c->dev == DEV_NONE) c->dev = DEV_DEFAULT;
+        if (p > 0 && c->dev == DEV_DEFAULT) c->dev = DEV_UNSET;
+        GetPrivateProfileStringW(sec, L"pad_guid", L"", c->guid, 40, g_ini);
+        GetPrivateProfileStringW(sec, L"pad_name", L"", c->name, MAX_PATH, g_ini);
+        if (GetPrivateProfileStringW(sec, L"keys", L"", v, 128, g_ini)) list_parse(v, c->keys);
+        if (GetPrivateProfileStringW(sec, L"buttons", L"", v, 128, g_ini)) list_parse(v, c->buttons);
+    }
+    if (g_pl[0].dev == DEV_UNSET) g_pl[0].dev = DEV_DEFAULT;
+}
+static void players_save(void)
+{
+    for (int p = 0; p < NPLAYERS; p++) {
+        const player_cfg *c = &g_pl[p];
+        if (c->dev == DEV_UNSET) continue;
+        wchar_t sec[8], v[128];
+        swprintf(sec, 8, L"p%d", p + 1);
+        WritePrivateProfileStringW(sec, L"device", DEV_INI[c->dev], g_ini);
+        WritePrivateProfileStringW(sec, L"pad_guid", c->guid, g_ini);
+        WritePrivateProfileStringW(sec, L"pad_name", c->name, g_ini);
+        if (p > 0) {
+            list_format(c->keys, v, 128);
+            WritePrivateProfileStringW(sec, L"keys", v, g_ini);
+            list_format(c->buttons, v, 128);
+            WritePrivateProfileStringW(sec, L"buttons", v, g_ini);
+        }
+    }
+}
+
 static void settings_load(void)
 {
+    players_load();
     GetPrivateProfileStringW(L"launcher", L"GameDir", L"", g_game_dir, MAX_PATH, g_ini);
     wchar_t l[32];
     GetPrivateProfileStringW(L"launcher", L"GameLang", L"", l, 32, g_ini);
@@ -331,6 +416,7 @@ static void settings_save(void)
     if (g_lang_pt >= 0) WritePrivateProfileStringW(L"launcher", L"GameLang", LANG_INI[g_lang_pt], g_ini);
     WritePrivateProfileStringW(L"launcher", L"WindowScale", WSCALE_INI[g_wscale], g_ini);
     WritePrivateProfileStringW(L"launcher", L"ScreenMode", SCREEN_INI[g_screen], g_ini);
+    players_save();
 }
 
 /* ---------------------------------------------------------------- finding the game in Steam */
@@ -479,10 +565,10 @@ static int lang_available(void)
 
 enum { ID_PATH = 100, ID_BROWSE, ID_FIND, ID_GAME, ID_MOD, ID_INSTALL, ID_UNINSTALL, ID_SOLO, ID_COOP, ID_PADS_L,
        ID_PADS, ID_PADS_NOTE, ID_CONTROLS, ID_FOOTER, ID_DIRLABEL, ID_LANG_L, ID_LANG, ID_WSCALE_L, ID_WSCALE,
-       ID_SCREEN_L, ID_SCREEN };
+       ID_SCREEN_L, ID_SCREEN, ID_DEV0 = 300, ID_KEYS0 = 310 };
 #define TIMER_PADS 1
 
-static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_pads, g_lang, g_wscale_c, g_screen_c;
+static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_lang, g_wscale_c, g_screen_c;
 static HFONT g_font, g_font_big, g_font_mono;
 static int g_dpi = 96;
 static int S(int v) { return MulDiv(v, g_dpi, 96); }
@@ -516,14 +602,79 @@ static void refresh(void)
     EnableWindow(g_lang, have_lang);
 }
 
-/* the joysticks, in the order the game's EnumDevices sees them */
-typedef struct { wchar_t names[8][MAX_PATH]; int n; } pad_list;
+/* ---------------------------------------------------------------- the players' devices */
+
+/* the joysticks, in the order the game's EnumDevices sees them, with their instance GUIDs */
+typedef struct { wchar_t names[8][MAX_PATH]; wchar_t guids[8][40]; GUID g[8]; int n; } pad_list;
+static pad_list g_padl;
+static IDirectInput7W *g_di;
+static HWND g_dev_c[NPLAYERS], g_keys_b[NPLAYERS];
+/* each combo item: the device kind and the gamepad (index into g_padl, -2 = the saved one, not connected) */
+static struct { int dev, pad; } g_item[NPLAYERS][16];
 
 static BOOL CALLBACK pad_cb(LPCDIDEVICEINSTANCEW d, LPVOID ctx)
 {
     pad_list *l = ctx;
-    if (l->n < 8) wcsncpy(l->names[l->n++], d->tszInstanceName[0] ? d->tszInstanceName : d->tszProductName, MAX_PATH - 1);
+    if (l->n < 8) {
+        wcsncpy(l->names[l->n], d->tszInstanceName[0] ? d->tszInstanceName : d->tszProductName, MAX_PATH - 1);
+        StringFromGUID2(&d->guidInstance, l->guids[l->n], 40);
+        l->g[l->n] = d->guidInstance;
+        l->n++;
+    }
     return DIENUM_CONTINUE;
+}
+
+/* player p's device combo, from g_pl[p] and the gamepads connected now */
+static void fill_dev_combo(int p)
+{
+    HWND c = g_dev_c[p];
+    player_cfg *pc = &g_pl[p];
+    SendMessageW(c, CB_RESETCONTENT, 0, 0);
+    int n = 0, sel = 0;
+    wchar_t row[MAX_PATH + 64];
+    if (p == 0) {
+        g_item[p][n].dev = DEV_DEFAULT; g_item[p][n++].pad = -1;
+        SendMessageW(c, CB_ADDSTRING, 0, (LPARAM)TR(S_DEV_P1_DEFAULT));
+        g_item[p][n].dev = DEV_KB; g_item[p][n++].pad = -1;
+        SendMessageW(c, CB_ADDSTRING, 0, (LPARAM)TR(S_DEV_KB_ONLY));
+        if (pc->dev == DEV_KB) sel = 1;
+    } else {
+        g_item[p][n].dev = DEV_NONE; g_item[p][n++].pad = -1;
+        SendMessageW(c, CB_ADDSTRING, 0, (LPARAM)TR(S_DEV_NONE));
+        g_item[p][n].dev = DEV_KB; g_item[p][n++].pad = -1;
+        SendMessageW(c, CB_ADDSTRING, 0, (LPARAM)TR(S_DEV_KB));
+        if (pc->dev == DEV_KB) sel = 1;
+    }
+    int found = 0;
+    for (int i = 0; i < g_padl.n && n < 15; i++) {
+        swprintf(row, MAX_PATH + 64, L"%ls%ls", TR(S_DEV_PAD), g_padl.names[i]);
+        if (pc->dev == DEV_PAD && _wcsicmp(pc->guid, g_padl.guids[i]) == 0) { sel = n; found = 1; }
+        g_item[p][n].dev = DEV_PAD; g_item[p][n++].pad = i;
+        SendMessageW(c, CB_ADDSTRING, 0, (LPARAM)row);
+    }
+    if (pc->dev == DEV_PAD && !found) {   /* the saved gamepad, unplugged: kept */
+        swprintf(row, MAX_PATH + 64, L"%ls%ls%ls", TR(S_DEV_PAD), pc->name, TR(S_DEV_GONE));
+        sel = n;
+        g_item[p][n].dev = DEV_PAD; g_item[p][n++].pad = -2;
+        SendMessageW(c, CB_ADDSTRING, 0, (LPARAM)row);
+    }
+    SendMessageW(c, CB_SETCURSEL, sel, 0);
+    if (g_keys_b[p] != NULL) EnableWindow(g_keys_b[p], pc->dev == DEV_KB || pc->dev == DEV_PAD);
+}
+
+static void dev_changed(int p)
+{
+    int k = (int)SendMessageW(g_dev_c[p], CB_GETCURSEL, 0, 0);
+    if (k < 0 || k >= 16) return;
+    player_cfg *pc = &g_pl[p];
+    pc->dev = g_item[p][k].dev;
+    int i = g_item[p][k].pad;
+    if (pc->dev == DEV_PAD && i >= 0) {
+        wcscpy(pc->guid, g_padl.guids[i]);
+        wcsncpy(pc->name, g_padl.names[i], MAX_PATH - 1);
+    }
+    if (g_keys_b[p] != NULL) EnableWindow(g_keys_b[p], pc->dev == DEV_KB || pc->dev == DEV_PAD);
+    settings_save();
 }
 
 static void list_pads(void)
@@ -531,29 +682,268 @@ static void list_pads(void)
     static const GUID IID_DI7W = { 0x9a4cb685, 0x236d, 0x11d3, { 0x8e, 0x9d, 0x00, 0xc0, 0x4f, 0x68, 0x44, 0xae } };
     typedef HRESULT (WINAPI *create_t)(HINSTANCE, DWORD, REFIID, LPVOID *, LPUNKNOWN);
     static create_t create;
-    static IDirectInput7W *di;
-    if (di == NULL) {
+    if (g_di == NULL) {
         HMODULE m = LoadLibraryW(L"dinput.dll");
         if (m != NULL) create = (create_t)(void *)GetProcAddress(m, "DirectInputCreateEx");
-        if (create == NULL || FAILED(create(GetModuleHandleW(NULL), 0x0700, &IID_DI7W, (LPVOID *)&di, NULL))) di = NULL;
+        if (create == NULL || FAILED(create(GetModuleHandleW(NULL), 0x0700, &IID_DI7W, (LPVOID *)&g_di, NULL))) g_di = NULL;
     }
     pad_list l;
     memset(&l, 0, sizeof l);
-    if (di != NULL) IDirectInput7_EnumDevices(di, DIDEVTYPE_JOYSTICK, pad_cb, &l, DIEDFL_ATTACHEDONLY);
+    if (g_di != NULL) IDirectInput7_EnumDevices(g_di, DIDEVTYPE_JOYSTICK, pad_cb, &l, DIEDFL_ATTACHEDONLY);
 
-    static wchar_t shown[2048];   /* "" = nothing listed yet; "-" = listed "no controller" */
-    wchar_t now[2048] = L"-";
-    for (int i = 0; i < l.n; i++) wcsncat(now, l.names[i], 2047 - wcslen(now)), wcsncat(now, L"|", 2047 - wcslen(now));
-    if (wcscmp(now, shown) == 0) return;
-    wcscpy(shown, now);
-    SendMessageW(g_pads, LB_RESETCONTENT, 0, 0);
-    if (l.n == 0) SendMessageW(g_pads, LB_ADDSTRING, 0, (LPARAM)TR(S_PAD_NONE));
-    for (int i = 0; i < l.n; i++) {
-        wchar_t row[MAX_PATH + 32];
-        if (i < 2) swprintf(row, MAX_PATH + 32, L"P%d:  %ls", i + 1, l.names[i]);
-        else swprintf(row, MAX_PATH + 32, L"—   %ls  (%ls)", l.names[i], TR(S_PAD_UNUSED));
-        SendMessageW(g_pads, LB_ADDSTRING, 0, (LPARAM)row);
+    static int listed;
+    if (listed && l.n == g_padl.n && memcmp(l.guids, g_padl.guids, sizeof l.guids) == 0) return;
+    g_padl = l;
+    if (!listed) {   /* first run without saved devices: player 2 = the 2nd gamepad else the keyboard (numpad),
+                      * player 3 = the 3rd gamepad else nobody */
+        listed = 1;
+        int changed = 0;
+        for (int p = 1; p < NPLAYERS; p++) {
+            if (g_pl[p].dev != DEV_UNSET) continue;
+            changed = 1;
+            if (l.n > p) {
+                g_pl[p].dev = DEV_PAD;
+                wcscpy(g_pl[p].guid, l.guids[p]);
+                wcsncpy(g_pl[p].name, l.names[p], MAX_PATH - 1);
+            } else g_pl[p].dev = p == 1 ? DEV_KB : DEV_NONE;
+        }
+        if (changed) settings_save();
     }
+    for (int p = 0; p < NPLAYERS; p++) if (g_dev_c[p] != NULL) fill_dev_combo(p);
+}
+
+/* coop-controls.ini in the game folder: what the mod reads (rhost's load_controls) */
+static void write_controls(void)
+{
+    wchar_t f[MAX_PATH], v[128], sec[8];
+    join(f, g_game_dir, L"coop-controls.ini");
+    DeleteFileW(f);
+    for (int p = 0; p < NPLAYERS; p++) {
+        const player_cfg *c = &g_pl[p];
+        int dev = c->dev == DEV_UNSET ? (p == 0 ? DEV_DEFAULT : DEV_NONE) : c->dev;
+        swprintf(sec, 8, L"p%d", p + 1);
+        WritePrivateProfileStringW(sec, L"keyboard", dev == DEV_DEFAULT || dev == DEV_KB ? L"1" : L"0", f);
+        WritePrivateProfileStringW(sec, L"pad", dev == DEV_DEFAULT || dev == DEV_PAD ? L"1" : L"0", f);
+        if (dev == DEV_DEFAULT) WritePrivateProfileStringW(sec, L"pad_index", L"0", f);
+        if (dev == DEV_PAD) {
+            WritePrivateProfileStringW(sec, L"pad_guid", c->guid, f);
+            WritePrivateProfileStringW(sec, L"pad_name", c->name, f);
+        }
+        if (p > 0) {
+            list_format(c->keys, v, 128);
+            WritePrivateProfileStringW(sec, L"keys", v, f);
+            list_format(c->buttons, v, 128);
+            WritePrivateProfileStringW(sec, L"buttons", v, f);
+        }
+    }
+}
+
+/* two players on one gamepad (player 1's default = the 1st one connected) */
+static int same_pad_twice(void)
+{
+    const wchar_t *g[NPLAYERS];
+    for (int p = 0; p < NPLAYERS; p++) {
+        g[p] = NULL;
+        if (g_pl[p].dev == DEV_PAD) g[p] = g_pl[p].guid;
+        else if (p == 0 && g_pl[p].dev == DEV_DEFAULT && g_padl.n > 0) g[p] = g_padl.guids[0];
+        for (int q = 0; q < p; q++) if (g[p] && g[q] && _wcsicmp(g[p], g[q]) == 0) return 1;
+    }
+    return 0;
+}
+
+/* ---------------------------------------------------------------- the "Keys..." window (players 2 / 3) */
+
+#define TIMER_CAPTURE 2
+static HWND g_kwin, g_kbtn[NACT];
+static int g_kp, g_kcap = -1;
+static uint8_t g_kdown[256];               /* keys / buttons held when the capture started (ignored) */
+static IDirectInputDevice7W *g_kdev;       /* the player's gamepad while the window is open */
+
+static void key_name(uint8_t dik, wchar_t *out, int n)
+{
+    if (dik == 0) { wcsncpy(out, TR(S_KEY_NONE), (size_t)n); return; }
+    LONG lp = (LONG)((dik & 0x7f) << 16) | ((dik & 0x80) ? (1L << 24) : 0);
+    if (!GetKeyNameTextW(lp, out, n)) swprintf(out, (size_t)n, L"0x%02X", dik);
+}
+
+static void keys_refresh(void)
+{
+    const player_cfg *c = &g_pl[g_kp];
+    for (int a = 0; a < NACT; a++) {
+        if (g_kbtn[a] == NULL) continue;
+        wchar_t t[64];
+        if (a == g_kcap) wcscpy(t, L"...");
+        else if (c->dev == DEV_PAD) swprintf(t, 64, TR(S_BUTTON_N), c->buttons[a] + 1);
+        else key_name(c->keys[a], t, 64);
+        SetWindowTextW(g_kbtn[a], t);
+    }
+}
+
+static int pad_buttons(uint8_t *b)   /* the open gamepad's 32 buttons now; 0 = not readable */
+{
+    DIJOYSTATE js;
+    if (g_kdev == NULL) return 0;
+    IDirectInputDevice7_Poll(g_kdev);
+    if (FAILED(IDirectInputDevice7_GetDeviceState(g_kdev, sizeof js, &js))) {
+        IDirectInputDevice7_Acquire(g_kdev);
+        return 0;
+    }
+    for (int i = 0; i < 32; i++) b[i] = (js.rgbButtons[i] & 0x80) != 0;
+    return 1;
+}
+
+static void keys_title(void)
+{
+    wchar_t t[128];
+    if (g_kcap >= 0) wcsncpy(t, TR(g_pl[g_kp].dev == DEV_PAD ? S_PRESS_BTN : S_PRESS_KEY), 127);
+    else swprintf(t, 128, TR(S_KEYS_TITLE), g_kp + 1);
+    SetWindowTextW(g_kwin, t);
+}
+
+static void capture_end(void)
+{
+    KillTimer(g_kwin, TIMER_CAPTURE);
+    g_kcap = -1;
+    keys_refresh();
+    keys_title();
+}
+
+static void capture_poll(void)
+{
+    player_cfg *c = &g_pl[g_kp];
+    if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { capture_end(); return; }
+    if (c->dev == DEV_PAD) {
+        uint8_t b[32];
+        if (!pad_buttons(b)) return;
+        for (int i = 0; i < 32; i++) {
+            if (b[i] && !g_kdown[i]) {
+                for (int a = 0; a < NACT; a++) if (a != g_kcap && c->buttons[a] == i && a >= 4) c->buttons[a] = c->buttons[g_kcap];
+                c->buttons[g_kcap] = (uint8_t)i;
+                capture_end();
+                settings_save();
+                return;
+            }
+            g_kdown[i] = b[i];
+        }
+        return;
+    }
+    for (int vk = 8; vk < 256; vk++) {
+        if (vk == VK_SHIFT || vk == VK_CONTROL || vk == VK_MENU || vk == VK_ESCAPE) continue;
+        int down = (GetAsyncKeyState(vk) & 0x8000) != 0;
+        if (down && !g_kdown[vk]) {
+            UINT sc = MapVirtualKeyW((UINT)vk, 4 /* MAPVK_VK_TO_VSC_EX */);
+            if ((sc & 0xff) == 0) continue;
+            uint8_t dik = (uint8_t)((sc & 0x7f) | ((sc & 0xff00) == 0xe000 ? 0x80 : 0));
+            for (int a = 0; a < NACT; a++) if (a != g_kcap && c->keys[a] == dik) c->keys[a] = c->keys[g_kcap];   /* swap */
+            c->keys[g_kcap] = dik;
+            capture_end();
+            settings_save();
+            return;
+        }
+        g_kdown[vk] = (uint8_t)down;
+    }
+}
+
+static void capture_start(int a)
+{
+    g_kcap = a;
+    memset(g_kdown, 0, sizeof g_kdown);
+    if (g_pl[g_kp].dev == DEV_PAD) pad_buttons(g_kdown);
+    else for (int vk = 8; vk < 256; vk++) g_kdown[vk] = (GetAsyncKeyState(vk) & 0x8000) != 0;
+    keys_refresh();
+    keys_title();
+    SetFocus(g_kwin);   /* a key must not press the focused button */
+    SetTimer(g_kwin, TIMER_CAPTURE, 30, NULL);
+}
+
+static LRESULT CALLBACK keys_proc(HWND w, UINT m, WPARAM wp, LPARAM lp)
+{
+    switch (m) {
+    case WM_COMMAND: {
+        int id = LOWORD(wp);
+        if (id >= 100 && id < 100 + NACT) capture_start(id - 100);
+        else if (id == 200) {   /* defaults */
+            memcpy(g_pl[g_kp].keys, DEF_KEYS[g_kp], NACT);
+            memcpy(g_pl[g_kp].buttons, DEF_BUTTONS, NACT);
+            settings_save();
+            keys_refresh();
+        } else if (id == 201) DestroyWindow(w);
+        return 0;
+    }
+    case WM_TIMER:
+        if (wp == TIMER_CAPTURE) capture_poll();
+        return 0;
+    case WM_CLOSE:
+        DestroyWindow(w);
+        return 0;
+    case WM_DESTROY:
+        KillTimer(w, TIMER_CAPTURE);
+        if (g_kdev != NULL) {
+            IDirectInputDevice7_Unacquire(g_kdev);
+            IDirectInputDevice7_Release(g_kdev);
+            g_kdev = NULL;
+        }
+        EnableWindow(g_wnd, TRUE);
+        SetForegroundWindow(g_wnd);
+        g_kwin = NULL;
+        return 0;
+    }
+    return DefWindowProcW(w, m, wp, lp);
+}
+
+static HWND kmk(const wchar_t *cls, const wchar_t *text, DWORD style, int x, int y, int w, int h, int id)
+{
+    HWND c = CreateWindowExW(0, cls, text, WS_CHILD | WS_VISIBLE | style, S(x), S(y), S(w), S(h), g_kwin,
+                             (HMENU)(INT_PTR)id, GetModuleHandleW(NULL), NULL);
+    SendMessageW(c, WM_SETFONT, (WPARAM)g_font, TRUE);
+    return c;
+}
+
+static void show_keys(int p)
+{
+    if (g_kwin != NULL) return;
+    player_cfg *c = &g_pl[p];
+    if (c->dev != DEV_KB && c->dev != DEV_PAD) return;
+    g_kp = p;
+    g_kcap = -1;
+    memset(g_kbtn, 0, sizeof g_kbtn);
+    if (c->dev == DEV_PAD && g_di != NULL) {   /* the gamepad, read while the window is open */
+        GUID g;
+        if (SUCCEEDED(CLSIDFromString(c->guid, &g)) &&
+            SUCCEEDED(IDirectInput7_CreateDeviceEx(g_di, &g, &IID_IDirectInputDevice7W, (LPVOID *)&g_kdev, NULL))) {
+            IDirectInputDevice7_SetDataFormat(g_kdev, &c_dfDIJoystick);
+            IDirectInputDevice7_SetCooperativeLevel(g_kdev, g_wnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+            IDirectInputDevice7_Acquire(g_kdev);
+        }
+    }
+    int first = c->dev == DEV_PAD ? 4 : 0, rows = NACT - first;
+    int h = 16 + (c->dev == DEV_PAD ? 26 : 0) + rows * 32 + 56;
+    RECT r = { 0, 0, S(420), S(h) };
+    DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU;
+    AdjustWindowRect(&r, style, FALSE);
+    wchar_t title[64];
+    swprintf(title, 64, TR(S_KEYS_TITLE), p + 1);
+    RECT mr;
+    GetWindowRect(g_wnd, &mr);
+    g_kwin = CreateWindowExW(WS_EX_DLGMODALFRAME, L"CoopSummonersKeys", title, style, mr.left + S(60), mr.top + S(80),
+                             r.right - r.left, r.bottom - r.top, g_wnd, NULL, GetModuleHandleW(NULL), NULL);
+    int y = 14;
+    if (c->dev == DEV_PAD) {
+        kmk(L"STATIC", TR(S_PAD_DIRS), 0, 16, y, 388, 20, 0);
+        y += 26;
+    }
+    for (int a = first; a < NACT; a++) {
+        kmk(L"STATIC", TR(S_ACT_0 + a), 0, 16, y + 5, 210, 20, 0);
+        g_kbtn[a] = kmk(L"BUTTON", L"", BS_PUSHBUTTON, 232, y, 172, 26, 100 + a);
+        y += 32;
+    }
+    y += 8;
+    kmk(L"STATIC", L"", 0, 16, y - 4, 388, 1, 0);
+    kmk(L"BUTTON", TR(S_DEFAULTS), BS_PUSHBUTTON, 16, y + 8, 120, 28, 200);
+    kmk(L"BUTTON", TR(S_OK_BTN), BS_DEFPUSHBUTTON, 284, y + 8, 120, 28, 201);
+    keys_refresh();
+    EnableWindow(g_wnd, FALSE);
+    ShowWindow(g_kwin, SW_SHOW);
 }
 
 static int ask(const wchar_t *text) { return MessageBoxW(g_wnd, text, TR(S_TITLE), MB_YESNO | MB_ICONQUESTION) == IDYES; }
@@ -723,6 +1113,8 @@ static void do_uninstall(void)
         refresh();
         return;
     }
+    join(p, g_game_dir, L"coop-controls.ini");
+    DeleteFileW(p);
     join(p, g_game_dir, L"coop.log");
     DeleteFileW(p);
     join(p, g_game_dir, L"lang.log");
@@ -752,7 +1144,9 @@ static void play(int coop)
     } else if (!confirm_version()) {
         return;
     }
+    if (same_pad_twice() && !ask(TR(S_ASK_SAME_PAD))) return;
     if (!auto_backup() && !ask(TR(S_ASK_NO_BACKUP))) return;
+    write_controls();   /* the players' devices and keys, for the mod */
     wchar_t exe[MAX_PATH], cmd[MAX_PATH + 192], ws[80] = L"";
     installed_path(exe);
     int pt = g_lang_pt > 0 && lang_available();
@@ -761,7 +1155,7 @@ static void play(int coop)
     wcscpy(ws, SCREEN_ARGS[g_screen]);
     if ((g_screen == SCREEN_WINDOW || g_screen == SCREEN_ASK) && g_wscale > 0)
         swprintf(ws + wcslen(ws), 80 - wcslen(ws), L" --window-scale %ls", WSCALE_INI[g_wscale]);
-    swprintf(cmd, MAX_PATH + 192, L"\"%ls\"%ls%ls%ls%ls", exe, coop ? L" --coop --coop-p2-wait" : L"", pt ? L" --lang pt-br" : L"",
+    swprintf(cmd, MAX_PATH + 192, L"\"%ls\"%ls%ls%ls%ls", exe, coop ? L" --coop --coop-wait" : L"", pt ? L" --lang pt-br" : L"",
              pt && g_lang_pt == 2 ? L" --lang-names original" : L"", ws);
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;
@@ -876,9 +1270,18 @@ static void build_ui(void)
     g_coop = mk(L"BUTTON", TR(S_COOP), BS_DEFPUSHBUTTON, X + (W - 12) / 2 + 12, y, (W - 12) / 2, 52, ID_COOP, g_font_big);
     y += 68;
     mk(L"STATIC", TR(S_PADS), 0, X, y, W, 20, ID_PADS_L, g_font);
-    y += 22;
-    g_pads = mk(L"LISTBOX", L"", WS_BORDER | LBS_NOSEL | LBS_NOINTEGRALHEIGHT, X, y, W, 70, ID_PADS, g_font);
-    y += 74;
+    y += 24;
+    for (int p = 0; p < NPLAYERS; p++) {   /* each player's device (+ keys for players 2 / 3) */
+        wchar_t lab[32];
+        swprintf(lab, 32, TR(S_PLAYER), p + 1);
+        mk(L"STATIC", lab, 0, X, y + 5, 90, 20, 0, g_font);
+        g_dev_c[p] = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, X + 96, y + 1, p ? 330 : 452, 300,
+                        ID_DEV0 + p, g_font);
+        SendMessageW(g_dev_c[p], CB_SETDROPPEDWIDTH, S(452), 0);
+        if (p > 0) g_keys_b[p] = mk(L"BUTTON", TR(S_KEYS_BTN), BS_PUSHBUTTON, X + 432, y, 116, 27, ID_KEYS0 + p, g_font);
+        fill_dev_combo(p);
+        y += 31;
+    }
     mk(L"STATIC", TR(S_PADS_NOTE), 0, X, y, W, 36, ID_PADS_NOTE, g_font);
     y += 42;
     mk(L"BUTTON", TR(S_CONTROLS), BS_PUSHBUTTON, X, y, 130, 28, ID_CONTROLS, g_font);
@@ -933,6 +1336,12 @@ static LRESULT CALLBACK wnd_proc(HWND w, UINT m, WPARAM wp, LPARAM lp)
                 g_lang_pt = (int)SendMessageW(g_lang, CB_GETCURSEL, 0, 0);
                 settings_save();
             }
+            break;
+        case ID_DEV0: case ID_DEV0 + 1: case ID_DEV0 + 2:
+            if (HIWORD(wp) == CBN_SELCHANGE) dev_changed(LOWORD(wp) - ID_DEV0);
+            break;
+        case ID_KEYS0 + 1: case ID_KEYS0 + 2:
+            show_keys(LOWORD(wp) - ID_KEYS0);
             break;
         case ID_SCREEN:
             if (HIWORD(wp) == CBN_SELCHANGE) {
@@ -1008,12 +1417,15 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR cmdline, int show)
     wc.hIcon = LoadIconW(inst, MAKEINTRESOURCEW(1));
     wc.lpszClassName = L"CoopSummonersLauncher";
     RegisterClassW(&wc);
+    wc.lpfnWndProc = keys_proc;
+    wc.lpszClassName = L"CoopSummonersKeys";
+    RegisterClassW(&wc);
     wc.lpfnWndProc = help_proc;
     wc.lpszClassName = L"CoopSummonersHelp";
     wc.hbrBackground = GetSysColorBrush(COLOR_WINDOW);
     RegisterClassW(&wc);
 
-    RECT r = { 0, 0, S(580), S(574) };
+    RECT r = { 0, 0, S(580), S(592) };
     DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
     AdjustWindowRect(&r, style, FALSE);
     g_wnd = CreateWindowExW(0, L"CoopSummonersLauncher", TR(S_TITLE), style,

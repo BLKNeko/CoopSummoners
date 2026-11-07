@@ -12,7 +12,7 @@ mkdir -p "$OUT"
 (cd "$SRC" && i686-w64-mingw32-windres launcher.rc -O coff -o "$OUT/launcher.res")
 i686-w64-mingw32-gcc -std=gnu11 -O2 -Wall -Wextra -municode -mwindows -static -s \
     -o "$OUT/CoopSummoners.exe" "$SRC/launcher.c" "$OUT/launcher.res" \
-    -lcomctl32 -lshell32 -lole32 -luuid
+    -lcomctl32 -lshell32 -lole32 -luuid -ldinput -ldxguid
 echo "built $OUT/CoopSummoners.exe"
 
 [ "${1:-}" = "--package" ] || exit 0
