@@ -121,6 +121,9 @@ void coop_test_drop(int32_t who);
 /* test only (rhost --coop-test-leave F): at F (on = 1) the leader leaves the party while every other
  * member is not targetable (body inactive: no normal new leader); at F+60 (on = 0) their bodies return */
 void coop_test_leave(int32_t on);
+/* test only (rhost --coop-test-item F): drop an item (the item table's first) at the leader, as a foe's
+ * drop does (pickup_spawn 0x556990); returns its id, 0 = none */
+int32_t coop_test_item(void);
 
 /* The markers, drawn by the host onto the finished back buffer right before each Flip (an overlay:
  * no game state is read back or changed).  A "P2" (blue) / "P3" (purple) badge with a pointer above

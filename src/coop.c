@@ -7,8 +7,10 @@
 #include <string.h>
 
 #include "camera_follow.h"
+#include "char_hit.h"
 #include "char_state.h"
 #include "engine_calls.h"
+#include "entity_move.h"
 #include "input.h"
 #include "party_member.h"
 #include "room_load.h"
@@ -554,13 +556,25 @@ void coop_tick(wl_room *r)
  * jump / use and goes after LIGHT_IDLE_MS without input.  It takes the coins it touches (the gold as the
  * party's own pickup takes it, room_pickups 0x59ca90: the cap, the money total, the coin's "taken" state 3,
  * so the coin's own sound and rise play), never items (the leader's only).  Hold attack: the coins near it
- * fly to it (the magnet); jump / use: a ring where it is (a ping for the others).  Each player's coins
- * this session are counted under the light.  World units are px x 100. */
+ * fly to it (the magnet).  Hold jump: the first item on the ground it reaches hangs under it until jump is let go (the
+ * leader takes it on touch, as always; let go, it falls); a jump press with no item near, or use: a ring where it is
+ * (a ping for the others).  Each player's coins this session are counted under the light.  World units are
+ * px x 100.
+ *
+ * A dropped coin / item lives on its body's phase (body +0x58, 0x46e190): 0 / 1 in the air (gravity, bounces),
+ * 2 on the ground counting +0x5c to 500 updates, 3 blinking (entity +0xf4 alpha) until released 120 updates
+ * later.  Pulled / carried ones go back to phase 1 with the count cleared and full alpha: they fall when let
+ * go and their time on the ground starts again.  A carried item moves through the game's own movers
+ * (0x54db10 / 0x54e5c0, as a dropped pickup falls): walls and floors stop it, and stuck LIGHT_SNAG behind the
+ * light it is let go where it is (never inside a wall). */
 
 #define LIGHT_IDLE_MS   10000
 #define LIGHT_SPEED     450      /* top speed per update */
 #define LIGHT_ACCEL     70
 #define LIGHT_R         700      /* the reach around its centre */
+#define LIGHT_GRAB_R    1400     /* jump picks an item up this close (beyond its half size) */
+#define LIGHT_DRAG_STEP 900      /* a carried item's step per update (it catches up with the light) */
+#define LIGHT_SNAG      4800     /* a carried item stuck this far behind (a wall, a floor) is let go */
 #define LIGHT_MARGIN    1000     /* kept this far inside the view */
 #define LIGHT_MAG_R     9000     /* the magnet's range */
 #define LIGHT_MAG_STEP  600      /* a pulled coin's step per update */
@@ -570,18 +584,19 @@ void coop_tick(wl_room *r)
 #define LIGHT_PINGS     3
 
 typedef struct coop_light {
-    int      on;
-    int32_t  x, y, vx, vy;
-    uint32_t last_input, seen;      /* the last input / the last update (drawn only while updated) */
-    int      prev_ping, magnet;
-    uint32_t coins;                 /* this session's coins */
-    int32_t  gain;
-    uint32_t gain_at;
-    int32_t  tx[LIGHT_TRAIL], ty[LIGHT_TRAIL];
-    int      tn, tk;
-    int32_t  px[LIGHT_PINGS], py[LIGHT_PINGS];
-    uint32_t pat[LIGHT_PINGS];
-    int      pk;
+    int        on;
+    int32_t    x, y, vx, vy;
+    uint32_t   last_input, seen;    /* the last input / the last update (drawn only while updated) */
+    int        prev_jump, prev_use, magnet;
+    wl_entity *drag;                /* the item it carries, or NULL */
+    uint32_t   coins;               /* this session's coins */
+    int32_t    gain;
+    uint32_t   gain_at;
+    int32_t    tx[LIGHT_TRAIL], ty[LIGHT_TRAIL];
+    int        tn, tk;
+    int32_t    px[LIGHT_PINGS], py[LIGHT_PINGS];
+    uint32_t   pat[LIGHT_PINGS];
+    int        pk;
 } coop_light;
 
 static coop_light g_light[COOP_NIN];
@@ -623,16 +638,35 @@ static void light_spawn(coop_light *L, const wl_room *r, const camera_view *v)
     L->tn = L->tk = 0;
 }
 
+/* a coin (kind 1) / item (2) still there to take (room_pickups' rule: not in the air, taken ...) */
+static int band_lying(const wl_entity *e, int32_t kind)
+{
+    if (e == NULL || e->alive == 0 || e->body == NULL || get32(e, 0x1fc) != kind) return 0;
+    int32_t st = get32(e, 0x204);
+    if (st > 0 && st <= 4) return 0;
+    return e->body->f58 < 100;   /* 100+: a taken pickup's rise */
+}
+
+/* moved by the light: back in the air (falls when let go), its time on the ground restarted, not blinking */
+static void band_lift(wl_entity *e)
+{
+    wl_body *b = e->body;
+    if (b->f58 >= 2) {
+        if (b->f58 == 3) e->tint_f4 = get32(g_eng.sys, 10228);   /* the blink's full alpha (0x46e190 case 3) */
+        b->f58 = 1;
+    }
+    b->act_ctr = 0;
+    b->vvel = 0;
+    b->vel_x = 0;
+}
+
 /* the coins the light reaches (and, with the magnet, pulls) */
 static void light_coins(wl_room *r, coop_light *L, int p, uint32_t now)
 {
     wl_world *wd = *g_eng.world;
     for (int k = 0; k < 96; k++) {
         wl_entity *e = wd->band96[k];
-        if (e == NULL || e->alive == 0 || e->body == NULL) continue;
-        int32_t st = get32(e, 0x204);
-        if (st > 0 && st <= 4) continue;            /* in the air / taken / ... (room_pickups' own rule) */
-        if (get32(e, 0x1fc) != 1 || get32(e, 0x200) <= 0) continue;   /* coins only */
+        if (!band_lying(e, 1) || get32(e, 0x200) <= 0) continue;   /* coins only */
         wl_body *b = e->body;
         int32_t dx = L->x - (b->x + b->w / 2), dy = L->y - (b->y + b->h / 2);
         if (L->magnet && dx > -LIGHT_MAG_R && dx < LIGHT_MAG_R && dy > -LIGHT_MAG_R && dy < LIGHT_MAG_R) {
@@ -642,8 +676,7 @@ static void light_coins(wl_room *r, coop_light *L, int p, uint32_t now)
                 int32_t sy = d <= LIGHT_MAG_STEP ? dy : (int32_t)((int64_t)dy * LIGHT_MAG_STEP / d);
                 b->x += sx;
                 b->y += sy;
-                b->vvel = 0;
-                b->vel_x = 0;
+                band_lift(e);
                 dx -= sx;
                 dy -= sy;
             }
@@ -666,6 +699,44 @@ static void light_coins(wl_room *r, coop_light *L, int p, uint32_t now)
     }
 }
 
+/* the nearest item on the ground within reach that no other light carries, or NULL */
+static wl_entity *light_item_near(const coop_light *L)
+{
+    wl_world *wd = *g_eng.world;
+    wl_entity *best = NULL;
+    int64_t bd = 0;
+    for (int k = 0; k < 96; k++) {
+        wl_entity *e = wd->band96[k];
+        if (!band_lying(e, 2)) continue;
+        int taken = 0;
+        for (int q = 1; q < COOP_NIN; q++) taken |= g_light[q].drag == e;
+        if (taken) continue;
+        const wl_body *b = e->body;
+        int32_t dx = L->x - (b->x + b->w / 2), dy = L->y - (b->y + b->h / 2);
+        if (dx <= -(b->w / 2 + LIGHT_GRAB_R) || dx >= b->w / 2 + LIGHT_GRAB_R) continue;
+        if (dy <= -(b->h / 2 + LIGHT_GRAB_R) || dy >= b->h / 2 + LIGHT_GRAB_R) continue;
+        int64_t d = (int64_t)dx * dx + (int64_t)dy * dy;
+        if (best == NULL || d < bd) { best = e; bd = d; }
+    }
+    return best;
+}
+
+static void light_ping(coop_light *L, uint32_t now)
+{
+    L->px[L->pk] = L->x;
+    L->py[L->pk] = L->y;
+    L->pat[L->pk] = now;
+    L->pk = (L->pk + 1) % LIGHT_PINGS;
+}
+
+static void light_drop(coop_light *L, int p, const char *why)
+{
+    if (L->drag == NULL) return;
+    static int logged;
+    if (logged++ < 40) coop_log("player %d's light %s item %d", p + 1, why, (int)get32(L->drag, 0x208));
+    L->drag = NULL;
+}
+
 void coop_light_tick(wl_room *r)
 {
     if (!g_coop || r == NULL || r->nin < 2 || r->in == NULL || g_eng.world == NULL || *g_eng.world == NULL) return;
@@ -676,16 +747,23 @@ void coop_light_tick(wl_room *r)
     for (int p = 1; p < COOP_NIN && p < r->nin; p++) {
         coop_light *L = &g_light[p];
         const uint8_t *h = g_held[p];
-        int ping = h[COOP_A_JUMP] || h[COOP_A_USE];
-        if (!ctl || played(r, p) != NULL) { L->on = 0; L->prev_ping = ping; continue; }
-        int any = h[COOP_A_UP] || h[COOP_A_DOWN] || h[COOP_A_LEFT] || h[COOP_A_RIGHT] || h[COOP_A_ATTACK] || ping;
+        int jump = h[COOP_A_JUMP], use = h[COOP_A_USE];
+        if (!ctl || played(r, p) != NULL) {
+            light_drop(L, p, "dropped");
+            L->on = 0;
+            L->prev_jump = jump;
+            L->prev_use = use;
+            continue;
+        }
+        int any = h[COOP_A_UP] || h[COOP_A_DOWN] || h[COOP_A_LEFT] || h[COOP_A_RIGHT] || h[COOP_A_ATTACK] || jump || use;
         if (!L->on) {
-            if (!any) { L->prev_ping = ping; continue; }
+            if (!any) { L->prev_jump = jump; L->prev_use = use; continue; }
             light_spawn(L, r, v);
-            L->prev_ping = ping;   /* the press that brought it is not a ping */
+            L->prev_jump = jump;   /* the press that brought it does nothing else */
+            L->prev_use = use;
         }
         if (any) L->last_input = now;
-        if ((uint32_t)(now - L->last_input) > LIGHT_IDLE_MS) { L->on = 0; continue; }
+        if ((uint32_t)(now - L->last_input) > LIGHT_IDLE_MS) { light_drop(L, p, "dropped"); L->on = 0; continue; }
         int dx = (int)h[COOP_A_RIGHT] - (int)h[COOP_A_LEFT], dy = (int)h[COOP_A_DOWN] - (int)h[COOP_A_UP];
         int32_t max = dx != 0 && dy != 0 ? LIGHT_SPEED * 7 / 10 : LIGHT_SPEED;
         light_axis(&L->vx, dx, max);
@@ -695,6 +773,7 @@ void coop_light_tick(wl_room *r)
         int32_t x0 = v->cur_x + LIGHT_MARGIN, x1 = v->cur_x + v->vp_w - LIGHT_MARGIN;
         int32_t y0 = v->cur_y + 100 * v->y_off + LIGHT_MARGIN, y1 = y0 + v->vp_h - 2 * LIGHT_MARGIN;
         if (L->x < x0 - 32000 || L->x > x1 + 32000 || L->y < y0 - 32000 || L->y > y1 + 32000) {
+            light_drop(L, p, "dropped");
             light_spawn(L, r, v);   /* the view jumped (a new room): back to the leader */
         }
         if (L->x < x0) { L->x = x0; L->vx = 0; }
@@ -708,13 +787,44 @@ void coop_light_tick(wl_room *r)
             L->ty[0] = L->y;
             if (L->tn < LIGHT_TRAIL) L->tn++;
         }
-        if (ping && !L->prev_ping) {
-            L->px[L->pk] = L->x;
-            L->py[L->pk] = L->y;
-            L->pat[L->pk] = now;
-            L->pk = (L->pk + 1) % LIGHT_PINGS;
+        if (L->drag != NULL && !band_lying(L->drag, 2)) {   /* taken (the leader touched it) or gone */
+            static int logged;
+            if (logged++ < 40) coop_log("player %d's light: its item was taken", p + 1);
+            L->drag = NULL;
         }
-        L->prev_ping = ping;
+        if (jump && L->drag == NULL) {   /* held: the first item it reaches (a press with none near pings) */
+            wl_entity *e = light_item_near(L);
+            if (e != NULL) {
+                L->drag = e;
+                static int logged;
+                if (logged++ < 40) coop_log("player %d's light picked up item %d", p + 1, (int)get32(e, 0x208));
+            } else if (!L->prev_jump) {
+                light_ping(L, now);
+            }
+        }
+        if (!jump) light_drop(L, p, "let go of");
+        if (use && !L->prev_use) light_ping(L, now);
+        L->prev_jump = jump;
+        L->prev_use = use;
+        if (L->drag != NULL) {   /* pulled under the light through the game's own movers: walls and floors stop it */
+            wl_body *b = L->drag->body;
+            int32_t tx = L->x - b->w / 2, ty = L->y + 1100;   /* its top just under the glow */
+            int32_t mx = tx - b->x, my = ty - b->y;
+            if (mx > LIGHT_DRAG_STEP) mx = LIGHT_DRAG_STEP;
+            if (mx < -LIGHT_DRAG_STEP) mx = -LIGHT_DRAG_STEP;
+            if (my > LIGHT_DRAG_STEP) my = LIGHT_DRAG_STEP;
+            if (my < -LIGHT_DRAG_STEP) my = -LIGHT_DRAG_STEP;
+            if (mx != 0) entity_move_horizontal(L->drag, b, mx, 1, 1, 0, 0, 0);
+            if (my != 0) {
+                int32_t ny = b->y;
+                entity_move_vertical(L->drag, b, my, 1, 0, &ny, NULL);   /* down through one-way floors */
+                b->y = ny;
+            }
+            band_lift(L->drag);
+            int32_t ex = tx - b->x, ey = ty - b->y;
+            if (ex > LIGHT_SNAG || ex < -LIGHT_SNAG || ey > LIGHT_SNAG || ey < -LIGHT_SNAG)
+                light_drop(L, p, "snagged (wall / floor), dropped");
+        }
         L->magnet = h[COOP_A_ATTACK];
         light_coins(r, L, p, now);
         L->seen = now;
@@ -748,12 +858,20 @@ void coop_status(char *buf, size_t n)
     char l[COOP_NIN][64];
     for (int p = 1; p < COOP_NIN; p++) {
         const coop_light *L = &g_light[p];
-        if (L->on) snprintf(l[p], sizeof l[p], " l%d=%d,%d%s c%u", p + 1, (int)L->x, (int)L->y, L->magnet ? " mag" : "", L->coins);
+        if (L->on) snprintf(l[p], sizeof l[p], " l%d=%d,%d%s%s c%u", p + 1, (int)L->x, (int)L->y, L->magnet ? " mag" : "", L->drag ? " drag" : "", L->coins);
         else if (L->coins) snprintf(l[p], sizeof l[p], " l%d- c%u", p + 1, L->coins);
         else l[p][0] = 0;
     }
-    snprintf(buf, n, " coop[nin=%u act=%d p1ctl=%d p2out=%d lead=%s p2=%s p3out=%d p3=%s gold=%d%s%s]", (unsigned)r->nin,
-             nact, p1_in_control(r), g_out[1], a, b[1], g_out[2], b[2], (int)get32(r, 0x4014), l[1], l[2]);
+    char it[64] = "";   /* the first item lying around: where, its body phase, its state */
+    for (int k = 0; k < 96; k++) {
+        const wl_entity *e = (*g_eng.world)->band96[k];
+        if (e == NULL || e->alive == 0 || e->body == NULL || get32(e, 0x1fc) != 2) continue;
+        snprintf(it, sizeof it, " item=%d,%d/ph%d/st%d", (int)e->body->x, (int)e->body->y, (int)e->body->f58,
+                 (int)get32(e, 0x204));
+        break;
+    }
+    snprintf(buf, n, " coop[nin=%u act=%d p1ctl=%d p2out=%d lead=%s p2=%s p3out=%d p3=%s gold=%d%s%s%s]", (unsigned)r->nin,
+             nact, p1_in_control(r), g_out[1], a, b[1], g_out[2], b[2], (int)get32(r, 0x4014), l[1], l[2], it);
 }
 
 void coop_filter_cmd(wl_char *c)
@@ -805,6 +923,18 @@ void coop_test_drop(int32_t who)
 {
     const wl_pslot *s = test_slot(who);
     if (s != NULL && s->ch != NULL && s->ch->base.body != NULL) s->ch->base.body->y = 50000000;
+}
+
+int32_t coop_test_item(void)
+{
+    if (!g_coop || g_eng.world == NULL || *g_eng.world == NULL || (*g_eng.world)->room == NULL) return 0;
+    const wl_pslot *ld = (*g_eng.world)->room->leader;
+    if (ld == NULL || ld->ch == NULL || ld->ch->base.body == NULL) return 0;
+    int32_t item = get32(g_eng.data(0x6c0cd0u), 0);   /* the item table's first row (736-byte rows, key first) */
+    if (item == 0) return 0;
+    wl_body at = *ld->ch->base.body;
+    if (g_light[1].on) { at.x = g_light[1].x; at.y = g_light[1].y; at.w = at.h = 0; }   /* at player 2's light */
+    return pickup_spawn(100162, &at, item) != NULL ? item : 0;
 }
 
 void coop_test_leave(int32_t on)
@@ -1113,6 +1243,12 @@ static void ov_lights(const ov_surf *s)
             }
         }
         if (!L->on) continue;
+        if (L->drag != NULL && L->drag->body != NULL) {   /* the carried item: a glowing ring around it */
+            const wl_body *db = L->drag->body;
+            view_project(v, db->x + db->w / 2, db->y + db->h / 2, 0, 0, 0, 0, &x, &y, 0);
+            ov_ring(s, x, y, db->w / 200 + 5, 2, cr, cg, cb, 200);
+            ov_ring(s, x, y, db->w / 200 + 5, 0, 255, 255, 255, 220);
+        }
         for (int k = L->tn - 1; k >= 1; k--) {   /* the trail */
             view_project(v, L->tx[k], L->ty[k], 0, 0, 0, 0, &x, &y, 0);
             ov_glow(s, x, y, 7 - k / 2, cr, cg, cb, 200 - k * 22);
@@ -1146,7 +1282,7 @@ static void ov_lights(const ov_surf *s)
         uint32_t edge = ov_rgb(s, 16, 24, 48), ink = ov_rgb(s, 255, 255, 255);
         char t[16];
         snprintf(t, sizeof t, "%u", L->coins);
-        ov_text_outlined(s, t, x - ov_text_w(t, 1) / 2, y + 18, edge, ov_rgb(s, 255, 220, 80));   /* coin gold */
+        ov_text_outlined(s, t, x - ov_text_w(t, 1) / 2, L->drag != NULL ? y - 26 : y + 18, edge, ov_rgb(s, 255, 220, 80));   /* coin gold */
         uint32_t age = now - L->gain_at;
         if (L->gain > 0 && age < LIGHT_GAIN_MS) {   /* the coins just taken, rising */
             snprintf(t, sizeof t, "+%d", (int)L->gain);

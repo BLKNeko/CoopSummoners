@@ -108,6 +108,7 @@ static int g_n_test_hp;
 static struct { uint32_t frame; int32_t who; } g_test_drop[8];     /* --coop-test-drop F:WHO (test only) */
 static int g_n_test_drop;
 static uint32_t g_test_leave;                                         /* --coop-test-leave F (test only) */
+static uint32_t g_test_item[4]; static int g_ntest_item;               /* --coop-test-item F (test only, up to 4) */
 static uint32_t g_test_crash;                                         /* --test-crash F: a NULL write (test only) */
 uint32_t RT_TEXT_LO, RT_TEXT_SZ, RT_DATA_LO, RT_DATA_HI, RT_IMG_HI;
 
@@ -1340,6 +1341,7 @@ static void __cdecl pre_flip(void)
             rh_log("coop-test-drop frame %u who %d\n", g_frame, g_test_drop[i].who);
         }
     if (g_test_crash && g_frame == g_test_crash) { rh_log("test-crash frame %u\n", g_frame); *(volatile int *)(uintptr_t)8 = 1; }
+    for (int ti = 0; ti < g_ntest_item; ti++) if (g_frame == g_test_item[ti]) rh_log("coop-test-item frame %u item %d\n", g_frame, (int)coop_test_item());
     if (g_test_leave && (g_frame == g_test_leave || g_frame == g_test_leave + 60)) {
         coop_test_leave(g_frame == g_test_leave);
         rh_log("coop-test-leave frame %u %s\n", g_frame, g_frame == g_test_leave ? "leader leaves" : "bodies restored");
@@ -1574,6 +1576,7 @@ static void parse(int argc, char **argv)
                        &g_test_hp[g_n_test_hp].hp) == 3) g_n_test_hp++;
         }
         else if (!strcmp(a, "--coop-test-leave")) g_test_leave = strtoul(ARG(), 0, 0);   /* FRAME */
+        else if (!strcmp(a, "--coop-test-item")) { uint32_t f = strtoul(ARG(), 0, 0); if (g_ntest_item < 4) g_test_item[g_ntest_item++] = f; }   /* FRAME */
         else if (!strcmp(a, "--test-crash")) g_test_crash = strtoul(ARG(), 0, 0);        /* FRAME */
         else if (!strcmp(a, "--coop-wait") || !strcmp(a, "--coop-p2-wait")) coop_wait();   /* players 2 / 3 start out */
         else if (!strcmp(a, "--controls")) g_controls_file = ARG();   /* the players' devices / keys (ini) */

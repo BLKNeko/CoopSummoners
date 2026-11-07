@@ -72,3 +72,14 @@ f4740-4800 while it waits (`--controls <local T9 controls.ini>`): purple light `
 at f4900 when P3 takes Sana; coop.log equal to T9's — PASS (shots checked). T1-T7 equal the previous
 build in frame / tick / rng / pixels (no light there: the out players press only switch); the 10
 non-co-op scenarios equal upstream.
+
+**Carrying items (2026-11-06, later):** `L3-drag` = `T2-p1-lone` (Enter at f4500 dropped) + player 2's
+numpad while out; run with `--coop-wait --log-every 10 --coop-test-item 4440 --coop-test-item 4800`
+(test only: an item, the item table's first (110010), dropped at player 2's light through pickup_spawn).
+Item 1 bounces to 69651,54400 (phase 2 at f4510); 2 held f4540-4700 (the press pings: nothing near),
+4 f4560-4620: the light reaches it at f4575 ("picked up item 110010"), pulls it along the floor (y stays
+54400: the game's movers) into the leader, who takes it at f4590 (phase 100 / state 3, "its item was
+taken"). Item 2 lands at 55816,54400 (f4880); 2 held f4890-4990, 6 f4890-4903 picks it up, 8
+f4930-4960 lifts it to 42500 (shot f4950: the chest under the light inside the ring, the counter above);
+let go at f4990 it falls, bounces and lies at 54400 (phase 2, f5050) — PASS. Not covered: an item
+snagged on a wall (dropped where it is).
