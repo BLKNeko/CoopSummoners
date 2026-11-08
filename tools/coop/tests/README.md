@@ -102,3 +102,8 @@ f4550 -> back to 50010; shots f4420 / f4510: the blue turning sight on Arche / o
 f3950 -> `coop.log` "camera follows player 2", "CAMERA P2" notice, the view follows Sana up the stairs with a
 gold P1 badge on Arche (shot f4200); P1's Backspace f4250 -> "camera follows player 1" (shot f4300). Non-co-op
 10 scenarios equal `gate-upstream`; T1-T7 equal the previous build.
+Camera follow-up (2026-11-08): the camera's gamepad default is RT (`buttons` value 32 = the Z axis below -500;
+33 = LT), not testable in rhost (no joysticks). A fall moves it on: same save, P2's numpad - f3950 (camera P2),
+`--coop-test-hp 4100:1:0` -> `coop.log` "camera follows player 1 (player 2 fell)", pink "CAMERA P1" (shot f4120);
+P1's Backspace f4250 -> "camera follows player 2" and it stays on the fallen Sana (shot f4270). Non-co-op 10 equal
+`gate-upstream`; T1-T7 equal the previous build.

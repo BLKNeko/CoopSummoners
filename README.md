@@ -87,13 +87,13 @@ with **Keys...**.
 | Use / talk | game setting | numpad **3** | **P** | B |
 | Skill modifier | game setting | numpad **0** | **Y** | LB |
 | Switch | **Enter** | numpad **+** | **H** | Y |
-| Camera | **Backspace** (or RB) | numpad **-** | **N** | RB |
+| Camera | **Backspace** (or RT) | numpad **-** | **N** | RT |
 
 Player 1 uses the game's own key setup (set it in the game's options).
 
-**Camera:** any player presses *Camera* and the camera follows the next player (1 → 2 → 3 → 1). It goes back to player 1 in cutscenes, and when the player it follows leaves.
+**Camera:** any player presses *Camera* and the camera follows the next player (1 → 2 → 3 → 1). If the player it follows falls in battle, it moves on to the next player still standing (you can still pick the fallen one by hand). It goes back to player 1 in cutscenes, and when the player it follows leaves.
 
-**Support spells** (Sana's shield, and the like): hold attack to cast, and tap **up / down** to pick which ally it goes to. A turning sight in your colour marks the ally it will reach. (Healing spells pick the most hurt ally on their own, as in the base game.)
+**Support spells** (Sana's shield, and the like): hold attack to cast, and tap **up / down** to pick which ally it goes to. A turning sight in your colour (P1 pink, P2 blue, P3 purple) marks the ally it will reach. (Healing spells pick the most hurt ally on their own, as in the base game.)
 
 ### The switch button
 
