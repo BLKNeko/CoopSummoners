@@ -87,8 +87,13 @@ with **Keys...**.
 | Use / talk | game setting | numpad **3** | **P** | B |
 | Skill modifier | game setting | numpad **0** | **Y** | LB |
 | Switch | **Enter** | numpad **+** | **H** | Y |
+| Camera | **Backspace** (or RB) | numpad **-** | **N** | RB |
 
 Player 1 uses the game's own key setup (set it in the game's options).
+
+**Camera:** any player presses *Camera* and the camera follows the next player (1 → 2 → 3 → 1). It goes back to player 1 in cutscenes, and when the player it follows leaves.
+
+**Support spells** (Sana's shield, and the like): hold attack to cast, and tap **up / down** to pick which ally it goes to. A turning sight in your colour marks the ally it will reach. (Healing spells pick the most hurt ally on their own, as in the base game.)
 
 ### The switch button
 
@@ -117,7 +122,7 @@ The light goes away after 10 s without input. The number under it counts the coi
 
 ## Good to know
 
-- **Player 1 is always the leader:** the camera follows them, and only they talk to people,
+- **Player 1 is always the leader:** the camera follows them (unless someone presses *Camera*), and only they talk to people,
   open menus and read signs.
 - During **cutscenes**, the AI plays everyone's characters for a moment, then gives them back.
 - A character at **0 HP** stays with its player: they can walk and jump but not attack until
@@ -132,7 +137,7 @@ The light goes away after 10 s without input. The number under it counts the coi
 
 ### Known limits
 
-- One camera, following player 1. Players 2 and 3 can walk off screen.
+- One camera, following one player at a time. The others can walk off screen (the edge arrows help).
 - Three players at most (the party has three members).
 - Not fully tested yet: every cutscene, streaming over Parsec.
 
@@ -407,9 +412,9 @@ producers, from each player's keyboard keys or own gamepad as `coop-controls.ini
 
 | File | What it does |
 |---|---|
-| `src/coop.c`, `src/coop.h` | Everything co-op: players 2 / 3's input (keys, gamepads), attach / release, the switch rules, the fallen-character filter, the spell panel choice, the lights (coins, magnet, carrying items, the wave, ping), the P2 / P3 markers and notices. |
+| `src/coop.c`, `src/coop.h` | Everything co-op: players 2 / 3's input (keys, gamepads), attach / release, the switch rules, the fallen-character filter, the spell panel choice, the lights (coins, magnet, carrying items, the wave, ping), the support-spell sight, the camera key, the P1 / P2 / P3 markers and notices. |
 | `src/scene_loop.c` | Creates the extra input managers when co-op is on. |
-| `src/room_loop.c` | Feeds players 2 / 3 (`coop_produce`); runs `coop_tick`; filters a fallen player's commands. |
+| `src/room_loop.c`, `src/room_load.c` | Feed players 2 / 3 (`coop_produce`); run `coop_tick`; filter a fallen player's commands; the camera follows `coop_camera_char`. |
 | `src/input_dev.c` | Gamepad re-acquire after hot-plug (co-op only); player 1's gamepad from the launcher's choice. |
 | `src/render_draw.c` | The spell panel can show player 2's caster. |
 | `src/char_state.c` | NULL guard in `char_add_hp` (a fallen player 2 falling into a pit crashed). |

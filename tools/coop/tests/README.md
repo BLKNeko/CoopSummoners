@@ -93,3 +93,12 @@ fighting the leader; 1 tapped f23705-23710 (20 s of game time = ~1250 frames aft
 roll moves ±1 at these sizes; the leader's own hit at f23709 took 5, as estimated). Lights tap / hold:
 `L1-light` (attack held = the magnet) unchanged; T1-T7 equal the previous build; the 10 non-co-op scenarios
 equal upstream.
+
+**Spell sight + camera (2026-11-08):** run on the owner's save (slot 2: Arche + Sana LV4, Sana has the
+shield 20102, `aim` = 1) — not committed (a personal save). Load: Enter f2970, Down f3070, Enter f3110. P2
+holds 1 (attack) f3950-4250 = Heal Water (20101, aim 0: no sight, the game picks), then 0+5 to the next spell and
+1 f4350-4650 = shield: status `spell=20102/aim1 tgt=50010` (Arche first), 8 (up) f4500 -> `tgt=50011`, 5 (down)
+f4550 -> back to 50010; shots f4420 / f4510: the blue turning sight on Arche / on Sana. Camera: P2's numpad -
+f3950 -> `coop.log` "camera follows player 2", "CAMERA P2" notice, the view follows Sana up the stairs with a
+gold P1 badge on Arche (shot f4200); P1's Backspace f4250 -> "camera follows player 1" (shot f4300). Non-co-op
+10 scenarios equal `gate-upstream`; T1-T7 equal the previous build.
