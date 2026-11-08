@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "camera_follow.h"
+#include "coop.h"
 #include "actor_ops.h"
 #include "char_physics.h"
 #include "engine_calls.h"
@@ -188,7 +189,7 @@ wl_char *world_leader(const wl_world *w)
 
 camera_view *camera_snap(wl_roomloop *rl, int32_t snap)
 {
-    wl_char *c = world_leader(g_world);
+    wl_char *c = coop_camera_char(world_leader(g_world));   /* co-op: the player the camera follows (else the leader) */
     if (c == NULL) return NULL;
     const wl_body *b = c->base.body;
     int32_t y = b->y + rl->lead_y;

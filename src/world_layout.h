@@ -235,8 +235,9 @@ typedef struct wl_entity {
 /* One skill record (character+0x754 + 0x300*i, 64 of them; count at +0xc754). */
 typedef struct wl_skill {
     int32_t  id;              /* +0x000 */
-    uint8_t  _p004[0xbc - 0x4];
-    int32_t  ground;          /* +0x0bc  1 needs ground, 2 needs air, 3 ground + 90% speed */
+    uint8_t  _p004[0xb8 - 0x4];
+    int32_t  aim;             /* +0x0b8  1 / 3: aimed at an ally the caster picks (Up / Down while it is up) */
+    int32_t  ground;         /* +0x0bc  1 needs ground, 2 needs air, 3 ground + 90% speed */
     int32_t  cls;             /* +0x0c0  0xf00000.. party gates, else the member id      */
     uint8_t  _p0c4[0x2ec - 0xc4];
     int32_t  pose_req;        /* +0x2ec  the pose it chains from (10101 = any of 10115/22) */

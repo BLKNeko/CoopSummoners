@@ -57,8 +57,8 @@ static const char *g_controls_file;   /* --controls (default <game>\coop-control
 
 /* the players' devices and keys, written by the launcher (sections [p1] [p2] [p3]):
  *   keyboard=0|1  pad=0|1  pad_guid={...}  pad_name=...  pad_index=N
- *   keys=up,down,left,right,attack,jump,use,mod,switch (DIK codes; players 2 / 3)
- *   buttons=(the same order; gamepad button numbers for attack..switch)
+ *   keys=up,down,left,right,attack,jump,use,mod,switch,camera (DIK codes; players 2 / 3; player 1: camera only)
+ *   buttons=(the same order; gamepad button numbers for attack..camera)
  * missing keys keep the defaults (coop_controls_default) */
 static void load_controls(void)
 {

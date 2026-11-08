@@ -776,7 +776,8 @@ int room_loop_run(wl_roomloop *rl)
         if (g_world->room != NULL) {
             wl_room *r = g_world->room;
             const wl_char *partner = rl->view[r->partner].partner;
-            room_lead(rl, r->leader != NULL ? r->leader->ch : NULL, partner, r->lead_mode);
+            /* co-op: the look-ahead follows the character the camera follows (else the leader) */
+            room_lead(rl, coop_camera_char(r->leader != NULL ? r->leader->ch : NULL), partner, r->lead_mode);
             int d = room_party_down(g_world->room);
             if (d != 0) return d;
             d = room_warp_tick(rl, g_world->room);

@@ -52,9 +52,9 @@ static int g_ctl_init, g_ctl_loaded;
 
 void coop_controls_default(coop_player_ctl ctl[COOP_NIN])
 {
-    static const uint8_t P2_KEYS[COOP_NACT] = { 0x48, 0x4c, 0x4b, 0x4d, 0x4f, 0x50, 0x51, 0x52, 0x4e };   /* numpad */
-    static const uint8_t P3_KEYS[COOP_NACT] = { 0x17, 0x25, 0x24, 0x26, 0x16, 0x18, 0x19, 0x15, 0x23 };   /* IKJL UOP Y H */
-    static const uint8_t BUTTONS[COOP_NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3 };   /* attack X, jump A, use B, LB, Y */
+    static const uint8_t P2_KEYS[COOP_NACT] = { 0x48, 0x4c, 0x4b, 0x4d, 0x4f, 0x50, 0x51, 0x52, 0x4e, 0x4a };   /* numpad (- camera) */
+    static const uint8_t P3_KEYS[COOP_NACT] = { 0x17, 0x25, 0x24, 0x26, 0x16, 0x18, 0x19, 0x15, 0x23, 0x31 };   /* IKJL UOP Y H N */
+    static const uint8_t BUTTONS[COOP_NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3, 5 };   /* attack X, jump A, use B, LB, Y, RB */
     memset(ctl, 0, sizeof(coop_player_ctl) * COOP_NIN);
     for (int p = 0; p < COOP_NIN; p++) {
         ctl[p].pad = 1;
@@ -65,6 +65,7 @@ void coop_controls_default(coop_player_ctl ctl[COOP_NIN])
     ctl[1].kb = 1;
     memcpy(ctl[1].keys, P2_KEYS, COOP_NACT);
     memcpy(ctl[2].keys, P3_KEYS, COOP_NACT);
+    ctl[0].keys[COOP_A_CAMERA] = 0x0e;   /* player 1 plays on the game's keys: only the camera key is co-op's (Backspace) */
 }
 
 static void ctl_init(void)
@@ -516,9 +517,66 @@ static void sw_update(wl_room *r)
     }
 }
 
+/* ---- the camera: who it follows ---- */
+
+static int g_cam;                       /* the player the camera follows (0 = player 1, the leader) */
+static uint8_t g_cam_prev[COOP_NIN];    /* each player's camera key last update (a press = an edge) */
+static uint32_t g_cam_at;               /* when it last changed hands (the notice) */
+static int g_cam_noted;
+
+/* player p's character when it can be followed */
+static wl_char *cam_char(const wl_room *r, int p)
+{
+    if (p == 0) return r->leader != NULL ? r->leader->ch : NULL;
+    if (g_out[p]) return NULL;
+    const wl_pslot *s = coop_player_slot(r, p);
+    if (s == NULL || s->active != 1 || s->ch == NULL || s->ch->base.body == NULL) return NULL;
+    return s->ch;
+}
+
+/* player 1's camera key: their keyboard key, or the button on the game's own gamepad (joystick slot 0) */
+static int cam_p1_held(void)
+{
+    const coop_player_ctl *c = &g_ctl[0];
+    uint8_t k = c->keys[COOP_A_CAMERA], b = c->buttons[COOP_A_CAMERA];
+    const p2_dev *d = sysp(0x2878);
+    if (c->kb && k != 0 && d != NULL && (d->state[k] & 0x80) != 0) return 1;
+    const uint8_t *w = sysp(0x287c);
+    return c->pad && w != NULL && b < 32 && (w[0x48 + b] & 0x80) != 0;
+}
+
+static void cam_tick(const wl_room *r)
+{
+    int press = 0;
+    for (int p = 0; p < COOP_NIN; p++) {
+        uint8_t h = (uint8_t)(p == 0 ? cam_p1_held() : g_held[p][COOP_A_CAMERA]);
+        if (h && !g_cam_prev[p]) press = 1;
+        g_cam_prev[p] = h;
+    }
+    if (g_cam != 0 && cam_char(r, g_cam) == NULL) g_cam = 0;   /* that player left: back on the leader */
+    if (!press || !p1_in_control(r)) return;
+    for (int k = 1; k <= COOP_NIN; k++) {
+        int q = (g_cam + k) % COOP_NIN;
+        if (cam_char(r, q) != NULL) { g_cam = q; break; }
+    }
+    g_cam_at = g_eng.tick();
+    g_cam_noted = 1;
+    coop_log("camera follows player %d", g_cam + 1);
+}
+
+wl_char *coop_camera_char(wl_char *leader)
+{
+    if (!g_coop || g_cam == 0 || g_eng.world == NULL || *g_eng.world == NULL) return leader;
+    const wl_room *r = (*g_eng.world)->room;
+    if (r == NULL || !p1_in_control(r)) return leader;
+    wl_char *c = cam_char(r, g_cam);
+    return c != NULL ? c : leader;
+}
+
 void coop_tick(wl_room *r)
 {
     if (!g_coop || r->nin < 2 || r->in == NULL) return;
+    cam_tick(r);
     if (!p1_in_control(r)) {   /* a cutscene / script: everyone's member goes to the AI (back afterwards) */
         for (int p = 1; p < COOP_NIN && p < r->nin; p++) {
             wl_pslot *held = coop_player_slot(r, p);
@@ -972,6 +1030,13 @@ void coop_status(char *buf, size_t n)
             snprintf(b[p], sizeof b[p], "%d@%d,%d/%d hp%d%s", (int)s->code, (int)s->ch->base.body->x,
                      (int)s->ch->base.body->y, (int)s->ch->f200, (int)s->ch->party->hp,
                      char_targetable(s->ch, 0, 1) ? "" : " DOWN");
+        if (s != NULL && s->ch != NULL && s->ch->base.body != NULL && s->ch->base.body->spell != 0) {
+            const wl_body *cb = s->ch->base.body;   /* a spell up: its id, aim kind, phase and target */
+            size_t k = strlen(b[p]);
+            const wl_skill *rec = (const wl_skill *)(intptr_t)cb->spell;
+            snprintf(b[p] + k, sizeof b[p] - k, " spell=%d/aim%d/ph%d tgt=%d", (int)rec->id, (int)rec->aim, (int)cb->f58,
+                     cb->target ? (int)((const wl_char *)(intptr_t)cb->target)->base.code : 0);
+        }
     }
     char l[COOP_NIN][64];
     for (int p = 1; p < COOP_NIN; p++) {
@@ -1138,6 +1203,7 @@ static const ov_char FONT[] = {
     { '5', { 0x1f, 0x10, 0x1e, 0x01, 0x01, 0x11, 0x0e } }, { '6', { 0x06, 0x08, 0x10, 0x1e, 0x11, 0x11, 0x0e } },
     { '7', { 0x1f, 0x01, 0x02, 0x04, 0x08, 0x08, 0x08 } }, { '8', { 0x0e, 0x11, 0x11, 0x0e, 0x11, 0x11, 0x0e } },
     { '9', { 0x0e, 0x11, 0x11, 0x0f, 0x01, 0x02, 0x0c } }, { '+', { 0x00, 0x04, 0x04, 0x1f, 0x04, 0x04, 0x00 } },
+    { 'C', { 0x0e, 0x11, 0x10, 0x10, 0x10, 0x11, 0x0e } }, { 'M', { 0x11, 0x1b, 0x15, 0x15, 0x11, 0x11, 0x11 } },
 };
 
 static const uint8_t *ov_glyph_rows(char ch)
@@ -1203,7 +1269,8 @@ static int coop_marker(int p, int32_t sw, int32_t sh, int32_t *sx, int32_t *sy, 
     const wl_room *r = wd->room;
     const camera_view *v = wd->view;
     if (r == NULL || v == NULL || !p1_in_control(r)) return 0;
-    const wl_pslot *s = coop_player_slot(r, p);
+    if (p == 0 && g_cam == 0) return 0;   /* player 1's badge only while the camera follows someone else */
+    const wl_pslot *s = p == 0 ? r->leader : coop_player_slot(r, p);
     if (s == NULL || s->active != 1 || s->ch == NULL || s->ch->base.body == NULL) return 0;
     const wl_body *b = s->ch->base.body;
     int32_t x, y;
@@ -1249,7 +1316,8 @@ static int32_t ov_row(const ov_surf *s, int32_t y, const char *t, uint32_t el, u
 static void player_colors(const ov_surf *s, int p, uint32_t *edge, uint32_t *fill)
 {
     *edge = ov_rgb(s, 16, 24, 48);
-    *fill = p == 2 ? ov_rgb(s, 150, 70, 220) : ov_rgb(s, 48, 144, 255);   /* player 3 purple (Stella), 2 blue */
+    *fill = p == 2 ? ov_rgb(s, 150, 70, 220) : p == 0 ? ov_rgb(s, 220, 160, 30)   /* player 3 purple (Stella), */
+                                                      : ov_rgb(s, 48, 144, 255);  /* 1 gold, 2 blue */
 }
 
 static void ov_notices(const ov_surf *s)
@@ -1266,6 +1334,11 @@ static void ov_notices(const ov_surf *s)
         else snprintf(t, sizeof t, "%s", g_ui_pt ? "TIRAR TODOS" : "DROP ALL");
         player_colors(s, 1, &edge, &fill);
         y = ov_row(s, y, t, now - k->down_at, COOP_KICK_MS, edge, fill, ink);
+    }
+    if (g_cam_noted && (uint32_t)(now - g_cam_at) < NOTICE_MS) {   /* the camera changed hands */
+        snprintf(t, sizeof t, "CAMERA P%d", g_cam + 1);
+        player_colors(s, g_cam, &edge, &fill);
+        y = ov_row(s, y, t, 0, 0, edge, fill, ink);
     }
     for (int p = 1; p < COOP_NIN; p++) {
         const sw_state *h = &g_sw[p];
@@ -1464,15 +1537,83 @@ static void ov_lights(const ov_surf *s)
     }
 }
 
+/* ---- the spell aim: a sight on the ally a player's spell will reach ----
+ * A spell whose record says "an ally the caster picks" (wl_skill.aim 1 / 3) holds its target in the body
+ * (+0x50) while it is being cast (phase +0x58 1..3); the game's own Up / Down taps move it to the next ally
+ * (char_ai's target cycling, 0x47adb0) — the base game draws nothing for it.  The sight turns, in the caster's
+ * colour (player 1 gold, 2 blue, 3 purple); a second sight on the same ally sits wider. */
+/* the point at angle `a` (256 = a turn, 0 = up, clockwise) and radius rad, relative to the centre */
+static void aim_point(uint32_t a, int32_t rad, int32_t *dx, int32_t *dy)
+{
+    a %= 256;
+    int i = (int)(a / 8), f = (int)(a % 8);
+    int32_t sx = (SIN32[i] * (8 - f) + SIN32[(i + 1) % 32] * f) / 8;
+    int32_t cx = (SIN32[(i + 8) % 32] * (8 - f) + SIN32[(i + 9) % 32] * f) / 8;
+    *dx = sx * rad / 1000;
+    *dy = -cx * rad / 1000;
+}
+
+static void ov_aims(const ov_surf *s)
+{
+    if (g_eng.world == NULL || *g_eng.world == NULL) return;
+    const wl_world *wd = *g_eng.world;
+    const wl_room *r = wd->room;
+    const camera_view *v = wd->view;
+    if (r == NULL || v == NULL || !p1_in_control(r)) return;
+    const wl_char *aimed[COOP_NIN] = { 0 };
+    uint32_t now = g_eng.tick();
+    for (int p = 0; p < COOP_NIN; p++) {
+        const wl_pslot *ps = p == 0 ? r->leader : coop_player_slot(r, p);
+        if (ps == NULL || ps->ch == NULL || ps->ch->base.body == NULL || ps->ch->f200 != 0) continue;
+        const wl_body *cb = ps->ch->base.body;
+        if (cb->spell == 0 || cb->target == 0 || cb->f58 < 1 || cb->f58 > 3) continue;
+        const wl_skill *rec = (const wl_skill *)(intptr_t)cb->spell;
+        if (rec->aim != 1 && rec->aim != 3) continue;
+        const wl_char *t = (const wl_char *)(intptr_t)cb->target;
+        if (t->base.alive == 0 || t->base.body == NULL) continue;
+        aimed[p] = t;
+        int same = 0;
+        for (int q = 0; q < p; q++) if (aimed[q] == t) same++;
+        const wl_body *tb = t->base.body;
+        int32_t x, y;
+        view_project(v, tb->x + tb->w / 2, tb->y + tb->margin + (tb->h - tb->margin) / 2, 0, 0, 0, 0, &x, &y, 0);
+        uint8_t cr, cg, cbl;
+        if (p == 0) { cr = 255; cg = 200; cbl = 60; } else player_rgb(p, &cr, &cg, &cbl);
+        int32_t rad = 20 + 7 * same + (int32_t)((now / 120) % 3 == 0);   /* a small beat */
+        uint32_t rot = (now / 12) % 256;                                  /* a turn every ~3 s */
+        for (int pass = 0; pass < 2; pass++)   /* a dark outline, then the colour */
+            for (int k = 0; k < 4; k++) {   /* four brackets of ~50 degrees, turning */
+                for (uint32_t a = 0; a < 36; a++) {
+                    int32_t px2, py2;
+                    for (int32_t d = -2; d <= 2; d++) {
+                        if (pass == 1 && (d < -1 || d > 1)) continue;
+                        aim_point(rot + 64u * (uint32_t)k + a - 18u, rad + d, &px2, &py2);
+                        if (pass == 0) ov_blend(s, x + px2, y + py2, 16, 24, 48, 200);
+                        else ov_blend(s, x + px2, y + py2, d ? cr : 255, d ? cg : 255, d ? cbl : 255, 255);
+                    }
+                }
+                for (int32_t d = -7; d <= -2; d++) {   /* a tick pointing in, between the brackets */
+                    int32_t px2, py2;
+                    aim_point(rot + 64u * (uint32_t)k + 32u, rad + d, &px2, &py2);
+                    if (pass == 0) { for (int e = -1; e <= 1; e++) for (int f = -1; f <= 1; f++) ov_blend(s, x + px2 + e, y + py2 + f, 16, 24, 48, 160); }
+                    else ov_blend(s, x + px2, y + py2, cr, cg, cbl, 255);
+                }
+            }
+        ov_glow(s, x, y, 5, cr, cg, cbl, 220);
+        ov_blend(s, x, y, 255, 255, 255, 255);
+    }
+}
+
 void coop_overlay_draw(uint8_t *px, int32_t pitch, int32_t w, int32_t h, int32_t bpp,
                        uint32_t rmask, uint32_t gmask, uint32_t bmask)
 {
     if (!g_coop || px == NULL || (bpp != 16 && bpp != 32)) return;
     ov_surf s = { px, pitch, w, h, bpp, rmask, gmask, bmask };
     ov_lights(&s);
+    ov_aims(&s);
     ov_notices(&s);
     uint32_t ink = ov_rgb(&s, 255, 255, 255);
-    for (int p = 1; p < COOP_NIN; p++) {
+    for (int p = 0; p < COOP_NIN; p++) {
         int32_t x, y, side;
         uint32_t edge, fill;
         if (!coop_marker(p, w, h, &x, &y, &side)) continue;

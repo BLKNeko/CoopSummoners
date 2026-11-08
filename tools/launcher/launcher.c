@@ -48,7 +48,7 @@ enum {
     S_WSCALE, S_WS_1, S_WS_AUTO, S_WS_2, S_WS_3, S_ASK_NO_BACKUP, S_WS_NOFIT,
     S_SCREEN, S_SM_BORDERLESS, S_SM_WINDOW, S_SM_FULL, S_SM_ASK,
     S_PLAYER, S_DEV_P1_DEFAULT, S_DEV_KB_ONLY, S_DEV_NONE, S_DEV_KB, S_DEV_PAD, S_DEV_GONE, S_KEYS_BTN, S_KEYS_TITLE,
-    S_ACT_0, S_ACT_1, S_ACT_2, S_ACT_3, S_ACT_4, S_ACT_5, S_ACT_6, S_ACT_7, S_ACT_8,
+    S_ACT_0, S_ACT_1, S_ACT_2, S_ACT_3, S_ACT_4, S_ACT_5, S_ACT_6, S_ACT_7, S_ACT_8, S_ACT_9,
     S_PRESS_KEY, S_PRESS_BTN, S_BUTTON_N, S_PAD_DIRS, S_DEFAULTS, S_OK_BTN, S_ASK_SAME_PAD, S_KEY_NONE, S_N
 };
 
@@ -92,6 +92,12 @@ static const wchar_t *const STR_EN[S_N] = {
     L"3 use, 0 sheathe, + switch; player 3 I/K/J/L, U attack, O jump,\r\n"
     L"P use, Y sheathe, H switch; gamepads move with the stick / d-pad).\r\n"
     L"\r\n"
+    L"Camera: Backspace (player 1), numpad - (player 2), N (player 3), or\r\n"
+    L"RB on a gamepad: the camera follows the next player (1 > 2 > 3).\r\n"
+    L"\r\n"
+    L"Support spells (Sana's shield...): hold attack to cast and tap\r\n"
+    L"up / down to pick the ally; a turning sight shows who it reaches.\r\n"
+    L"\r\n"
     L"Switch key in co-op\r\n"
     L"- Two players tap within 0.5 s: they swap characters (any pair).\r\n"
     L"- One player taps alone: the game's normal switch to a free AI member.\r\n"
@@ -117,7 +123,7 @@ static const wchar_t *const STR_EN[S_N] = {
     L"  where it is, to show the others something.\r\n"
     L"- It goes away after 10 s without input, and when you take a character.\r\n"
     L"\r\n"
-    L"Player 1 is always the leader (camera, talking, menus).\r\n"
+    L"Player 1 is always the leader (talking, menus).\r\n"
     L"A fallen player can walk but not attack until healed.\r\n"
     L"Game over only when the whole party is down.\r\n",
     L"Game language:", L"English (original)", L"Português (Brasil)", L"Português, original names",
@@ -129,7 +135,7 @@ static const wchar_t *const STR_EN[S_N] = {
     L"Player %d:", L"Keyboard + 1st gamepad (default)", L"Keyboard only", L"Nobody", L"Keyboard", L"Gamepad: ",
     L" (not connected)", L"Keys...", L"Keys — player %d",
     L"Up", L"Down", L"Left", L"Right", L"Attack", L"Jump", L"Use / investigate", L"Sheathe / skill modifier",
-    L"Switch character",
+    L"Switch character", L"Camera (next player)",
     L"Press a key... (Esc cancels)", L"Press a gamepad button... (Esc cancels)", L"Button %d",
     L"Move: left stick or d-pad.", L"Defaults", L"OK",
     L"Two players are set to the same gamepad. Play anyway?", L"(none)",
@@ -175,6 +181,12 @@ static const wchar_t *const STR_PT[S_N] = {
     L"3 usar, 0 guardar, + trocar; jogador 3 I/K/J/L, U atacar, O pular,\r\n"
     L"P usar, Y guardar, H trocar; controles andam com analógico / direcional).\r\n"
     L"\r\n"
+    L"Câmera: Backspace (jogador 1), numérico - (jogador 2), N (jogador 3),\r\n"
+    L"ou RB no controle: a câmera passa a seguir o próximo jogador (1 > 2 > 3).\r\n"
+    L"\r\n"
+    L"Magias de suporte (escudo da Sana...): segure atacar para conjurar e\r\n"
+    L"toque cima / baixo para escolher o aliado; uma mira mostra o alvo.\r\n"
+    L"\r\n"
     L"Tecla de troca no co-op\r\n"
     L"- Dois jogadores apertam em até 0,5 s: trocam de personagem (qualquer par).\r\n"
     L"- Só um aperta: a troca normal do jogo para um membro livre da IA.\r\n"
@@ -200,7 +212,7 @@ static const wchar_t *const STR_PT[S_N] = {
     L"  onde ela está, para mostrar algo aos outros.\r\n"
     L"- Some depois de 10 s sem tocar em nada, e quando você pega um personagem.\r\n"
     L"\r\n"
-    L"O jogador 1 é sempre o líder (câmera, conversas, menus).\r\n"
+    L"O jogador 1 é sempre o líder (conversas, menus).\r\n"
     L"Um jogador caído pode andar, mas não atacar, até ser curado.\r\n"
     L"Game over só quando o grupo inteiro cai.\r\n",
     L"Idioma do jogo:", L"Inglês (original)", L"Português (Brasil)", L"Português, nomes originais",
@@ -212,7 +224,7 @@ static const wchar_t *const STR_PT[S_N] = {
     L"Jogador %d:", L"Teclado + 1º controle (padrão)", L"Só teclado", L"Ninguém", L"Teclado", L"Controle: ",
     L" (desconectado)", L"Teclas...", L"Teclas — jogador %d",
     L"Cima", L"Baixo", L"Esquerda", L"Direita", L"Atacar", L"Pular", L"Usar / investigar", L"Guardar arma / modif. habilidade",
-    L"Trocar personagem",
+    L"Trocar personagem", L"Câmera (próximo jogador)",
     L"Aperte uma tecla... (Esc cancela)", L"Aperte um botão do controle... (Esc cancela)", L"Botão %d",
     L"Mover: analógico esquerdo ou direcional.", L"Padrão", L"OK",
     L"Dois jogadores estão no mesmo controle. Jogar mesmo assim?", L"(nenhuma)",
@@ -353,10 +365,10 @@ static const wchar_t *const SCREEN_INI[4] = { L"borderless", L"window", L"fullsc
 
 /* the players' devices and keys ([p1] [p2] [p3] in launcher.ini; written for the game as coop-controls.ini at
  * play).  Player 1: the game's own keys, a device choice only; players 2 / 3: keyboard keys (DIK codes) or
- * gamepad buttons for the 9 actions (the order of the mod's COOP_A_*: up down left right attack jump use mod
- * switch; a gamepad moves with its stick / d-pad, its buttons cover attack..switch) */
+ * gamepad buttons for the 10 actions (the order of the mod's COOP_A_*: up down left right attack jump use mod
+ * switch camera; a gamepad moves with its stick / d-pad, its buttons cover attack..switch) */
 #define NPLAYERS 3
-#define NACT 9
+#define NACT 10
 enum { DEV_DEFAULT, DEV_KB, DEV_PAD, DEV_NONE, DEV_UNSET = -1 };
 static const wchar_t *const DEV_INI[4] = { L"default", L"keyboard", L"pad", L"none" };
 typedef struct {
@@ -368,8 +380,8 @@ typedef struct {
 } player_cfg;
 static player_cfg g_pl[NPLAYERS];
 static const uint8_t DEF_KEYS[NPLAYERS][NACT] = {
-    { 0 }, { 0x48, 0x4c, 0x4b, 0x4d, 0x4f, 0x50, 0x51, 0x52, 0x4e }, { 0x17, 0x25, 0x24, 0x26, 0x16, 0x18, 0x19, 0x15, 0x23 } };
-static const uint8_t DEF_BUTTONS[NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3 };
+    { [9] = 0x0e }, { 0x48, 0x4c, 0x4b, 0x4d, 0x4f, 0x50, 0x51, 0x52, 0x4e, 0x4a }, { 0x17, 0x25, 0x24, 0x26, 0x16, 0x18, 0x19, 0x15, 0x23, 0x31 } };
+static const uint8_t DEF_BUTTONS[NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3, 5 };
 
 static void list_parse(const wchar_t *s, uint8_t *out)
 {
@@ -1261,13 +1273,13 @@ static void show_controls(void)
     wcsncpy(title, TR(S_CONTROLS), 63);
     title[63] = 0;
     for (size_t n = wcslen(title); n > 0 && title[n - 1] == L'.'; ) title[--n] = 0;
-    RECT r = { 0, 0, S(720), S(600) };
+    RECT r = { 0, 0, S(720), S(680) };
     AdjustWindowRect(&r, WS_OVERLAPPEDWINDOW, FALSE);
     h = CreateWindowExW(0, L"CoopSummonersHelp", title, WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT,
                         CW_USEDEFAULT, r.right - r.left, r.bottom - r.top, g_wnd, NULL, GetModuleHandleW(NULL), NULL);
     HWND e = CreateWindowExW(0, L"EDIT", TR(S_CONTROLS_TEXT),
                              WS_CHILD | WS_VISIBLE | WS_VSCROLL | ES_MULTILINE | ES_READONLY | ES_AUTOVSCROLL, 0, 0,
-                             S(720), S(600), h, (HMENU)1, GetModuleHandleW(NULL), NULL);
+                             S(720), S(680), h, (HMENU)1, GetModuleHandleW(NULL), NULL);
     SendMessageW(e, WM_SETFONT, (WPARAM)g_font_mono, TRUE);
     SendMessageW(e, EM_SETMARGINS, EC_LEFTMARGIN | EC_RIGHTMARGIN, MAKELPARAM(S(10), S(10)));
 }
