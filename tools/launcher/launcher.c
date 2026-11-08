@@ -93,7 +93,8 @@ static const wchar_t *const STR_EN[S_N] = {
     L"P use, Y sheathe, H switch; gamepads move with the stick / d-pad).\r\n"
     L"\r\n"
     L"Camera: Backspace (player 1), numpad - (player 2), N (player 3), or\r\n"
-    L"RB on a gamepad: the camera follows the next player (1 > 2 > 3).\r\n"
+    L"RT on a gamepad: the camera follows the next player (1 > 2 > 3).\r\n"
+    L"If the player it follows falls, it moves to the next one standing.\r\n"
     L"\r\n"
     L"Support spells (Sana's shield...): hold attack to cast and tap\r\n"
     L"up / down to pick the ally; a turning sight shows who it reaches.\r\n"
@@ -182,7 +183,8 @@ static const wchar_t *const STR_PT[S_N] = {
     L"P usar, Y guardar, H trocar; controles andam com analógico / direcional).\r\n"
     L"\r\n"
     L"Câmera: Backspace (jogador 1), numérico - (jogador 2), N (jogador 3),\r\n"
-    L"ou RB no controle: a câmera passa a seguir o próximo jogador (1 > 2 > 3).\r\n"
+    L"ou RT no controle: a câmera passa a seguir o próximo jogador (1 > 2 > 3).\r\n"
+    L"Se o jogador seguido cair, ela passa para o próximo de pé.\r\n"
     L"\r\n"
     L"Magias de suporte (escudo da Sana...): segure atacar para conjurar e\r\n"
     L"toque cima / baixo para escolher o aliado; uma mira mostra o alvo.\r\n"
@@ -381,7 +383,9 @@ typedef struct {
 static player_cfg g_pl[NPLAYERS];
 static const uint8_t DEF_KEYS[NPLAYERS][NACT] = {
     { [9] = 0x0e }, { 0x48, 0x4c, 0x4b, 0x4d, 0x4f, 0x50, 0x51, 0x52, 0x4e, 0x4a }, { 0x17, 0x25, 0x24, 0x26, 0x16, 0x18, 0x19, 0x15, 0x23, 0x31 } };
-static const uint8_t DEF_BUTTONS[NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3, 5 };
+#define PAD_RT 32   /* buttons[] past the 32 buttons: the triggers (an Xbox-style pad's Z axis; the mod's COOP_PAD_RT / LT) */
+#define PAD_LT 33
+static const uint8_t DEF_BUTTONS[NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3, PAD_RT };
 
 static void list_parse(const wchar_t *s, uint8_t *out)
 {
@@ -813,13 +817,15 @@ static void keys_refresh(void)
         if (g_kbtn[a] == NULL) continue;
         wchar_t t[64];
         if (a == g_kcap) wcscpy(t, L"...");
+        else if (c->dev == DEV_PAD && c->buttons[a] == PAD_RT) wcscpy(t, L"RT");
+        else if (c->dev == DEV_PAD && c->buttons[a] == PAD_LT) wcscpy(t, L"LT");
         else if (c->dev == DEV_PAD) swprintf(t, 64, TR(S_BUTTON_N), c->buttons[a] + 1);
         else key_name(c->keys[a], t, 64);
         SetWindowTextW(g_kbtn[a], t);
     }
 }
 
-static int pad_buttons(uint8_t *b)   /* the open gamepad's 32 buttons now; 0 = not readable */
+static int pad_buttons(uint8_t *b)   /* the open gamepad's 32 buttons + RT, LT now; 0 = not readable */
 {
     DIJOYSTATE js;
     if (g_kdev == NULL) return 0;
@@ -829,6 +835,8 @@ static int pad_buttons(uint8_t *b)   /* the open gamepad's 32 buttons now; 0 = n
         return 0;
     }
     for (int i = 0; i < 32; i++) b[i] = (js.rgbButtons[i] & 0x80) != 0;
+    b[PAD_RT] = js.lZ < -500;   /* the Z axis set to +-1000 when the pad opened, as the game sets it */
+    b[PAD_LT] = js.lZ > 500;
     return 1;
 }
 
@@ -853,9 +861,9 @@ static void capture_poll(void)
     player_cfg *c = &g_pl[g_kp];
     if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) { capture_end(); return; }
     if (c->dev == DEV_PAD) {
-        uint8_t b[32];
+        uint8_t b[34];
         if (!pad_buttons(b)) return;
-        for (int i = 0; i < 32; i++) {
+        for (int i = 0; i < 34; i++) {
             if (b[i] && !g_kdown[i]) {
                 for (int a = 0; a < NACT; a++) if (a != g_kcap && c->buttons[a] == i && a >= 4) c->buttons[a] = c->buttons[g_kcap];
                 c->buttons[g_kcap] = (uint8_t)i;
@@ -952,6 +960,8 @@ static void show_keys(int p)
         if (SUCCEEDED(CLSIDFromString(c->guid, &g)) &&
             SUCCEEDED(IDirectInput7_CreateDeviceEx(g_di, &g, &IID_IDirectInputDevice7W, (LPVOID *)&g_kdev, NULL))) {
             IDirectInputDevice7_SetDataFormat(g_kdev, &c_dfDIJoystick);
+            DIPROPRANGE rg = { { sizeof rg, sizeof rg.diph, DIJOFS_Z, DIPH_BYOFFSET }, -1000, 1000 };
+            IDirectInputDevice7_SetProperty(g_kdev, DIPROP_RANGE, &rg.diph);
             IDirectInputDevice7_SetCooperativeLevel(g_kdev, g_wnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
             IDirectInputDevice7_Acquire(g_kdev);
         }

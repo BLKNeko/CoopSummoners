@@ -54,7 +54,7 @@ void coop_controls_default(coop_player_ctl ctl[COOP_NIN])
 {
     static const uint8_t P2_KEYS[COOP_NACT] = { 0x48, 0x4c, 0x4b, 0x4d, 0x4f, 0x50, 0x51, 0x52, 0x4e, 0x4a };   /* numpad (- camera) */
     static const uint8_t P3_KEYS[COOP_NACT] = { 0x17, 0x25, 0x24, 0x26, 0x16, 0x18, 0x19, 0x15, 0x23, 0x31 };   /* IKJL UOP Y H N */
-    static const uint8_t BUTTONS[COOP_NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3, 5 };   /* attack X, jump A, use B, LB, Y, RB */
+    static const uint8_t BUTTONS[COOP_NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3, COOP_PAD_RT };   /* attack X, jump A, use B, LB, Y, RT */
     memset(ctl, 0, sizeof(coop_player_ctl) * COOP_NIN);
     for (int p = 0; p < COOP_NIN; p++) {
         ctl[p].pad = 1;
@@ -184,6 +184,16 @@ static intptr_t pad_get(int p)
     return (intptr_t)(uint32_t)g_joy[p];
 }
 
+/* "button" `b` of gamepad `w` held: 0..31 a button; COOP_PAD_RT / COOP_PAD_LT a trigger.  An Xbox-style pad
+ * shows both triggers as one axis (the DIJOYSTATE's lZ at +0x20, ±1000 as the game sets every axis, 0x5ba6a0):
+ * RT pulls it down, LT up */
+static int pad_button(intptr_t w, uint8_t b)
+{
+    if (b < 32) return (((const uint8_t *)w)[0x48 + b] & 0x80) != 0;
+    int32_t z = get32((const void *)w, 0x20);
+    return b == COOP_PAD_RT ? z < -500 : b == COOP_PAD_LT ? z > 500 : 0;
+}
+
 /* the actions held on gamepad `w` (stick or d-pad for the directions, the player's buttons for the rest) */
 static void pad_state(intptr_t w, const coop_player_ctl *c, uint8_t on[COOP_NACT])
 {
@@ -197,8 +207,7 @@ static void pad_state(intptr_t w, const coop_player_ctl *c, uint8_t on[COOP_NACT
     on[COOP_A_DOWN] = y > th || (pv && pov >= 13500 && pov <= 22500);
     on[COOP_A_LEFT] = x < -th || (pv && pov >= 22500 && pov <= 31500);
     on[COOP_A_RIGHT] = x > th || (pv && pov >= 4500 && pov <= 13500);
-    for (int a = COOP_A_ATTACK; a < COOP_NACT; a++)
-        on[a] = c->buttons[a] < 32 && (((const uint8_t *)w)[0x48 + c->buttons[a]] & 0x80) != 0;
+    for (int a = COOP_A_ATTACK; a < COOP_NACT; a++) on[a] = (uint8_t)pad_button(w, c->buttons[a]);
 }
 
 void coop_produce(wl_room *r, uint16_t p, const void *kb)
@@ -534,6 +543,15 @@ static wl_char *cam_char(const wl_room *r, int p)
     return s->ch;
 }
 
+static int g_cam_down;   /* the followed character was down (0 HP) last update: a fall = a 0 -> 1 edge */
+
+/* player p's character is down (0 HP, "Disabled") */
+static int cam_down(const wl_room *r, int p)
+{
+    const wl_char *c = cam_char(r, p);
+    return c != NULL && c->party != NULL && c->party->hp <= 0;
+}
+
 /* player 1's camera key: their keyboard key, or the button on the game's own gamepad (joystick slot 0) */
 static int cam_p1_held(void)
 {
@@ -542,7 +560,7 @@ static int cam_p1_held(void)
     const p2_dev *d = sysp(0x2878);
     if (c->kb && k != 0 && d != NULL && (d->state[k] & 0x80) != 0) return 1;
     const uint8_t *w = sysp(0x287c);
-    return c->pad && w != NULL && b < 32 && (w[0x48 + b] & 0x80) != 0;
+    return c->pad && w != NULL && pad_button((intptr_t)w, b);
 }
 
 static void cam_tick(const wl_room *r)
@@ -554,11 +572,28 @@ static void cam_tick(const wl_room *r)
         g_cam_prev[p] = h;
     }
     if (g_cam != 0 && cam_char(r, g_cam) == NULL) g_cam = 0;   /* that player left: back on the leader */
-    if (!press || !p1_in_control(r)) return;
-    for (int k = 1; k <= COOP_NIN; k++) {
+    if (!p1_in_control(r)) return;
+    int down = cam_down(r, g_cam);
+    if (down && !g_cam_down) {   /* the followed player just fell: on to the next one still standing */
+        for (int k = 1; k < COOP_NIN; k++) {
+            int q = (g_cam + k) % COOP_NIN;
+            if (cam_char(r, q) != NULL && !cam_down(r, q)) {
+                coop_log("camera follows player %d (player %d fell)", q + 1, g_cam + 1);
+                g_cam = q;
+                g_cam_at = g_eng.tick();
+                g_cam_noted = 1;
+                down = 0;
+                break;
+            }
+        }
+    }
+    g_cam_down = down;
+    if (!press) return;
+    for (int k = 1; k <= COOP_NIN; k++) {   /* by hand: any player in the game, fallen or not */
         int q = (g_cam + k) % COOP_NIN;
         if (cam_char(r, q) != NULL) { g_cam = q; break; }
     }
+    g_cam_down = cam_down(r, g_cam);   /* a fallen player picked by hand keeps the camera */
     g_cam_at = g_eng.tick();
     g_cam_noted = 1;
     coop_log("camera follows player %d", g_cam + 1);
@@ -1316,8 +1351,8 @@ static int32_t ov_row(const ov_surf *s, int32_t y, const char *t, uint32_t el, u
 static void player_colors(const ov_surf *s, int p, uint32_t *edge, uint32_t *fill)
 {
     *edge = ov_rgb(s, 16, 24, 48);
-    *fill = p == 2 ? ov_rgb(s, 150, 70, 220) : p == 0 ? ov_rgb(s, 220, 160, 30)   /* player 3 purple (Stella), */
-                                                      : ov_rgb(s, 48, 144, 255);  /* 1 gold, 2 blue */
+    *fill = p == 2 ? ov_rgb(s, 150, 70, 220) : p == 0 ? ov_rgb(s, 230, 90, 160)   /* player 3 purple (Stella), */
+                                                      : ov_rgb(s, 48, 144, 255);  /* 1 pink (Arche), 2 blue */
 }
 
 static void ov_notices(const ov_surf *s)
@@ -1541,7 +1576,7 @@ static void ov_lights(const ov_surf *s)
  * A spell whose record says "an ally the caster picks" (wl_skill.aim 1 / 3) holds its target in the body
  * (+0x50) while it is being cast (phase +0x58 1..3); the game's own Up / Down taps move it to the next ally
  * (char_ai's target cycling, 0x47adb0) — the base game draws nothing for it.  The sight turns, in the caster's
- * colour (player 1 gold, 2 blue, 3 purple); a second sight on the same ally sits wider. */
+ * colour (player 1 pink, 2 blue, 3 purple); a second sight on the same ally sits wider. */
 /* the point at angle `a` (256 = a turn, 0 = up, clockwise) and radius rad, relative to the centre */
 static void aim_point(uint32_t a, int32_t rad, int32_t *dx, int32_t *dy)
 {
@@ -1578,7 +1613,7 @@ static void ov_aims(const ov_surf *s)
         int32_t x, y;
         view_project(v, tb->x + tb->w / 2, tb->y + tb->margin + (tb->h - tb->margin) / 2, 0, 0, 0, 0, &x, &y, 0);
         uint8_t cr, cg, cbl;
-        if (p == 0) { cr = 255; cg = 200; cbl = 60; } else player_rgb(p, &cr, &cg, &cbl);
+        if (p == 0) { cr = 255; cg = 120; cbl = 190; } else player_rgb(p, &cr, &cg, &cbl);
         int32_t rad = 20 + 7 * same + (int32_t)((now / 120) % 3 == 0);   /* a small beat */
         uint32_t rot = (now / 12) % 256;                                  /* a turn every ~3 s */
         for (int pass = 0; pass < 2; pass++)   /* a dark outline, then the colour */

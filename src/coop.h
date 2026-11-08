@@ -44,6 +44,8 @@ void coop_init_from_env(void);
 /* ---- the players' devices and keys (rhost reads them from the launcher's coop-controls.ini) ---- */
 enum { COOP_A_UP, COOP_A_DOWN, COOP_A_LEFT, COOP_A_RIGHT, COOP_A_ATTACK, COOP_A_JUMP, COOP_A_USE,
        COOP_A_MOD, COOP_A_SWITCH, COOP_A_CAMERA, COOP_NACT };
+#define COOP_PAD_RT 32   /* buttons[] values past the 32 buttons: the triggers (the pad's Z axis) */
+#define COOP_PAD_LT 33
 typedef struct coop_player_ctl {
     int     kb;               /* the keyboard feeds this player (keys[] below; player 1: the game's keys) */
     int     pad;              /* a gamepad feeds it: 1 = the one named by pad_guid / pad_name / pad_index */
@@ -72,9 +74,10 @@ int32_t coop_game_pad_index(intptr_t dinput, intptr_t slot, int32_t index);
  * player's coins this session are counted under the light. */
 void coop_light_tick(wl_room *r);
 /* The character the camera follows (camera_snap, room_lead): the leader (`leader`, passed through) unless a
- * player pressed the camera key (COOP_A_CAMERA: player 1 Backspace / RB on their gamepad, player 2 numpad -,
+ * player pressed the camera key (COOP_A_CAMERA: player 1 Backspace / RT on their gamepad, player 2 numpad -,
  * player 3 N, or the player's own key / button) to hand it to the next player in the game (1 -> 2 -> 3 -> 1).
- * Back on the leader in cutscenes and while the chosen player has no character.  Co-op only. */
+ * When the followed character falls (0 HP), it moves on to the next player standing (picked by hand, a fallen
+ * player keeps it).  Back on the leader in cutscenes and while the chosen player has no character.  Co-op only. */
 wl_char *coop_camera_char(wl_char *leader);
 /* the number of input managers a room gets (1 off, COOP_NIN on) */
 uint16_t coop_room_inputs(void);
