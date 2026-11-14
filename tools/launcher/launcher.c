@@ -49,7 +49,8 @@ enum {
     S_SCREEN, S_SM_BORDERLESS, S_SM_WINDOW, S_SM_FULL, S_SM_ASK,
     S_PLAYER, S_DEV_P1_DEFAULT, S_DEV_KB_ONLY, S_DEV_NONE, S_DEV_KB, S_DEV_PAD, S_DEV_GONE, S_KEYS_BTN, S_KEYS_TITLE,
     S_ACT_0, S_ACT_1, S_ACT_2, S_ACT_3, S_ACT_4, S_ACT_5, S_ACT_6, S_ACT_7, S_ACT_8, S_ACT_9,
-    S_PRESS_KEY, S_PRESS_BTN, S_BUTTON_N, S_PAD_DIRS, S_DEFAULTS, S_OK_BTN, S_ASK_SAME_PAD, S_KEY_NONE, S_N
+    S_PRESS_KEY, S_PRESS_BTN, S_BUTTON_N, S_PAD_DIRS, S_DEFAULTS, S_OK_BTN, S_ASK_SAME_PAD, S_KEY_NONE,
+    S_LIGHT_CD, S_LIGHT_POW, S_TAG_DEFAULT, S_TAG_STRONG, S_N
 };
 
 static const wchar_t *const STR_EN[S_N] = {
@@ -115,8 +116,9 @@ static const wchar_t *const STR_EN[S_N] = {
     L"  It flies with the directions, through walls, and stays on screen.\r\n"
     L"- It takes the coins it touches. Its number = your\r\n"
     L"  coins this session.\r\n"
-    L"- Tap attack: a wave (every 20 s). Allies near it heal 8% of their\r\n"
-    L"  max HP; foes take 25% of a plain hit of the leader. The arc round\r\n"
+    L"- Tap attack: a wave (every 12 s; \"Light recharge\" in the launcher).\r\n"
+    L"  Allies near it heal 8% of their max HP; foes take 25% of a plain\r\n"
+    L"  hit of the leader (x \"Light power\", 1x to 4x). The arc round\r\n"
     L"  the light fills while it recharges.\r\n"
     L"- Hold attack: magnet, the coins near it fly to it.\r\n"
     L"- Hold jump: carries the first item it reaches (bring it to the\r\n"
@@ -140,6 +142,7 @@ static const wchar_t *const STR_EN[S_N] = {
     L"Press a key... (Esc cancels)", L"Press a gamepad button... (Esc cancels)", L"Button %d",
     L"Move: left stick or d-pad.", L"Defaults", L"OK",
     L"Two players are set to the same gamepad. Play anyway?", L"(none)",
+    L"Light recharge:", L"Light power:", L"(default)", L"(very strong)",
 };
 
 static const wchar_t *const STR_PT[S_N] = {
@@ -205,9 +208,10 @@ static const wchar_t *const STR_PT[S_N] = {
     L"  Ela voa com as direções, atravessa paredes e fica dentro da tela.\r\n"
     L"- Pega as moedas em que encostar. O número embaixo dela =\r\n"
     L"  as suas moedas nesta sessão.\r\n"
-    L"- Toque atacar: uma onda (a cada 20 s). Aliados perto curam 8% do HP\r\n"
-    L"  máximo; inimigos levam 25% de um golpe normal do líder. O arco em\r\n"
-    L"  volta da luz enche enquanto ela recarrega.\r\n"
+    L"- Toque atacar: uma onda (a cada 12 s; \"Recarga da luz\" no launcher).\r\n"
+    L"  Aliados perto curam 8% do HP máximo; inimigos levam 25% de um golpe\r\n"
+    L"  normal do líder (x \"Força da luz\", de 1x a 4x). O arco em volta da\r\n"
+    L"  luz enche enquanto ela recarrega.\r\n"
     L"- Segure atacar: ímã, as moedas perto voam até ela.\r\n"
     L"- Segure pular: carrega o primeiro item que alcançar (leve até o\r\n"
     L"  líder; soltou, ele cai). Pular sem item perto, ou usar: um anel\r\n"
@@ -230,6 +234,7 @@ static const wchar_t *const STR_PT[S_N] = {
     L"Aperte uma tecla... (Esc cancela)", L"Aperte um botão do controle... (Esc cancela)", L"Botão %d",
     L"Mover: analógico esquerdo ou direcional.", L"Padrão", L"OK",
     L"Dois jogadores estão no mesmo controle. Jogar mesmo assim?", L"(nenhuma)",
+    L"Recarga da luz:", L"Força da luz:", L"(padrão)", L"(muito forte)",
 };
 
 static const wchar_t *const *T = STR_EN;
@@ -358,6 +363,12 @@ static int g_lang_pt = -1;
 static const wchar_t *const LANG_INI[3] = { L"en", L"pt-br", L"pt-br-original-names" };
 /* the game window's size when "Windowed" is picked in the game's own launcher (--window-scale): the combo's order */
 static int g_wscale = 1;
+/* the light's wave (co-op): its recharge in seconds (--coop-light-recharge) and its power (--coop-light-power) */
+static const int LIGHT_CD_S[] = { 5, 8, 10, 12, 15, 20, 30 };
+#define LIGHT_CD_N ((int)(sizeof LIGHT_CD_S / sizeof LIGHT_CD_S[0]))
+#define LIGHT_CD_DEFAULT 3   /* 12 s */
+static int g_light_cd = LIGHT_CD_DEFAULT, g_light_pow = 1;   /* an index into LIGHT_CD_S; 1..4 */
+static HWND g_light_cd_c, g_light_pow_c;
 static const wchar_t *const WSCALE_INI[4] = { L"1", L"auto", L"2", L"3" };
 /* how the game shows: the launcher passes it (--no-launcher --screen N [--borderless]) so the game's own options
  * window is skipped; "ask" shows that window as before.  The combo's order. */
@@ -453,6 +464,10 @@ static void settings_load(void)
     GetPrivateProfileStringW(L"launcher", L"WindowScale", L"auto", l, 32, g_ini);
     for (int i = 0; i < 4; i++)
         if (wcscmp(l, WSCALE_INI[i]) == 0) g_wscale = i;
+    int cd = (int)GetPrivateProfileIntW(L"launcher", L"LightRecharge", LIGHT_CD_S[LIGHT_CD_DEFAULT], g_ini);
+    for (int i = 0; i < LIGHT_CD_N; i++) if (LIGHT_CD_S[i] == cd) g_light_cd = i;
+    g_light_pow = (int)GetPrivateProfileIntW(L"launcher", L"LightPower", 1, g_ini);
+    if (g_light_pow < 1 || g_light_pow > 4) g_light_pow = 1;
 }
 static void settings_save(void)
 {
@@ -460,6 +475,11 @@ static void settings_save(void)
     if (g_lang_pt >= 0) WritePrivateProfileStringW(L"launcher", L"GameLang", LANG_INI[g_lang_pt], g_ini);
     WritePrivateProfileStringW(L"launcher", L"WindowScale", WSCALE_INI[g_wscale], g_ini);
     WritePrivateProfileStringW(L"launcher", L"ScreenMode", SCREEN_INI[g_screen], g_ini);
+    wchar_t n[16];
+    swprintf(n, 16, L"%d", LIGHT_CD_S[g_light_cd]);
+    WritePrivateProfileStringW(L"launcher", L"LightRecharge", n, g_ini);
+    swprintf(n, 16, L"%d", g_light_pow);
+    WritePrivateProfileStringW(L"launcher", L"LightPower", n, g_ini);
     players_save();
 }
 
@@ -609,7 +629,7 @@ static int lang_available(void)
 
 enum { ID_PATH = 100, ID_BROWSE, ID_FIND, ID_GAME, ID_MOD, ID_INSTALL, ID_UNINSTALL, ID_SOLO, ID_COOP, ID_PADS_L,
        ID_PADS, ID_PADS_NOTE, ID_CONTROLS, ID_FOOTER, ID_DIRLABEL, ID_LANG_L, ID_LANG, ID_WSCALE_L, ID_WSCALE,
-       ID_SCREEN_L, ID_SCREEN, ID_DEV0 = 300, ID_KEYS0 = 310 };
+       ID_SCREEN_L, ID_SCREEN, ID_LIGHT_CD_L, ID_LIGHT_CD, ID_LIGHT_POW_L, ID_LIGHT_POW, ID_DEV0 = 300, ID_KEYS0 = 310 };
 #define TIMER_PADS 1
 
 static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_lang, g_wscale_c, g_screen_c;
@@ -1197,7 +1217,7 @@ static void play(int coop)
     if (same_pad_twice() && !ask(TR(S_ASK_SAME_PAD))) return;
     if (!auto_backup() && !ask(TR(S_ASK_NO_BACKUP))) return;
     write_controls();   /* the players' devices and keys, for the mod */
-    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 192], ws[80] = L"";
+    wchar_t exe[MAX_PATH], cmd[MAX_PATH + 256], ws[80] = L"", lt[64] = L"";
     installed_path(exe);
     int pt = g_lang_pt > 0 && lang_available();
     static const wchar_t *const SCREEN_ARGS[4] = {
@@ -1205,8 +1225,9 @@ static void play(int coop)
     wcscpy(ws, SCREEN_ARGS[g_screen]);
     if ((g_screen == SCREEN_WINDOW || g_screen == SCREEN_ASK) && g_wscale > 0)
         swprintf(ws + wcslen(ws), 80 - wcslen(ws), L" --window-scale %ls", WSCALE_INI[g_wscale]);
-    swprintf(cmd, MAX_PATH + 192, L"\"%ls\"%ls%ls%ls%ls", exe, coop ? L" --coop --coop-wait" : L"", pt ? L" --lang pt-br" : L"",
-             pt && g_lang_pt == 2 ? L" --lang-names original" : L"", ws);
+    if (coop) swprintf(lt, 64, L" --coop-light-recharge %d --coop-light-power %d", LIGHT_CD_S[g_light_cd], g_light_pow);
+    swprintf(cmd, MAX_PATH + 256, L"\"%ls\"%ls%ls%ls%ls%ls", exe, coop ? L" --coop --coop-wait" : L"", pt ? L" --lang pt-br" : L"",
+             pt && g_lang_pt == 2 ? L" --lang-names original" : L"", ws, lt);
     STARTUPINFOW si;
     PROCESS_INFORMATION pi;
     memset(&si, 0, sizeof si);
@@ -1365,6 +1386,24 @@ static void build_ui(void)
     }
     SendMessageW(g_wscale_c, CB_SETCURSEL, g_wscale, 0);
     EnableWindow(g_wscale_c, g_screen == SCREEN_WINDOW || g_screen == SCREEN_ASK);   /* only a window has a size */
+    y += 34;
+    mk(L"STATIC", TR(S_LIGHT_CD), SS_RIGHT, X, y + 5, 130, 20, ID_LIGHT_CD_L, g_font);
+    g_light_cd_c = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, X + 136, y + 1, 120, 300, ID_LIGHT_CD, g_font);
+    for (int i = 0; i < LIGHT_CD_N; i++) {
+        wchar_t item[48];
+        swprintf(item, 48, i == LIGHT_CD_DEFAULT ? L"%d s %ls" : L"%d s", LIGHT_CD_S[i], TR(S_TAG_DEFAULT));
+        SendMessageW(g_light_cd_c, CB_ADDSTRING, 0, (LPARAM)item);
+    }
+    SendMessageW(g_light_cd_c, CB_SETCURSEL, g_light_cd, 0);
+    mk(L"STATIC", TR(S_LIGHT_POW), SS_RIGHT, X + 262, y + 5, 110, 20, ID_LIGHT_POW_L, g_font);
+    g_light_pow_c = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, X + 378, y + 1, 170, 200, ID_LIGHT_POW, g_font);
+    for (int i = 1; i <= 4; i++) {
+        wchar_t item[48];
+        if (i == 1 || i == 4) swprintf(item, 48, L"%d× %ls", i, TR(i == 1 ? S_TAG_DEFAULT : S_TAG_STRONG));
+        else swprintf(item, 48, L"%d×", i);
+        SendMessageW(g_light_pow_c, CB_ADDSTRING, 0, (LPARAM)item);
+    }
+    SendMessageW(g_light_pow_c, CB_SETCURSEL, g_light_pow - 1, 0);
     y += 40;
     mk(L"STATIC", TR(S_FOOTER), SS_CENTER, X, y, W, 40, ID_FOOTER, g_font);
 }
@@ -1398,6 +1437,20 @@ static LRESULT CALLBACK wnd_proc(HWND w, UINT m, WPARAM wp, LPARAM lp)
                 g_screen = (int)SendMessageW(g_screen_c, CB_GETCURSEL, 0, 0);
                 if (g_screen < 0 || g_screen > 3) g_screen = SCREEN_BORDERLESS;
                 EnableWindow(g_wscale_c, g_screen == SCREEN_WINDOW || g_screen == SCREEN_ASK);
+                settings_save();
+            }
+            break;
+        case ID_LIGHT_CD:
+            if (HIWORD(wp) == CBN_SELCHANGE) {
+                g_light_cd = (int)SendMessageW(g_light_cd_c, CB_GETCURSEL, 0, 0);
+                if (g_light_cd < 0 || g_light_cd >= LIGHT_CD_N) g_light_cd = LIGHT_CD_DEFAULT;
+                settings_save();
+            }
+            break;
+        case ID_LIGHT_POW:
+            if (HIWORD(wp) == CBN_SELCHANGE) {
+                g_light_pow = (int)SendMessageW(g_light_pow_c, CB_GETCURSEL, 0, 0) + 1;
+                if (g_light_pow < 1 || g_light_pow > 4) g_light_pow = 1;
                 settings_save();
             }
             break;
@@ -1475,7 +1528,7 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR cmdline, int show)
     wc.hbrBackground = GetSysColorBrush(COLOR_WINDOW);
     RegisterClassW(&wc);
 
-    RECT r = { 0, 0, S(580), S(592) };
+    RECT r = { 0, 0, S(580), S(626) };
     DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
     AdjustWindowRect(&r, style, FALSE);
     g_wnd = CreateWindowExW(0, L"CoopSummonersLauncher", TR(S_TITLE), style,

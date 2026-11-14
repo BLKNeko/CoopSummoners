@@ -680,13 +680,22 @@ void coop_tick(wl_room *r)
 #define LIGHT_TRAIL     8
 #define LIGHT_PINGS     3
 #define LIGHT_TAP_MS    250      /* attack released sooner = a tap (the wave); held longer = the magnet */
-#define LIGHT_WAVE_MS   20000    /* the wave's recharge */
+#define LIGHT_WAVE_MS   12000    /* the wave's recharge by default (the launcher's "Light recharge") */
 #define LIGHT_WAVE_R    5000     /* its reach (px x 100 from the light's centre to the body's centre) */
 #define LIGHT_WAVE_HEAL 80       /* per mille of an ally's max HP (at least LIGHT_WAVE_MIN) */
 #define LIGHT_WAVE_MIN  5
 #define LIGHT_WAVE_DMG  250      /* per mille of the leader's plain hit on that foe (after its defence) */
 #define LIGHT_WAVE_SAME 3000     /* the same character takes one wave per this long (two lights) */
 #define LIGHT_WAVE_SHOW 450      /* the drawn wave's life */
+
+static uint32_t g_wave_ms = LIGHT_WAVE_MS;   /* the recharge in use (coop_set_light) */
+static int32_t g_light_power = 1;            /* the wave's heal and damage x this (1..4) */
+
+void coop_set_light(int32_t recharge_ms, int32_t power)
+{
+    if (recharge_ms >= 1000 && recharge_ms <= 120000) g_wave_ms = (uint32_t)recharge_ms;
+    if (power >= 1 && power <= 4) g_light_power = power;
+}
 
 typedef struct coop_light {
     int        on;
@@ -850,12 +859,12 @@ static void light_drop(coop_light *L, int p, const char *why)
 /* ---- the wave (a tap of attack): heals the allies in reach, hits the foes ----
  *
  * Heal: the healing item's own path (its use in menu_helpers.c: char_add_hp, the "%d" float in colour 7,
- * sound 85): LIGHT_WAVE_HEAL of the max HP (hp_max + both bonuses, as char_add_hp caps it); fallen members
+ * sound 85): LIGHT_WAVE_HEAL x g_light_power of the max HP (hp_max + both bonuses, as char_add_hp caps it); fallen members
  * (0 HP) are not raised.  Hit: a pending hit queued on the foe (char_hit_queue 0x4891c0, as a sword's hit box
  * fills it), taken by the game's own char_take_hit: the defence, the damage number, the stagger / flinch (its
  * armour rules: bosses that never flinch don't), death, EXP and drops.  Its power: the leader's plain physical
  * hit (char_atk_roll 0x4481f0 at 100 %, the middle of its spread) less the foe's defence (char_take_hit's
- * (def stats) / 4) = what the leader would deal; LIGHT_WAVE_DMG of that (at least 1), plus the defence back so
+ * (def stats) / 4) = what the leader would deal; LIGHT_WAVE_DMG x g_light_power of that (at least 1), plus the defence back so
  * the game's subtraction lands on it.  No attacker (no combo, no record), no direction (no sideways knock),
  * rule 2 (a small hop). */
 
@@ -891,7 +900,7 @@ static int wave_reaches(const coop_light *L, const wl_body *b)
 
 static void light_wave(wl_room *r, coop_light *L, int p, uint32_t now)
 {
-    if (L->waved && (uint32_t)(now - L->wave_at) < LIGHT_WAVE_MS) { L->deny_at = now; return; }
+    if (L->waved && (uint32_t)(now - L->wave_at) < g_wave_ms) { L->deny_at = now; return; }
     L->waved = 1;
     L->wave_at = now;
     L->wave_x = L->x;
@@ -904,7 +913,7 @@ static void light_wave(wl_room *r, coop_light *L, int p, uint32_t now)
         wl_party *pt = c->party;
         int32_t max = pt->hp_max + pt->hp_bonus1 + pt->hp_bonus2;
         if (pt->hp <= 0 || pt->hp >= max || !wave_reaches(L, c->base.body) || !wave_mark(c, now)) continue;
-        int32_t amt = (int32_t)((int64_t)max * LIGHT_WAVE_HEAL / 1000), got = 0;
+        int32_t amt = (int32_t)((int64_t)max * LIGHT_WAVE_HEAL * g_light_power / 1000), got = 0;
         if (amt < LIGHT_WAVE_MIN) amt = LIGHT_WAVE_MIN;
         char_add_hp(c, amt, &got, 0);
         if (got <= 0) continue;
@@ -927,7 +936,7 @@ static void light_wave(wl_room *r, coop_light *L, int p, uint32_t now)
         int32_t def = stat_jitter((ds < 0 ? 0 : ds) / 4, 1000, 500);   /* the middle of char_take_hit's defence */
         int32_t full = char_atk_roll(lc, 1000, 500, 0, 0) - def;   /* the leader's plain hit on this foe */
         if (full < 1) full = 1;
-        int32_t dmg = (int32_t)((int64_t)full * LIGHT_WAVE_DMG / 1000);
+        int32_t dmg = (int32_t)((int64_t)full * LIGHT_WAVE_DMG * g_light_power / 1000);
         if (dmg < 1) dmg = 1;
         const wl_body *b = c->base.body;
         char_hit_queue(c, (int32_t)(intptr_t)lc, 0, 99, 2, b->x + b->w / 2, b->y + b->h / 2, 0, 0, 0, 2, wave_id++,
@@ -1076,7 +1085,7 @@ void coop_status(char *buf, size_t n)
     char l[COOP_NIN][64];
     for (int p = 1; p < COOP_NIN; p++) {
         const coop_light *L = &g_light[p];
-        if (L->on) snprintf(l[p], sizeof l[p], " l%d=%d,%d%s%s%s c%u", p + 1, (int)L->x, (int)L->y, L->magnet ? " mag" : "", L->drag ? " drag" : "", L->waved && (uint32_t)(g_eng.tick() - L->wave_at) < LIGHT_WAVE_MS ? " cd" : "", L->coins);
+        if (L->on) snprintf(l[p], sizeof l[p], " l%d=%d,%d%s%s%s c%u", p + 1, (int)L->x, (int)L->y, L->magnet ? " mag" : "", L->drag ? " drag" : "", L->waved && (uint32_t)(g_eng.tick() - L->wave_at) < g_wave_ms ? " cd" : "", L->coins);
         else if (L->coins) snprintf(l[p], sizeof l[p], " l%d- c%u", p + 1, L->coins);
         else l[p][0] = 0;
     }
@@ -1551,13 +1560,13 @@ static void ov_lights(const ov_surf *s)
             ov_blend(s, x, y + d, 255, 255, 255, a);
         }
         ov_glow(s, x, y, 5, 255, 255, 255, 255);
-        if (L->waved && wage < LIGHT_WAVE_MS) {   /* recharging: an arc filling round the light */
+        if (L->waved && wage < g_wave_ms) {   /* recharging: an arc filling round the light */
             int deny = (uint32_t)(now - L->deny_at) < 300 && L->deny_at != 0;
             ov_arc(s, x, y, 24, 128, 128, 20, 24, 40, 170);
-            ov_arc(s, x, y, 24, wage, LIGHT_WAVE_MS, 255, deny ? 60 : 255, deny ? 60 : 255, 240);
-        } else if (L->waved && wage < LIGHT_WAVE_MS + 600) {   /* just ready again: a flash */
-            int32_t a = 255 - (int32_t)((wage - LIGHT_WAVE_MS) * 255 / 600);
-            ov_ring(s, x, y, 24 + (int32_t)((wage - LIGHT_WAVE_MS) * 12 / 600), 2, 255, 255, 255, a);
+            ov_arc(s, x, y, 24, wage, g_wave_ms, 255, deny ? 60 : 255, deny ? 60 : 255, 240);
+        } else if (L->waved && wage < g_wave_ms + 600) {   /* just ready again: a flash */
+            int32_t a = 255 - (int32_t)((wage - g_wave_ms) * 255 / 600);
+            ov_ring(s, x, y, 24 + (int32_t)((wage - g_wave_ms) * 12 / 600), 2, 255, 255, 255, a);
         }
         uint32_t edge = ov_rgb(s, 16, 24, 48), ink = ov_rgb(s, 255, 255, 255);
         char t[16];

@@ -1579,6 +1579,8 @@ static void parse(int argc, char **argv)
         else if (!strcmp(a, "--coop-test-item")) { uint32_t f = strtoul(ARG(), 0, 0); if (g_ntest_item < 4) g_test_item[g_ntest_item++] = f; }   /* FRAME */
         else if (!strcmp(a, "--test-crash")) g_test_crash = strtoul(ARG(), 0, 0);        /* FRAME */
         else if (!strcmp(a, "--coop-wait") || !strcmp(a, "--coop-p2-wait")) coop_wait();   /* players 2 / 3 start out */
+        else if (!strcmp(a, "--coop-light-recharge")) coop_set_light(atoi(ARG()) * 1000, 0);   /* the wave, seconds */
+        else if (!strcmp(a, "--coop-light-power")) coop_set_light(0, atoi(ARG()));   /* the wave's heal / damage x N */
         else if (!strcmp(a, "--controls")) g_controls_file = ARG();   /* the players' devices / keys (ini) */
         else if (!strcmp(a, "--coop-test-drop") && g_n_test_drop < 8) {   /* FRAME:WHO */
             const char *v = ARG();
