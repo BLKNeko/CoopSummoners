@@ -70,7 +70,8 @@ Your saves and settings are kept.
 > files from this page's Releases).
 
 In the launcher you can also pick the **game language**, the **screen mode** (borderless full
-screen is recommended), the **window size**, and see all the **controls**.
+screen is recommended), the **window size**, the support light's **recharge** (5 to 30 s, 12 s by default) and
+**power** (1× to 4×: the wave's heal and damage), and see all the **controls**.
 
 ---
 
@@ -111,7 +112,7 @@ Player 1 uses the game's own key setup (set it in the game's options).
 |---|---|
 | Press anything | The light appears. It flies through walls. |
 | Touch a coin | Picks it up for the party. |
-| **Tap attack** | **Wave**: heals nearby allies (8 % HP) and hurts enemies a little. Every 20 s. |
+| **Tap attack** | **Wave**: heals nearby allies (8 % HP) and hurts enemies a little. Every 12 s (both set in the launcher: *Light recharge*, *Light power*). |
 | **Hold attack** | **Magnet**: pulls nearby coins in. |
 | **Hold jump** | **Carries an item** to the leader. |
 | Use | **Ping**: rings to point something out. |

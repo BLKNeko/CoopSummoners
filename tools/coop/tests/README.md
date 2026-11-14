@@ -107,3 +107,10 @@ Camera follow-up (2026-11-08): the camera's gamepad default is RT (`buttons` val
 `--coop-test-hp 4100:1:0` -> `coop.log` "camera follows player 1 (player 2 fell)", pink "CAMERA P1" (shot f4120);
 P1's Backspace f4250 -> "camera follows player 2" and it stays on the fallen Sana (shot f4270). Non-co-op 10 equal
 `gate-upstream`; T1-T7 equal the previous build.
+
+**Light recharge / power (2026-11-14):** the wave's recharge is 12 s by default (`--coop-light-recharge S`, the
+launcher's "Light recharge" 5-30 s) and `--coop-light-power N` (1-4, "Light power") multiplies its heal and damage.
+`L4-wave` (`--coop-wait --frames 24000`): default -> the second wave at f23705 (20 s later) fires, "leader's hit 5,
+defence 3 -> 1"; the f22700 tap (3.8 s) is denied (shot f22706: the red arc ~1/3, of 12 s). With `--coop-light-recharge
+30 --coop-light-power 4`: the first heal shows "16" (Arche 84 -> 100, 32 % capped at her max; default "8") and the
+second wave is denied (20 s < 30 s). Non-co-op 10 equal `gate-upstream`; T1-T7 equal the previous build.
