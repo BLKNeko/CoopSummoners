@@ -93,7 +93,7 @@ static const wchar_t *const STR_EN[S_N] = {
     L"3 use, 0 sheathe, + switch; player 3 I/K/J/L, U attack, O jump,\r\n"
     L"P use, Y sheathe, H switch; gamepads move with the stick / d-pad).\r\n"
     L"\r\n"
-    L"Camera: Backspace (player 1), numpad - (player 2), N (player 3), or\r\n"
+    L"Camera: Right Ctrl (player 1), numpad - (player 2), N (player 3), or\r\n"
     L"RT on a gamepad: the camera follows the next player (1 > 2 > 3).\r\n"
     L"If the player it follows falls, it moves to the next one standing.\r\n"
     L"\r\n"
@@ -185,7 +185,7 @@ static const wchar_t *const STR_PT[S_N] = {
     L"3 usar, 0 guardar, + trocar; jogador 3 I/K/J/L, U atacar, O pular,\r\n"
     L"P usar, Y guardar, H trocar; controles andam com analógico / direcional).\r\n"
     L"\r\n"
-    L"Câmera: Backspace (jogador 1), numérico - (jogador 2), N (jogador 3),\r\n"
+    L"Câmera: Ctrl direito (jogador 1), numérico - (jogador 2), N (jogador 3),\r\n"
     L"ou RT no controle: a câmera passa a seguir o próximo jogador (1 > 2 > 3).\r\n"
     L"Se o jogador seguido cair, ela passa para o próximo de pé.\r\n"
     L"\r\n"
@@ -393,7 +393,7 @@ typedef struct {
 } player_cfg;
 static player_cfg g_pl[NPLAYERS];
 static const uint8_t DEF_KEYS[NPLAYERS][NACT] = {
-    { [9] = 0x0e }, { 0x48, 0x4c, 0x4b, 0x4d, 0x4f, 0x50, 0x51, 0x52, 0x4e, 0x4a }, { 0x17, 0x25, 0x24, 0x26, 0x16, 0x18, 0x19, 0x15, 0x23, 0x31 } };
+    { [9] = 0x9d }, { 0x48, 0x4c, 0x4b, 0x4d, 0x4f, 0x50, 0x51, 0x52, 0x4e, 0x4a }, { 0x17, 0x25, 0x24, 0x26, 0x16, 0x18, 0x19, 0x15, 0x23, 0x31 } };
 #define PAD_RT 32   /* buttons[] past the 32 buttons: the triggers (an Xbox-style pad's Z axis; the mod's COOP_PAD_RT / LT) */
 #define PAD_LT 33
 static const uint8_t DEF_BUTTONS[NACT] = { 0, 0, 0, 0, 2, 0, 1, 4, 3, PAD_RT };

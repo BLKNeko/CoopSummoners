@@ -65,7 +65,8 @@ void coop_controls_default(coop_player_ctl ctl[COOP_NIN])
     ctl[1].kb = 1;
     memcpy(ctl[1].keys, P2_KEYS, COOP_NACT);
     memcpy(ctl[2].keys, P3_KEYS, COOP_NACT);
-    ctl[0].keys[COOP_A_CAMERA] = 0x0e;   /* player 1 plays on the game's keys: only the camera key is co-op's (Backspace) */
+    ctl[0].keys[COOP_A_CAMERA] = 0x9d;   /* player 1 plays on the game's keys: only the camera key is co-op's (Right Ctrl; not
+                                          * Backspace: the game's cancel, id 39) */
 }
 
 static void ctl_init(void)
@@ -406,6 +407,7 @@ typedef struct sw_state {
     int          tap;         /* a tap waiting for the swap window                       */
     uint32_t     tap_at;
     input_event *posted;      /* the press coop posted for room_keys: not a player's     */
+    uint32_t     posted_ts;   /* its time stamp (the record is reused once the ring turns) */
 } sw_state;
 
 static sw_state g_sw[COOP_NIN];
@@ -428,6 +430,7 @@ static void sw_post(input_mgr *m, sw_state *s, uint32_t now)
 {
     push_ev(m, SWITCH_ID, now, 1);
     s->posted = m->ring[0];
+    s->posted_ts = now;
 }
 
 /* the slot player p plays: player 1 the leader (while it holds manager 0), else its own */
@@ -488,6 +491,10 @@ static void sw_update(wl_room *r)
             if (e == s->posted) {   /* ours, while room_keys may still take it; the record is reused later */
                 if (e->id == SWITCH_ID && e->flag == 1 && (uint32_t)(now - e->ts) <= 200) continue;
                 s->posted = NULL;
+                /* room_keys left it (no member to switch to): drop it.  Read as a player's press, it had no
+                 * release to end it -- a switch "held" forever, and player 1's drop-out hold then fired on the
+                 * next player to join */
+                if (e->id == SWITCH_ID && e->flag == 1 && e->ts == s->posted_ts) { e->id = 0; continue; }
             }
             if (e->id != SWITCH_ID) continue;
             int pressed = e->flag == 1;

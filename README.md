@@ -88,7 +88,7 @@ with **Keys...**.
 | Use / talk | game setting | numpad **3** | **P** | B |
 | Skill modifier | game setting | numpad **0** | **Y** | LB |
 | Switch | **Enter** | numpad **+** | **H** | Y |
-| Camera | **Backspace** (or RT) | numpad **-** | **N** | RT |
+| Camera | **Right Ctrl** (or RT) | numpad **-** | **N** | RT |
 
 Player 1 uses the game's own key setup (set it in the game's options).
 
