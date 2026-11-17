@@ -1804,6 +1804,11 @@ int main(int argc, char **argv)
     {   /* co-op mod translations: before rh_hooks_install binds g_eng.data */
         if (!g_lang_name && !g_lang_file) g_lang_name = getenv("OPENSUMMONERS_LANG");
         load_controls();   /* the players' devices and keys (the launcher's coop-controls.ini) */
+        if (g_coop) {   /* the co-op tuning values (coop-tuning.ini; the launcher's light settings stay on top) */
+            char tp[MAX_PATH];
+            snprintf(tp, sizeof tp, "%s\\coop-tuning.ini", g_gamedir_abs);
+            coop_tune_load(tp);
+        }
         coop_set_lang_pt(g_lang_name && !_strnicmp(g_lang_name, "pt", 2));   /* the co-op notices' language */
         char lp[MAX_PATH], why[256];
         if (g_lang_file) snprintf(lp, sizeof lp, "%s", g_lang_file);

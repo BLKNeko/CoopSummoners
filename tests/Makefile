@@ -41,7 +41,8 @@ SRCS_PORTED := ../src/asset_register.c ../src/bitmap_session.c ../src/input.c ..
                ../src/char_attack.c ../src/sana_skills.c ../src/char_hit.c ../src/char_monster.c \
                ../src/arche_sword.c ../src/skill_cast.c ../src/shots.c ../src/behave_helpers.c \
                ../src/char_handlers.c ../src/script_helpers.c ../src/chapter_scripts.c ../src/msvc_crt.c \
-               ../src/coop.c ../src/lang.c
+               ../src/coop.c ../src/coop_camera.c ../src/coop_light.c ../src/coop_overlay.c ../src/coop_tune.c \
+               ../src/lang.c
 
 SRCS_TESTS := test_main.c host_stubs.c test_asset_register.c test_bitmap_session.c test_input.c \
               test_glyph_text.c test_map_data.c test_map_grid.c test_map_decode.c test_map_render.c \

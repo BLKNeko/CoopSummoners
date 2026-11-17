@@ -76,6 +76,9 @@ void coop_light_tick(wl_room *r);
 /* the light's wave: its recharge in ms (default 12000; rhost --coop-light-recharge S, in seconds) and a power
  * 1..4 multiplying its heal and damage (--coop-light-power N); out-of-range values keep the current ones */
 void coop_set_light(int32_t recharge_ms, int32_t power);
+/* the tuning values: coop-tuning.ini (the game folder; see coop_tune.c), read once at start; the launcher's
+ * light settings (coop_set_light) keep their place over it */
+void coop_tune_load(const char *path);
 /* The character the camera follows (camera_snap, room_lead): the leader (`leader`, passed through) unless a
  * player pressed the camera key (COOP_A_CAMERA: player 1 Right Ctrl / RT on their gamepad, player 2 numpad -,
  * player 3 N, or the player's own key / button) to hand it to the next player in the game (1 -> 2 -> 3 -> 1).
