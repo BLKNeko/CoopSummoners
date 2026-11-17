@@ -114,3 +114,17 @@ launcher's "Light recharge" 5-30 s) and `--coop-light-power N` (1-4, "Light powe
 defence 3 -> 1"; the f22700 tap (3.8 s) is denied (shot f22706: the red arc ~1/3, of 12 s). With `--coop-light-recharge
 30 --coop-light-power 4`: the first heal shows "16" (Arche 84 -> 100, 32 % capped at her max; default "8") and the
 second wave is denied (20 s < 30 s). Non-co-op 10 equal `gate-upstream`; T1-T7 equal the previous build.
+
+**v1.2.0 (2026-11-16):**
+- Drop-out fix: a lone switch tap re-posts a press for room_keys; left untaken (no member to switch to), coop read
+  it as player 1's press after 200 ms and P1's switch stayed "held" -> the next join was dropped 16 ms later.
+  Repro: `marker-r2` trace C (owner's early-game recording) cut at f28000, `--coop-wait`, P2 numpad + f27820-27900:
+  before "player 2 joined" + "dropped out by player 1" at +16; after: joined, stays.
+- The split of coop.c (coop_camera / coop_light / coop_overlay / coop_tune): a build of 5707c83 vs the split build on
+  all 14 co-op traces (T1-T9, F1, L1-L4) -> frame / tick / rng / fb all equal.
+- coop-tuning.ini (the game folder): `L4-wave` with wave_ms 3000 + wave_power 4 + notice_ms 99999999 ->
+  coop.log "tuning: notice_ms = 99999999 out of 200..20000, kept", "22 values"; the f22700 tap now waves (3 s) and the
+  slime hit is 5 instead of 1 (x4). coop_log runs before the engine's clock exists there (tick printed 0; it
+  crashed the start before that fix).
+- Fallen warning: `--coop-test-hp 4100:1:0` on the owner's save -> coop.log "player 2 fell", a "P2 DOWN" notice and
+  P2's badge grey with a red X (shot f4115).

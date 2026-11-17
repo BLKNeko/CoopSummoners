@@ -15,7 +15,7 @@ light that collects coins, carries items and heals the party.
 > Unofficial fan project. Not affiliated with Lizsoft or Carpe Fulgur. **No game files are
 > included:** you need your own copy of the game (Steam, 2012 edition).
 
-**[⬇ Download the latest version](https://github.com/BLKNeko/CoopSummoners/releases)** ·
+**[⬇ Download the latest version](https://github.com/BLKNeko/CoopSummoners/releases)** (v1.2.0) ·
 [Install](#install) · [Controls](#controls) · [Problems?](#troubleshooting)
 
 ---
@@ -28,8 +28,15 @@ light that collects coins, carries items and heals the party.
 - **Swap characters** with another player by pressing switch at the same time.
 - **A support light** for players waiting for a character: collects coins, pulls them in
   with a magnet, carries items to the leader, sends a healing wave and pings spots on screen.
+- **Camera for anyone:** a key passes the camera to the next player; it moves on by itself
+  when the player it follows falls.
+- **Support spells you can aim:** a sight shows which ally Sana's shield (and similar spells)
+  will reach, and up / down picks another one.
+- **Clear warnings:** "P2 joined / left / down" notices, and a grey badge with a red X over a
+  fallen player.
 - **Easy launcher:** finds the game, installs the mod in one click, sets each player's
-  controls and backs up your saves.
+  controls, backs up your saves and lets you tune the support light.
+- **Tunable:** the light, the wave and the switch timings live in `coop-tuning.ini`.
 - **Smooth full screen** (no lag on Windows 10 / 11) and bigger window sizes.
 - **Brazilian Portuguese translation** (optional).
 - Without co-op, the game plays **exactly like the original**.
@@ -38,6 +45,8 @@ light that collects coins, carries items and heals the party.
 |:---:|:---:|:---:|
 | ![The light's wave heals Arche](docs/media/coop-light-wave.png) | ![The light carries a chest](docs/media/coop-light-carry.png) | ![A third player, with the Portuguese translation](docs/media/coop-p3-pt.png) |
 | The light's wave heals nearby allies | Carrying an item to the leader | A third player (here with the Portuguese translation) |
+| ![Player 2 is down: a grey badge with a red X, and the camera moved to player 1](docs/media/coop-p2-down.png) | | |
+| Player 2 fell: the warning, and the camera moved on to player 1 | | |
 
 ---
 
@@ -71,7 +80,17 @@ Your saves and settings are kept.
 
 In the launcher you can also pick the **game language**, the **screen mode** (borderless full
 screen is recommended), the **window size**, the support light's **recharge** (5 to 30 s, 12 s by default) and
-**power** (1× to 4×: the wave's heal and damage), and see all the **controls**.
+**power** (1× to 4×: the wave's heal and damage), and see all the **controls**. The launcher's
+title bar and footer show the mod's **version**.
+
+### Fine-tuning (`coop-tuning.ini`)
+
+**Tuning...** in the launcher opens `coop-tuning.ini` (in the game folder) in Notepad. Every
+value is explained in the file: the switch timings (join, leave, swap, drop everyone), how long
+notices stay, the light's speed, reach, magnet and idle time, and the wave's reach, heal,
+damage and recharge. Save the file and start the game again. Delete a line to go back to the
+default; a value out of range is ignored (`coop.log` says so). The launcher's *Light recharge* and
+*Light power* win over the file's `wave_ms` / `wave_power`. Updating the mod keeps your file.
 
 ---
 
@@ -128,8 +147,9 @@ The light goes away after 10 s without input. The number under it counts the coi
 - During **cutscenes**, the AI plays everyone's characters for a moment, then gives them back.
 - A character at **0 HP** stays with its player: they can walk and jump but not attack until
   healed. **Game over** only when the whole party is down.
-- A blue **P2** / purple **P3** badge shows each player's character; an arrow on the screen
-  edge shows where they are when off screen.
+- A pink **P1** (while the camera follows someone else) / blue **P2** / purple **P3** badge shows
+  each player's character; an arrow on the screen edge shows where they are when off screen.
+- When a player falls, their badge turns **grey with a red X** and a "P2 DOWN" notice shows.
 - **Playing online:** the mod is local co-op. To play with friends far away, stream the game
   with [Parsec](https://parsec.app/) (not tested yet).
 - **Portuguese:** pick *Português (Brasil)* under *Game language* in the launcher (or
@@ -160,7 +180,8 @@ The light goes away after 10 s without input. The number under it counts the coi
 ## Uninstall
 
 Click **Uninstall** in the launcher, then delete the launcher's folder. Your saves and backups
-stay in the game folder; the original game files are never changed.
+stay in the game folder; the original game files are never changed. (Uninstall also removes
+`coop-tuning.ini` and `coop-controls.ini`.)
 
 ---
 
@@ -413,7 +434,13 @@ producers, from each player's keyboard keys or own gamepad as `coop-controls.ini
 
 | File | What it does |
 |---|---|
-| `src/coop.c`, `src/coop.h` | Everything co-op: players 2 / 3's input (keys, gamepads), attach / release, the switch rules, the fallen-character filter, the spell panel choice, the lights (coins, magnet, carrying items, the wave, ping), the support-spell sight, the camera key, the P1 / P2 / P3 markers and notices. |
+| `src/coop.h` | The co-op interface the engine calls (`coop_produce`, `coop_tick`, `coop_overlay_draw`, ...). |
+| `src/coop.c` | Players 2 / 3's input (keys, gamepads), attach / release, the switch rules, the fallen-character filter, the spell panel choice, the status line, the test hooks. |
+| `src/coop_camera.c` | Which player the camera follows (the camera key, moving on when that player falls). |
+| `src/coop_light.c` | The light of players with no character: coins, magnet, carrying items, ping, the wave. |
+| `src/coop_overlay.c` | Everything drawn over the game: the P1 / P2 / P3 markers, fallen warnings, notices, hold bars, the lights, the support-spell sight. |
+| `src/coop_tune.c`, `tools/launcher/coop-tuning.ini` | The tuning values: defaults, the file the launcher installs, and how it's read. |
+| `src/coop_internal.h` | What the co-op files share. |
 | `src/scene_loop.c` | Creates the extra input managers when co-op is on. |
 | `src/room_loop.c`, `src/room_load.c` | Feed players 2 / 3 (`coop_produce`); run `coop_tick`; filter a fallen player's commands; the camera follows `coop_camera_char`. |
 | `src/input_dev.c` | Gamepad re-acquire after hot-plug (co-op only); player 1's gamepad from the launcher's choice. |
