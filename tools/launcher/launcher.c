@@ -19,6 +19,8 @@
 #define DIRECTINPUT_VERSION 0x0700
 #include <windows.h>
 #include <shellapi.h>
+
+#define COOP_VERSION L"1.2.0"   /* the mod's version: the title bar, the footer (bump it with each release) */
 #include <shlobj.h>
 #include <commctrl.h>
 #include <dinput.h>
@@ -50,7 +52,7 @@ enum {
     S_PLAYER, S_DEV_P1_DEFAULT, S_DEV_KB_ONLY, S_DEV_NONE, S_DEV_KB, S_DEV_PAD, S_DEV_GONE, S_KEYS_BTN, S_KEYS_TITLE,
     S_ACT_0, S_ACT_1, S_ACT_2, S_ACT_3, S_ACT_4, S_ACT_5, S_ACT_6, S_ACT_7, S_ACT_8, S_ACT_9,
     S_PRESS_KEY, S_PRESS_BTN, S_BUTTON_N, S_PAD_DIRS, S_DEFAULTS, S_OK_BTN, S_ASK_SAME_PAD, S_KEY_NONE,
-    S_LIGHT_CD, S_LIGHT_POW, S_TAG_DEFAULT, S_TAG_STRONG, S_N
+    S_LIGHT_CD, S_LIGHT_POW, S_TAG_DEFAULT, S_TAG_STRONG, S_TUNING_BTN, S_N
 };
 
 static const wchar_t *const STR_EN[S_N] = {
@@ -142,7 +144,7 @@ static const wchar_t *const STR_EN[S_N] = {
     L"Press a key... (Esc cancels)", L"Press a gamepad button... (Esc cancels)", L"Button %d",
     L"Move: left stick or d-pad.", L"Defaults", L"OK",
     L"Two players are set to the same gamepad. Play anyway?", L"(none)",
-    L"Light recharge:", L"Light power:", L"(default)", L"(very strong)",
+    L"Light recharge:", L"Light power:", L"(default)", L"(very strong)", L"Tuning...",
 };
 
 static const wchar_t *const STR_PT[S_N] = {
@@ -234,7 +236,7 @@ static const wchar_t *const STR_PT[S_N] = {
     L"Aperte uma tecla... (Esc cancela)", L"Aperte um botão do controle... (Esc cancela)", L"Botão %d",
     L"Mover: analógico esquerdo ou direcional.", L"Padrão", L"OK",
     L"Dois jogadores estão no mesmo controle. Jogar mesmo assim?", L"(nenhuma)",
-    L"Recarga da luz:", L"Força da luz:", L"(padrão)", L"(muito forte)",
+    L"Recarga da luz:", L"Força da luz:", L"(padrão)", L"(muito forte)", L"Ajustes...",
 };
 
 static const wchar_t *const *T = STR_EN;
@@ -559,6 +561,9 @@ static char g_game_hash[65];
 
 static void installed_path(wchar_t *out) { join(out, g_game_dir, MOD_EXE); }
 static void bundled_path(wchar_t *out) { join(out, g_self_dir, MOD_EXE); }
+/* the co-op tuning values (coop-tuning.ini, read by the mod at start): a commented copy ships next to the
+ * launcher; installed into the game folder only when it isn't there (a player's edits survive updates) */
+#define TUNING_FILE L"coop-tuning.ini"
 /* the translation files, next to the launcher (shipped in the zip) and in the game folder: the text, the table
  * names (items, spells, monsters, places), and the overlay putting those names back in English in sentences */
 #define LANG_FILE L"lang\\pt-br.tsv"
@@ -629,7 +634,7 @@ static int lang_available(void)
 
 enum { ID_PATH = 100, ID_BROWSE, ID_FIND, ID_GAME, ID_MOD, ID_INSTALL, ID_UNINSTALL, ID_SOLO, ID_COOP, ID_PADS_L,
        ID_PADS, ID_PADS_NOTE, ID_CONTROLS, ID_FOOTER, ID_DIRLABEL, ID_LANG_L, ID_LANG, ID_WSCALE_L, ID_WSCALE,
-       ID_SCREEN_L, ID_SCREEN, ID_LIGHT_CD_L, ID_LIGHT_CD, ID_LIGHT_POW_L, ID_LIGHT_POW, ID_DEV0 = 300, ID_KEYS0 = 310 };
+       ID_SCREEN_L, ID_SCREEN, ID_LIGHT_CD_L, ID_LIGHT_CD, ID_LIGHT_POW_L, ID_LIGHT_POW, ID_TUNING, ID_DEV0 = 300, ID_KEYS0 = 310 };
 #define TIMER_PADS 1
 
 static HWND g_wnd, g_path, g_game_l, g_mod_l, g_install, g_uninstall, g_solo, g_coop, g_lang, g_wscale_c, g_screen_c;
@@ -1163,6 +1168,12 @@ static int do_install(int quiet)
             }
         }
     }
+    {
+        wchar_t ti[MAX_PATH], tb[MAX_PATH];
+        join(ti, g_game_dir, TUNING_FILE);
+        join(tb, g_self_dir, TUNING_FILE);
+        if (exists(tb) && !exists(ti) && _wcsicmp(ti, tb) != 0) CopyFileW(tb, ti, TRUE);
+    }
     if (!quiet || backup[0]) {
         wchar_t msg[1024];
         swprintf(msg, 1024, L"%ls%ls%ls", TR(S_DONE_INSTALL), backup[0] ? TR(S_DONE_BACKUP) : L"", backup);
@@ -1185,6 +1196,8 @@ static void do_uninstall(void)
     }
     join(p, g_game_dir, L"coop-controls.ini");
     DeleteFileW(p);
+    join(p, g_game_dir, TUNING_FILE);
+    DeleteFileW(p);
     join(p, g_game_dir, L"coop.log");
     DeleteFileW(p);
     join(p, g_game_dir, L"lang.log");
@@ -1204,6 +1217,16 @@ static void do_uninstall(void)
     if (is_dir(p)) shell_op(FO_DELETE, p, NULL, 1);
     info(TR(S_DONE_UNINSTALL));
     refresh();
+}
+
+static void open_tuning(void)
+{
+    wchar_t ti[MAX_PATH], tb[MAX_PATH];
+    join(ti, g_game_dir, TUNING_FILE);
+    join(tb, g_self_dir, TUNING_FILE);
+    if (!exists(ti) && exists(tb)) CopyFileW(tb, ti, TRUE);
+    if (!exists(ti)) { err(S_ERR_COPY, ERROR_FILE_NOT_FOUND); return; }
+    ShellExecuteW(g_wnd, L"open", L"notepad.exe", ti, NULL, SW_SHOWNORMAL);
 }
 
 static void play(int coop)
@@ -1361,7 +1384,8 @@ static void build_ui(void)
     for (int i = S_SM_BORDERLESS; i <= S_SM_ASK; i++) SendMessageW(g_screen_c, CB_ADDSTRING, 0, (LPARAM)TR(i));
     SendMessageW(g_screen_c, CB_SETCURSEL, g_screen, 0);
     y += 34;
-    mk(L"STATIC", TR(S_WSCALE), SS_RIGHT, X + 96, y + 5, 156, 20, ID_WSCALE_L, g_font);
+    mk(L"BUTTON", TR(S_TUNING_BTN), BS_PUSHBUTTON, X, y, 130, 28, ID_TUNING, g_font);
+    mk(L"STATIC", TR(S_WSCALE), SS_RIGHT, X + 136, y + 5, 116, 20, ID_WSCALE_L, g_font);
     g_wscale_c = mk(L"COMBOBOX", L"", CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP, X + 258, y + 1, 290, 200, ID_WSCALE, g_font);
     {   /* the largest scale whose game window (retail's windowed style) fits the main screen's work area: what
          * "Largest that fits" picks, and the sizes that won't fit say so (the game then uses the largest fit) */
@@ -1405,7 +1429,11 @@ static void build_ui(void)
     }
     SendMessageW(g_light_pow_c, CB_SETCURSEL, g_light_pow - 1, 0);
     y += 40;
-    mk(L"STATIC", TR(S_FOOTER), SS_CENTER, X, y, W, 40, ID_FOOTER, g_font);
+    {
+        wchar_t foot[512];
+        swprintf(foot, 512, L"CoopSummoners v%ls  ·  %ls", COOP_VERSION, TR(S_FOOTER));
+        mk(L"STATIC", foot, SS_CENTER, X, y, W, 40, ID_FOOTER, g_font);
+    }
 }
 
 static LRESULT CALLBACK wnd_proc(HWND w, UINT m, WPARAM wp, LPARAM lp)
@@ -1420,6 +1448,7 @@ static LRESULT CALLBACK wnd_proc(HWND w, UINT m, WPARAM wp, LPARAM lp)
         case ID_SOLO: play(0); break;
         case ID_COOP: play(1); break;
         case ID_CONTROLS: show_controls(); break;
+        case ID_TUNING: open_tuning(); break;
         case ID_LANG:
             if (HIWORD(wp) == CBN_SELCHANGE) {
                 g_lang_pt = (int)SendMessageW(g_lang, CB_GETCURSEL, 0, 0);
@@ -1531,7 +1560,9 @@ int WINAPI wWinMain(HINSTANCE inst, HINSTANCE prev, PWSTR cmdline, int show)
     RECT r = { 0, 0, S(580), S(626) };
     DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX;
     AdjustWindowRect(&r, style, FALSE);
-    g_wnd = CreateWindowExW(0, L"CoopSummonersLauncher", TR(S_TITLE), style,
+    wchar_t wtitle[160];
+    swprintf(wtitle, 160, L"%ls  (v%ls)", TR(S_TITLE), COOP_VERSION);
+    g_wnd = CreateWindowExW(0, L"CoopSummonersLauncher", wtitle, style,
                             CW_USEDEFAULT, CW_USEDEFAULT, r.right - r.left, r.bottom - r.top, NULL, NULL, inst, NULL);
     build_ui();
 

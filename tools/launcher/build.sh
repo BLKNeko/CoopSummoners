@@ -23,7 +23,8 @@ rm -rf "$PKG" "$OUT/CoopSummoners.zip"
 mkdir -p "$PKG"
 cp "$OUT/CoopSummoners.exe" "$MOD" "$PKG/"
 cp "$SRC/README-package.txt" "$PKG/README.txt"
-FILES="CoopSummoners.exe opensummoners-standalone.exe README.txt"
+cp "$SRC/coop-tuning.ini" "$PKG/"   # the co-op tuning values, installed by the launcher when missing
+FILES="CoopSummoners.exe opensummoners-standalone.exe README.txt coop-tuning.ini"
 for f in pt-br.tsv pt-br.names.tsv pt-br.en-names.tsv; do   # the translation (Portuguese text only), installed by the launcher
     if [ -f "$ROOT/data/lang/$f" ]; then
         mkdir -p "$PKG/lang" && cp "$ROOT/data/lang/$f" "$PKG/lang/"

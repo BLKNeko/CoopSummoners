@@ -14,6 +14,8 @@ You need: Fortune Summoners: Secret of the Elemental Stone on Steam
 
 Player 1: keyboard + 1st controller. Player 2: numpad + 2nd controller.
 Click "Controls..." in the launcher for the full list.
+Fine-tuning (the light, the wave, the switch timings): "Tuning..." opens
+coop-tuning.ini (every value explained inside).
 
 Screen: the launcher's "Screen mode" (default: borderless full screen, without
 the lag of the game's original full screen). "Window size" applies to "Window".
@@ -42,6 +44,8 @@ Requisito: Fortune Summoners: Secret of the Elemental Stone na Steam
 
 Jogador 1: teclado + 1º controle. Jogador 2: teclado numérico + 2º controle.
 Clique em "Comandos..." no launcher para ver a lista completa.
+Ajustes finos (a luz, a onda, os tempos da troca): "Ajustes..." abre o
+coop-tuning.ini (cada valor explicado dentro).
 
 Tela: o "Modo de tela" do launcher (padrão: tela cheia sem bordas, sem o
 lag da tela cheia original do jogo). "Tamanho da janela" vale para "Janela".
